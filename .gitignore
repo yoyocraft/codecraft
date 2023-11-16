@@ -8,7 +8,8 @@ target/
 *.war
 *.zip
 *.tar.gz
-products
+codecraft-basic/src/main/resources/products/MainTemplate.java
+codecraft-basic/src/main/resources/products/site.html
 
 
 ### MAC ###
