@@ -46,4 +46,13 @@ public class MainTemplateModel {
     public String getOutputText() {
         return outputText;
     }
+
+    @Override
+    public String toString() {
+        return "MainTemplateModel{" +
+                "loop=" + loop +
+                ", author='" + author + '\'' +
+                ", outputText='" + outputText + '\'' +
+                '}';
+    }
 }
