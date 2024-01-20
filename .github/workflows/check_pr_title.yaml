@@ -1,0 +1,38 @@
+name: Lint PR
+
+on:
+  pull_request_target:
+    types:
+      - opened
+      - edited
+      - synchronize
+
+permissions:
+  pull-requests: read
+
+jobs:
+  main:
+    name: Validate PR title
+    runs-on: ubuntu-22.04
+    steps:
+      - name: check pr semantic
+        uses: amannn/action-semantic-pull-request@v5
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          # https://www.conventionalcommits.org/en/v1.0.0/
+          # Configure which types are allowed (newline-delimited).
+          types: |
+            fix
+            feat
+            docs
+            style
+            ci
+            refactor
+            perf
+            test
+            chore
+            build
+            revert
+          requireScope: true
+
