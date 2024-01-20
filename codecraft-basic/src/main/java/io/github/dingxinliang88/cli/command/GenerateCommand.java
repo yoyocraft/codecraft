@@ -1,14 +1,14 @@
-package com.juzi.cli.command;
+package io.github.dingxinliang88.cli.command;
 
 import cn.hutool.core.bean.BeanUtil;
-import com.juzi.generator.MainGenerator;
-import com.juzi.model.MainTemplateModel;
+import io.github.dingxinliang88.generator.MainGenerator;
+import io.github.dingxinliang88.model.MainTemplateModel;
 import picocli.CommandLine;
 
 import java.util.concurrent.Callable;
 
 /**
- * @author codejuzi
+ * @author <a href="https://github.com/dingxinliang88">youyi</a>
  */
 @CommandLine.Command(name = "generate", description = "generate code", mixinStandardHelpOptions = true)
 public class GenerateCommand implements Callable<Integer> {

@@ -1,4 +1,4 @@
-package com.juzi.model;
+package io.github.dingxinliang88.model;
 
 /**
  * 动态模板配置

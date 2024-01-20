@@ -1,9 +1,9 @@
-package com.juzi.cli.utils;
+package io.github.dingxinliang88.cli.utils;
 
 
-import com.juzi.cli.command.ConfigCommand;
-import com.juzi.cli.command.GenerateCommand;
-import com.juzi.cli.command.ListCommand;
+import io.github.dingxinliang88.cli.command.ConfigCommand;
+import io.github.dingxinliang88.cli.command.GenerateCommand;
+import io.github.dingxinliang88.cli.command.ListCommand;
 
 import java.util.HashMap;
 import java.util.Map;

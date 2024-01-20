@@ -1,13 +1,13 @@
-package com.juzi.cli.command;
+package io.github.dingxinliang88.cli.command;
 
 import cn.hutool.core.util.ReflectUtil;
-import com.juzi.model.MainTemplateModel;
+import io.github.dingxinliang88.model.MainTemplateModel;
 import picocli.CommandLine;
 
 import java.lang.reflect.Field;
 
 /**
- * @author codejuzi
+ * @author <a href="https://github.com/dingxinliang88">youyi</a>
  */
 @CommandLine.Command(name = "config", description = "model config", mixinStandardHelpOptions = true)
 public class ConfigCommand implements Runnable {

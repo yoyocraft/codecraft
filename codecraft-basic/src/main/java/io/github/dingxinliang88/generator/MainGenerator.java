@@ -1,6 +1,6 @@
-package com.juzi.generator;
+package io.github.dingxinliang88.generator;
 
-import com.juzi.model.MainTemplateModel;
+import io.github.dingxinliang88.model.MainTemplateModel;
 import freemarker.template.TemplateException;
 
 import java.io.File;

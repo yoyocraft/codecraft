@@ -1,6 +1,6 @@
-package com.juzi.cli.valid;
+package io.github.dingxinliang88.cli.valid;
 
-import com.juzi.cli.utils.CommandUtils;
+import io.github.dingxinliang88.cli.utils.CommandUtils;
 import picocli.CommandLine;
 
 import java.lang.reflect.Field;

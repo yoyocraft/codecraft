@@ -1,4 +1,4 @@
-package com.juzi.cli.command;
+package io.github.dingxinliang88.cli.command;
 
 import cn.hutool.core.io.FileUtil;
 import picocli.CommandLine;
@@ -7,7 +7,7 @@ import java.io.File;
 import java.util.List;
 
 /**
- * @author codejuzi
+ * @author <a href="https://github.com/dingxinliang88">youyi</a>
  */
 @CommandLine.Command(name = "list", description = "list file", mixinStandardHelpOptions = true)
 public class ListCommand implements Runnable {

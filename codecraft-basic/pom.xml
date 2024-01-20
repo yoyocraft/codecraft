@@ -4,7 +4,7 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>com.juzi</groupId>
+    <groupId>io.github.dingxinliang88</groupId>
     <artifactId>codecraft-basic</artifactId>
     <version>1.0</version>
 
@@ -62,7 +62,7 @@
                     <archive>
                         <manifest>
                             <!-- 替换主类 -->
-                            <mainClass>com.juzi.Main</mainClass>
+                            <mainClass>io.github.dingxinliang88.Main</mainClass>
                         </manifest>
                     </archive>
                 </configuration>
