@@ -1,7 +1,7 @@
-package com.juzi.cli.pattern;
+package io.github.dingxinliang88.cli.pattern;
 
 /**
- * @author codejuzi
+ * @author <a href="https://github.com/dingxinliang88">youyi</a>
  */
 public class TurnOnCommand implements Command {
     private final Device device;

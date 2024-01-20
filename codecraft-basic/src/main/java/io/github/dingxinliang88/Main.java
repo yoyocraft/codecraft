@@ -1,9 +1,9 @@
-package com.juzi;
+package io.github.dingxinliang88;
 
-import com.juzi.cli.CommandExecutor;
+import io.github.dingxinliang88.cli.CommandExecutor;
 
 /**
- * @author codejuzi
+ * @author <a href="https://github.com/dingxinliang88">youyi</a>
  */
 public class Main {
     public static void main(String[] args) {

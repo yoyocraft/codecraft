@@ -1,4 +1,4 @@
-package com.juzi.cli.pattern;
+package io.github.dingxinliang88.cli.pattern;
 
 /**
  * 接收者

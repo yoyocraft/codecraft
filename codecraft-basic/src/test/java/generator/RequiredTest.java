@@ -1,9 +1,9 @@
 package generator;
 
-import com.juzi.cli.command.ConfigCommand;
-import com.juzi.cli.command.GenerateCommand;
-import com.juzi.cli.command.ListCommand;
-import com.juzi.cli.utils.CommandUtils;
+import io.github.dingxinliang88.cli.command.ConfigCommand;
+import io.github.dingxinliang88.cli.command.GenerateCommand;
+import io.github.dingxinliang88.cli.command.ListCommand;
+import io.github.dingxinliang88.cli.utils.CommandUtils;
 import org.junit.Test;
 import picocli.CommandLine;
 
@@ -11,7 +11,7 @@ import java.lang.reflect.Field;
 import java.util.*;
 
 /**
- * @author codejuzi
+ * @author <a href="https://github.com/dingxinliang88">youyi</a>
  */
 public class RequiredTest {
 

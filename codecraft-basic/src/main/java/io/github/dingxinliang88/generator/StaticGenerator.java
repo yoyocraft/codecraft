@@ -1,4 +1,4 @@
-package com.juzi.generator;
+package io.github.dingxinliang88.generator;
 
 import cn.hutool.core.io.FileUtil;
 import cn.hutool.core.io.IORuntimeException;

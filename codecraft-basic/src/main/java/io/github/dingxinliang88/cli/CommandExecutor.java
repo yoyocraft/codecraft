@@ -1,16 +1,16 @@
-package com.juzi.cli;
+package io.github.dingxinliang88.cli;
 
-import com.juzi.cli.command.ConfigCommand;
-import com.juzi.cli.command.GenerateCommand;
-import com.juzi.cli.command.ListCommand;
-import com.juzi.cli.valid.CommandPreParser;
+import io.github.dingxinliang88.cli.command.ConfigCommand;
+import io.github.dingxinliang88.cli.command.GenerateCommand;
+import io.github.dingxinliang88.cli.command.ListCommand;
+import io.github.dingxinliang88.cli.valid.CommandPreParser;
 import picocli.CommandLine;
 
 import java.util.Arrays;
 
 
 /**
- * @author codejuzi
+ * @author <a href="https://github.com/dingxinliang88">youyi</a>
  */
 @CommandLine.Command(name = "craft", mixinStandardHelpOptions = true)
 public class CommandExecutor implements Runnable {

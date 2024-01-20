@@ -1,4 +1,4 @@
-package com.juzi.cli.example;
+package io.github.dingxinliang88.cli.example;
 
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
