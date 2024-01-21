@@ -1,7 +1,6 @@
-package io.github.dingxinliang88.generator;
+package ${basePackage}.generator;
 
 import cn.hutool.core.io.FileUtil;
-import io.github.dingxinliang88.model.MainTemplateModel;
 import freemarker.template.Configuration;
 import freemarker.template.Template;
 import freemarker.template.TemplateException;
@@ -14,36 +13,19 @@ import java.io.Writer;
 import java.util.*;
 
 /**
- * 动态文件生成
- *
- * @author <a href="https://github.com/dingxinliang88">youyi</a>
- */
+* 动态文件生成
+*/
 public class DynamicGenerator {
 
-    public static void main(String[] args) throws IOException, TemplateException {
-        String projectPath = System.getProperty("user.dir");
-
-        final String src =
-                projectPath + File.separator + "src/main/resources/templates/MainTemplate.java.ftl";
-        String dest =
-                projectPath + File.separator + "src/main/resources/products/MainTemplate.java";
-        // create model
-        MainTemplateModel dataModel = new MainTemplateModel();
-        dataModel.setLoop(true);
-        dataModel.setAuthor("codejuzi");
-        dataModel.setOutputText("Sum ==> ");
-        doGenerate(src, dest, dataModel);
-    }
-
     /**
-     * 生成文件
-     *
-     * @param src   模板文件输入路径
-     * @param dest  输出路径
-     * @param model 数据模型
-     */
+    * 生成文件
+    *
+    * @param src   模板文件输入路径
+    * @param dest  输出路径
+    * @param model 数据模型
+    */
     public static void doGenerate(final String src, String dest, Object model)
-            throws IOException, TemplateException {
+    throws IOException, TemplateException {
         // Configure
         Configuration cfg = new Configuration(Configuration.VERSION_2_3_32);
         File templateFile = new File(src);

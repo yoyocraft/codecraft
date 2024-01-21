@@ -1,0 +1,58 @@
+{
+  "name": "acm-template-pro-generator",
+  "description": "acm-template-pro-generator",
+  "basePackage": "io.github.dingxinliang88",
+  "version": "1.0",
+  "author": "youyi",
+  "createTime": "2024-01-21",
+  "fileConfig": {
+    "src": "/Users/codejuzi/Documents/CodeWorkSpace/Project/CodeCraft/codecraft/sample/acm-template-pro",
+    "dest": "generated",
+    "type": "dir",
+    "files": [
+      {
+        "src": "src/io/github/dingxinliang88/acm/MainTemplate.java.ftl",
+        "dest": "src/io/github/dingxinliang88/acm/MainTemplate.java",
+        "type": "file",
+        "generateType": "dynamic"
+      },
+      {
+        "src": ".gitignore",
+        "dest": ".gitignore",
+        "type": "file",
+        "generateType": "static"
+      },
+      {
+        "src": "README.md",
+        "dest": "README.md",
+        "type": "file",
+        "generateType": "static"
+      }
+    ]
+  },
+  "modelConfig": {
+    "models": [
+      {
+        "fieldName": "loop",
+        "type": "boolean",
+        "description": "是否循环",
+        "defaultValue": false,
+        "abbr": "l"
+      },
+      {
+        "fieldName": "author",
+        "type": "String",
+        "description": "作者",
+        "defaultValue": "youyi",
+        "abbr": "a"
+      },
+      {
+        "fieldName": "outputText",
+        "type": "String",
+        "description": "输出文本",
+        "defaultValue": "sum = ",
+        "abbr": "o"
+      }
+    ]
+  }
+}

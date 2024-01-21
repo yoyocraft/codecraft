@@ -10,6 +10,7 @@ target/
 *.tar.gz
 codecraft-basic/src/main/resources/products/MainTemplate.java
 codecraft-basic/src/main/resources/products/site.html
+generated/
 
 
 ### MAC ###
