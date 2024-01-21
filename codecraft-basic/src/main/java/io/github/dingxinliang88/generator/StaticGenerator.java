@@ -13,7 +13,7 @@ import java.nio.file.StandardCopyOption;
 /**
  * 静态代码文件生成
  *
- * @author codejuzi
+ * @author <a href="https://github.com/dingxinliang88">youyi</a>
  */
 public class StaticGenerator {
 

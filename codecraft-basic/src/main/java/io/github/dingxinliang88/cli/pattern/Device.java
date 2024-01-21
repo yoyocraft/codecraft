@@ -3,7 +3,7 @@ package io.github.dingxinliang88.cli.pattern;
 /**
  * 接收者
  *
- * @author codejuzi
+ * @author <a href="https://github.com/dingxinliang88">youyi</a>
  */
 public class Device {
 

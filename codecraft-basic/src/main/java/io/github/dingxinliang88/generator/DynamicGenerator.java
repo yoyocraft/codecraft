@@ -15,7 +15,7 @@ import java.util.*;
 /**
  * 动态文件生成
  *
- * @author codejuzi
+ * @author <a href="https://github.com/dingxinliang88">youyi</a>
  */
 public class DynamicGenerator {
 

@@ -5,7 +5,7 @@ import picocli.CommandLine;
 /**
  * 子命令示例
  *
- * @author codejuzi
+ * @author <a href="https://github.com/dingxinliang88">youyi</a>
  */
 @CommandLine.Command(name = "main", mixinStandardHelpOptions = true)
 public class SubCommandExample implements Runnable {

@@ -9,7 +9,7 @@ import java.util.*;
 /**
  * 命令前置转换器
  *
- * @author codejuzi
+ * @author <a href="https://github.com/dingxinliang88">youyi</a>
  */
 public class CommandPreParser {
 

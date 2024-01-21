@@ -9,7 +9,7 @@ import java.io.IOException;
 /**
  * 核心生成器
  *
- * @author codejuzi
+ * @author <a href="https://github.com/dingxinliang88">youyi</a>
  */
 public class MainGenerator {
 
