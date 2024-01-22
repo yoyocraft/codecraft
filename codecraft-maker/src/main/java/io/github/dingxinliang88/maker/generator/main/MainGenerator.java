@@ -22,13 +22,19 @@ public class MainGenerator {
         Meta meta = MetaManager.getMeta();
 
         String projectPath = System.getProperty("user.dir");
-        String destPath =
+        String projectDestPath =
                 projectPath + File.separator + "generated" + File.separator + meta.getName();
 
-        if (FileUtil.exist(destPath)) {
-            FileUtil.del(destPath);
+        // 清空目标目录
+        if (FileUtil.exist(projectDestPath)) {
+            FileUtil.del(projectDestPath);
         }
-        FileUtil.mkdir(destPath);
+        FileUtil.mkdir(projectDestPath);
+
+        // 复制原始文件
+        String srcRootPath = meta.getFileConfig().getSrcRootPath();
+        String scrCopyDestPath = projectDestPath + File.separator + ".source";
+        FileUtil.copy(srcRootPath, scrCopyDestPath, false);
 
         // 读取 resources 目录
         ClassPathResource classPathResource = new ClassPathResource("");
@@ -39,7 +45,7 @@ public class MainGenerator {
         String destBasePackagePath = StrUtil.join(File.separator,
                 StrUtil.split(basePackagePath, "."));
         String destBaseJavaPackagePath =
-                destPath + File.separator + "src" + File.separator + "main" + File.separator
+                projectDestPath + File.separator + "src" + File.separator + "main" + File.separator
                         + "java" + File.separator
                         + destBasePackagePath;
 
@@ -116,17 +122,17 @@ public class MainGenerator {
         // pom.xml
         src = srcPath + File.separator + "templates" + File.separator
                 + "pom.xml.ftl";
-        dest = destPath + File.separator + "pom.xml";
+        dest = projectDestPath + File.separator + "pom.xml";
         DynamicFileGenerator.doGenerate(src, dest, meta);
 
         // 构建 Jar 包
-        JarGenerator.doGenerate(destPath);
+        JarGenerator.doGenerate(projectDestPath);
 
         // 封装脚本
-        String shellDest = destPath + File.separator + "bin" + File.separator + "craft";
+        String shellDest = projectDestPath + File.separator + "bin" + File.separator + "craft";
         String jarName = String.format("%s-%s-jar-with-dependencies.jar", meta.getName(),
                 meta.getVersion());
-        String jarPath = destPath + File.separator + "target" + File.separator + jarName;
+        String jarPath = projectDestPath + File.separator + "target" + File.separator + jarName;
         ScriptGenerator.doGenerate(jarPath, shellDest);
     }
 

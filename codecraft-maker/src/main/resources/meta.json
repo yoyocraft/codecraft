@@ -6,7 +6,8 @@
   "author": "youyi",
   "createTime": "2024-01-21",
   "fileConfig": {
-    "src": "/Users/codejuzi/Documents/CodeWorkSpace/Project/CodeCraft/codecraft/sample/acm-template-pro",
+    "srcRootPath": "/Users/codejuzi/Documents/CodeWorkSpace/Project/CodeCraft/codecraft/sample/acm-template-pro",
+    "src": ".source/acm-template-pro",
     "dest": "generated",
     "type": "dir",
     "files": [

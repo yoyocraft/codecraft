@@ -22,6 +22,7 @@ public class Meta {
     @lombok.Data
     public static class FileConfig {
 
+        private String srcRootPath;
         private String src;
         private String dest;
         private String type;

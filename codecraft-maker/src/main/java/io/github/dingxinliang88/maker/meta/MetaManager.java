@@ -2,7 +2,6 @@ package io.github.dingxinliang88.maker.meta;
 
 import cn.hutool.core.io.resource.ResourceUtil;
 import cn.hutool.json.JSONUtil;
-import io.github.dingxinliang88.maker.meta.Meta.FileConfig;
 
 /**
  * 元信息管理器

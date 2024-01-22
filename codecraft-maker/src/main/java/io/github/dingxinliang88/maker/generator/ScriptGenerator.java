@@ -1,7 +1,6 @@
 package io.github.dingxinliang88.maker.generator;
 
 import cn.hutool.core.io.FileUtil;
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -14,8 +13,8 @@ import java.util.Set;
  */
 public class ScriptGenerator {
 
+    // 直接写入脚本
     public static void doGenerate(final String jarPath, String dest) {
-        // 直接写入脚本
         // windows
         StringBuilder scriptBuilder = new StringBuilder();
         scriptBuilder.append("@echo off\n");
@@ -34,10 +33,5 @@ public class ScriptGenerator {
         } catch (IOException ignored) {
 
         }
-    }
-
-    public static void main(String[] args) {
-        String dest = System.getProperty("user.dir") + File.separator + "generator";
-        doGenerate("", dest);
     }
 }
