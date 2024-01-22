@@ -125,6 +125,14 @@ public class MainGenerator {
         dest = projectDestPath + File.separator + "pom.xml";
         DynamicFileGenerator.doGenerate(src, dest, meta);
 
+        // TODO 可以考虑让 AI 在生成文档的最后，再额外补充一段生成的话术，比如求 star 等等
+        // README.md
+        src = srcPath + File.separator + "templates" + File.separator
+                + "README.md.ftl";
+        dest = projectDestPath + File.separator + "README.md";
+        DynamicFileGenerator.doGenerate(src, dest, meta);
+
+
         // 构建 Jar 包
         JarGenerator.doGenerate(projectDestPath);
 
