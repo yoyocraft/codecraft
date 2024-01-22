@@ -22,8 +22,8 @@ craft generate <#list modelConfig.models as modelInfo>-${modelInfo.abbr}</#list>
 <#list modelConfig.models as modelInfo>
   ${modelInfo?index + 1}) ${modelInfo.fieldName}
 
-  - type: #{modelInfo.type}
+  - type: ${modelInfo.type}
   - description: ${modelInfo.description}
-  - defaultValue: ${modelInfo.defaultValue}
+  - defaultValue: ${modelInfo.defaultValue?c}
   - abbreviations: ${modelInfo.abbr}
 </#list>
