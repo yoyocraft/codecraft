@@ -29,7 +29,7 @@ public class CommandExecutor implements Runnable {
     @Override
     public void run() {
         // 不输入子命令时，给出友好提示
-        System.out.println("请输入具体命令，或者输入 craft --help 查看命令提示");
+        commandLine.usage(System.out);
     }
 
     /**
