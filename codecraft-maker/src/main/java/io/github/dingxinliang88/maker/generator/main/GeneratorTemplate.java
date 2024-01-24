@@ -4,8 +4,9 @@ import cn.hutool.core.io.FileUtil;
 import cn.hutool.core.io.resource.ClassPathResource;
 import cn.hutool.core.util.StrUtil;
 import freemarker.template.TemplateException;
-import io.github.dingxinliang88.maker.JarGenerator;
+import io.github.dingxinliang88.maker.generator.JarGenerator;
 import io.github.dingxinliang88.maker.generator.ScriptGenerator;
+import io.github.dingxinliang88.maker.generator.VersionControlGenerator;
 import io.github.dingxinliang88.maker.generator.file.DynamicFileGenerator;
 import io.github.dingxinliang88.maker.meta.Meta;
 import io.github.dingxinliang88.maker.meta.MetaManager;
@@ -32,11 +33,15 @@ public abstract class GeneratorTemplate {
         }
         FileUtil.mkdir(outputPath);
 
+        // 读取 resources 目录
+        ClassPathResource classPathResource = new ClassPathResource("");
+        String srcPath = classPathResource.getAbsolutePath();
+
         // 1. 复制原始文件
         String srcCopyDestPath = copySource(meta, outputPath);
 
         // 2. 代码生成
-        generateCode(meta, outputPath);
+        generateCode(meta, outputPath, srcPath);
 
         // 3. 构建 Jar 包
         String jarPath = buildJar(meta, outputPath);
@@ -44,14 +49,24 @@ public abstract class GeneratorTemplate {
         // 4. 封装脚本
         buildScript(outputPath, jarPath);
 
-        // 5. 生成精简版的程序（产物）
-        buildDist(outputPath, jarPath, srcCopyDestPath);
+        // 5. 版本控制
+        versionControl(meta, srcPath, outputPath);
 
-        /*
-        TODO 支持 Git 托管项目
-            制作工具生成的代码生成器支持使用 git 版本控制工具来托管，可以根据元信息配置让开发者选择是否开启该特性。
-            实现思路：通过 Process 执行 git init 命令，并复制 .gitignore 模板文件到代码生成器中
-         */
+        // 6. 生成精简版的程序（产物）
+        buildDist(outputPath, jarPath, srcCopyDestPath);
+    }
+
+
+    protected void versionControl(Meta meta, String srcPath, String outputPath)
+            throws IOException, InterruptedException {
+        if (!meta.getVersionControl()) {
+            return;
+        }
+        // 拷贝 .gitignore 文件
+        String gitIgnorePath =
+                srcPath + File.separator + "templates" + File.separator + ".gitignore";
+        FileUtil.copy(gitIgnorePath, outputPath, true);
+        VersionControlGenerator.doGenerate(outputPath);
     }
 
     protected void buildDist(String outputPath, String jarPath, String srcCopyDestPath) {
@@ -87,11 +102,8 @@ public abstract class GeneratorTemplate {
         return ".." + File.separator + "target" + File.separator + jarName;
     }
 
-    protected void generateCode(Meta meta, String outputPath)
+    protected void generateCode(Meta meta, String outputPath, String srcPath)
             throws IOException, TemplateException {
-        // 读取 resources 目录
-        ClassPathResource classPathResource = new ClassPathResource("");
-        String srcPath = classPathResource.getAbsolutePath();
 
         // Java 包基础路径
         String outputBasePackage = meta.getBasePackage();

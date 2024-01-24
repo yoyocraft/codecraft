@@ -1,4 +1,4 @@
-package io.github.dingxinliang88.maker;
+package io.github.dingxinliang88.maker.generator;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -35,11 +35,6 @@ public class JarGenerator {
         // 等待命令执行完成
         int exitCode = process.waitFor();
         System.out.println("命令执行结束，exitCode = " + exitCode);
-    }
-
-    public static void main(String[] args) throws IOException, InterruptedException {
-        doGenerate(
-                "/Users/codejuzi/Documents/CodeWorkSpace/Project/CodeCraft/codecraft/codecraft-maker/generated/acm-template-pro-generator");
     }
 
 }

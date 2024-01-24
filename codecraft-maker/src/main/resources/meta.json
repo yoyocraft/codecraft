@@ -5,6 +5,7 @@
   "version": "1.0",
   "author": "youyi",
   "createTime": "2024-01-21",
+  "versionControl": true,
   "fileConfig": {
     "srcRootPath": "/Users/codejuzi/Documents/CodeWorkSpace/Project/CodeCraft/codecraft/sample/acm-template-pro",
     "src": ".source/acm-template-pro",
