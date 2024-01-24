@@ -64,7 +64,7 @@ codecraft 代码工艺
 
 【🌰栗子】
 
-参数：`author = codejuzi`
+参数：`author = youyi`
 
 模板文件代码：
 
@@ -78,7 +78,7 @@ I am ${author}
 
 ```html
 --------------
-I am codejuzi
+I am youyi
 --------------
 ```
 

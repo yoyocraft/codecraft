@@ -30,7 +30,7 @@ public class DynamicGenerator {
         // create model
         MainTemplateModel dataModel = new MainTemplateModel();
         dataModel.setLoop(true);
-        dataModel.setAuthor("codejuzi");
+        dataModel.setAuthor("youyi");
         dataModel.setOutputText("Sum ==> ");
         doGenerate(src, dest, dataModel);
     }

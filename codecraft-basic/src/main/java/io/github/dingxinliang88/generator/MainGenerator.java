@@ -35,7 +35,7 @@ public class MainGenerator {
     public static void main(String[] args) throws TemplateException, IOException {
         MainTemplateModel dataModel = new MainTemplateModel();
         dataModel.setLoop(true);
-        dataModel.setAuthor("codejuzi");
+        dataModel.setAuthor("youyi");
         dataModel.setOutputText("Sum：");
         doGenerate(dataModel);
     }

@@ -15,7 +15,7 @@ public class MainTemplateModel {
     /**
      * 作者注释
      */
-    private String author = "codejuzi";
+    private String author = "youyi";
 
     /**
      * 输出信息

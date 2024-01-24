@@ -34,7 +34,7 @@ public class GenerateCommand implements Callable<Integer> {
             description = "作者",
             interactive = true,
             echo = true)
-    private String author = "codejuzi";
+    private String author = "youyi";
 
     /**
      * 输出信息
