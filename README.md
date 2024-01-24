@@ -50,7 +50,7 @@ Requirements Analysis => Design (High-level Design, Detailed Design) => Technolo
 
 【🌰 Example】
 
-Parameters: `author = codejuzi`
+Parameters: `author = youyi`
 
 Template file code:
 
@@ -64,7 +64,7 @@ By injecting the parameters into the template file, we get the generated complet
 
 ```html
 --------------
-I am codejuzi
+I am youyi
 --------------
 ```
 
