@@ -1,3 +1,12 @@
+<#macro generateFile indent fileInfo>
+${indent}inputPath = new File(inputRootPath, "${fileInfo.inputPath}").getAbsolutePath();
+${indent}outputPath = new File(outputRootPath, "${fileInfo.outputPath}").getAbsolutePath();
+<#if fileInfo.generateType == "static">
+${indent}StaticGenerator.copyFileByHutool(inputPath, outputPath);
+<#else>
+${indent}DynamicGenerator.doGenerate(inputPath, outputPath, model);
+</#if>
+</#macro>
 package ${basePackage}.generator;
 
 import freemarker.template.TemplateException;
@@ -23,27 +32,30 @@ public class MainGenerator {
         ${modelInfo.type} ${modelInfo.fieldName} = model.${modelInfo.fieldName};
     </#list>
 
-        <#list fileConfig.files as fileInfo>
+    <#list fileConfig.files as fileInfo>
+        <#if fileInfo.groupKey??>
+        // groupKey: ${fileInfo.groupKey}
         <#if fileInfo.condition??>
         if(${fileInfo.condition}) {
-            inputPath = new File(inputRootPath, "${fileInfo.inputPath}").getAbsolutePath();
-            outputPath = new File(outputRootPath, "${fileInfo.outputPath}").getAbsolutePath();
-            <#if fileInfo.generateType == "static">
-            StaticGenerator.copyFileByHutool(inputPath, outputPath);
-            <#else>
-            DynamicGenerator.doGenerate(inputPath, outputPath, model);
-            </#if>
+            <#list fileInfo.files as fileInfo>
+            <@generateFile fileInfo=fileInfo indent="            " />
+            </#list>
         }
         <#else>
-        inputPath = new File(inputRootPath, "${fileInfo.inputPath}").getAbsolutePath();
-        outputPath = new File(outputRootPath, "${fileInfo.outputPath}").getAbsolutePath();
-        <#if fileInfo.generateType == "static">
-        StaticGenerator.copyFileByHutool(inputPath, outputPath);
+        <#list fileInfo.files as fileInfo>
+        <@generateFile fileInfo=fileInfo indent="        " />
+        </#list>
+        </#if>
+        <#-- 不是文件组 -->
         <#else>
-        DynamicGenerator.doGenerate(inputPath, outputPath, model);
+        <#if fileInfo.condition??>
+        if(${fileInfo.condition}) {
+            <@generateFile fileInfo=fileInfo indent="            " />
+        }
+        <#else>
+        <@generateFile fileInfo=fileInfo indent="        " />
         </#if>
         </#if>
     </#list>
-
     }
 }
