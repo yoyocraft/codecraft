@@ -11,18 +11,18 @@ import java.io.IOException;
 public class MainGenerator {
 
     public static void doGenerate(Object model) throws TemplateException, IOException {
-        String srcRootPath = "${fileConfig.src}";
-        String destRootPath = "${fileConfig.dest}";
+        String inputRootPath = "${fileConfig.inputRootPath}";
+        String outputRootPath = "${fileConfig.outputRootPath}";
 
-        String src;
-        String dest;
+        String inputPath;
+        String outputPath;
     <#list fileConfig.files as fileInfo>
-        src = new File(srcRootPath, "${fileInfo.src}").getAbsolutePath();
-        dest = new File(destRootPath, "${fileInfo.dest}").getAbsolutePath();
+        inputPath = new File(inputRootPath, "${fileInfo.inputPath}").getAbsolutePath();
+        outputPath = new File(outputRootPath, "${fileInfo.outputPath}").getAbsolutePath();
         <#if fileInfo.generateType == "static">
-        StaticGenerator.copyFileByHutool(src, dest);
+        StaticGenerator.copyFileByHutool(inputPath, outputPath);
         <#else>
-        DynamicGenerator.doGenerate(src, dest, model);
+        DynamicGenerator.doGenerate(inputPath, outputPath, model);
         </#if>
     </#list>
 

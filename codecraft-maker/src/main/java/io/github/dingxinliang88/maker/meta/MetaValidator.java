@@ -51,30 +51,31 @@ public class MetaValidator {
         if (fileConfig == null) {
             return;
         }
-        // srcRootPath: 必填
-        String srcRootPath = fileConfig.getSrcRootPath();
-        if (StrUtil.isBlank(srcRootPath)) {
-            throw new MetaException("srcRootPath is required");
+        // sourceRootPath: 必填
+        String sourceRootPath = fileConfig.getSourceRootPath();
+        if (StrUtil.isBlank(sourceRootPath)) {
+            throw new MetaException("sourceRootPath is required");
         }
 
-        // src: 默认为 .source + srcRootPath 的最后一个层级的路径
-        String src = fileConfig.getSrc();
-        String defaultSrc = ".source" + File.separator + FileUtil.getLastPathEle(Paths.get(src))
-                .getFileName().toString();
-        if (StrUtil.isEmpty(src)) {
-            fileConfig.setSrc(defaultSrc);
+        // inputRootPath: 默认为 .source + sourceRootPath 的最后一个层级的路径
+        String inputRootPath = fileConfig.getInputRootPath();
+        String defaultInputRootPath =
+                ".source" + File.separator + FileUtil.getLastPathEle(Paths.get(inputRootPath))
+                        .getFileName().toString();
+        if (StrUtil.isEmpty(inputRootPath)) {
+            fileConfig.setInputRootPath(defaultInputRootPath);
         }
 
-        // dest： 默认为当前路径下的 generated
-        String dest = fileConfig.getDest();
-        String defaultDest = "generated";
-        if (StrUtil.isEmpty(dest)) {
-            fileConfig.setDest(defaultDest);
+        // outputRootPath： 默认为当前路径下的 generated
+        String outputRootPath = fileConfig.getOutputRootPath();
+        String defaultOutputRootPath = "generated";
+        if (StrUtil.isEmpty(outputRootPath)) {
+            fileConfig.setOutputRootPath(defaultOutputRootPath);
         }
 
         // type: 默认为 dir
-        String type = fileConfig.getType();
-        if (StrUtil.isEmpty(type)) {
+        String fileConfigType = fileConfig.getType();
+        if (StrUtil.isEmpty(fileConfigType)) {
             fileConfig.setType(FileTypeEnum.DIR.getValue());
         }
 
@@ -83,23 +84,23 @@ public class MetaValidator {
             return;
         }
         for (Meta.FileConfig.FileInfo fileInfo : fileInfoList) {
-            // src: 必填
-            String srcInner = fileInfo.getSrc();
-            if (StrUtil.isBlank(srcInner)) {
-                throw new MetaException("src is required");
+            // inputPath: 必填
+            String inputPath = fileInfo.getInputPath();
+            if (StrUtil.isBlank(inputPath)) {
+                throw new MetaException("inputRootPath is required");
             }
 
-            // dest: 默认等于 src
-            String destInner = fileInfo.getDest();
-            if (StrUtil.isEmpty(destInner)) {
-                fileInfo.setDest(srcInner);
+            // outputPath: 默认等于 inputPath
+            String outputPath = fileInfo.getOutputPath();
+            if (StrUtil.isEmpty(outputPath)) {
+                fileInfo.setOutputPath(inputPath);
             }
 
-            // type: 默认 src 有文件后缀（如 .java）为 file, 否则为 dir
-            String typeInner = fileInfo.getType();
-            if (StrUtil.isBlank(typeInner)) {
+            // type: 默认 inputPath 有文件后缀（如 .java）为 file, 否则为 dir
+            String type = fileInfo.getType();
+            if (StrUtil.isBlank(type)) {
                 // 无文件后缀
-                if (StrUtil.isBlank(FileUtil.getSuffix(srcInner))) {
+                if (StrUtil.isBlank(FileUtil.getSuffix(inputPath))) {
                     fileInfo.setType(FileTypeEnum.DIR.getValue());
                 } else {
                     fileInfo.setType(FileTypeEnum.FILE.getValue());
@@ -110,7 +111,7 @@ public class MetaValidator {
             String generateType = fileInfo.getGenerateType();
             if (StrUtil.isBlank(generateType)) {
                 // 为动态模板
-                if (srcInner.endsWith(".ftl")) {
+                if (inputPath.endsWith(".ftl")) {
                     fileInfo.setGenerateType(FileGenerateTypeEnum.DYNAMIC.getValue());
                 } else {
                     fileInfo.setGenerateType(FileGenerateTypeEnum.STATIC.getValue());

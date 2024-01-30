@@ -12,6 +12,13 @@
     <maven.compiler.source>8</maven.compiler.source>
     <maven.compiler.target>8</maven.compiler.target>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <hutool.version>5.8.16</hutool.version>
+    <picocli.version>4.7.5</picocli.version>
+    <freemarker.version>2.3.32</freemarker.version>
+    <apache.commons-collections4.version>4.4</apache.commons-collections4.version>
+    <lombok.version>1.18.28</lombok.version>
+    <junit.version>4.13.2</junit.version>
+    <maven-checkstyle-plugin.version>3.2.0</maven-checkstyle-plugin.version>
   </properties>
 
   <dependencies>
@@ -19,38 +26,38 @@
     <dependency>
       <groupId>cn.hutool</groupId>
       <artifactId>hutool-all</artifactId>
-      <version>5.8.16</version>
+      <version><#noparse>${hutool.version}</#noparse></version>
     </dependency>
 
     <!-- https://picocli.info -->
     <dependency>
       <groupId>info.picocli</groupId>
       <artifactId>picocli</artifactId>
-      <version>4.7.5</version>
+      <version><#noparse>${picocli.version}</#noparse></version>
     </dependency>
     <!-- https://freemarker.apache.org/index.html -->
     <dependency>
       <groupId>org.freemarker</groupId>
       <artifactId>freemarker</artifactId>
-      <version>2.3.32</version>
+      <version><#noparse>${freemarker.version}</#noparse></version>
     </dependency>
 
     <dependency>
       <groupId>org.apache.commons</groupId>
       <artifactId>commons-collections4</artifactId>
-      <version>4.4</version>
+      <version><#noparse>${apache.commons-collections4.version}</#noparse></version>
     </dependency>
 
     <dependency>
       <groupId>org.projectlombok</groupId>
       <artifactId>lombok</artifactId>
-      <version>1.18.28</version>
+      <version><#noparse>${lombok.version}</#noparse></version>
     </dependency>
 
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
-      <version>4.13.2</version>
+      <version><#noparse>${junit.version}</#noparse></version>
       <scope>test</scope>
     </dependency>
   </dependencies>

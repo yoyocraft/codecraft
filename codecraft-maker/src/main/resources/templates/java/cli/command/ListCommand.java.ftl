@@ -13,8 +13,8 @@ public class ListCommand implements Runnable {
     @Override
     public void run() {
         // 输入路径
-        String src = "${fileConfig.src}";
-        List<File> files = FileUtil.loopFiles(src);
+        String inputRootPath = "${fileConfig.inputRootPath}";
+        List<File> files = FileUtil.loopFiles(inputRootPath);
         for (File file : files) {
             System.out.println(file);
         }

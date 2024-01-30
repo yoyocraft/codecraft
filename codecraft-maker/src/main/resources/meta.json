@@ -7,26 +7,26 @@
   "createTime": "2024-01-21",
   "versionControl": true,
   "fileConfig": {
-    "srcRootPath": "/Users/codejuzi/Documents/CodeWorkSpace/Project/CodeCraft/codecraft/sample/acm-template-pro",
-    "src": ".source/acm-template-pro",
-    "dest": "generated",
+    "sourceRootPath": "/Users/codejuzi/Documents/CodeWorkSpace/Project/CodeCraft/codecraft/sample/acm-template-pro",
+    "inputRootPath": ".source/acm-template-pro",
+    "outputRootPath": "generated",
     "type": "dir",
     "files": [
       {
-        "src": "src/io/github/dingxinliang88/acm/MainTemplate.java.ftl",
-        "dest": "src/io/github/dingxinliang88/acm/MainTemplate.java",
+        "inputPath": "src/io/github/dingxinliang88/acm/MainTemplate.java.ftl",
+        "outputPath": "src/io/github/dingxinliang88/acm/MainTemplate.java",
         "type": "file",
         "generateType": "dynamic"
       },
       {
-        "src": ".gitignore",
-        "dest": ".gitignore",
+        "inputPath": ".gitignore",
+        "outputPath": ".gitignore",
         "type": "file",
         "generateType": "static"
       },
       {
-        "src": "README.md",
-        "dest": "README.md",
+        "inputPath": "README.md",
+        "outputPath": "README.md",
         "type": "file",
         "generateType": "static"
       }

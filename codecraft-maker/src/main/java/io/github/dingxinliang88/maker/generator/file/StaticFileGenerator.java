@@ -1,14 +1,6 @@
 package io.github.dingxinliang88.maker.generator.file;
 
 import cn.hutool.core.io.FileUtil;
-import cn.hutool.core.io.IORuntimeException;
-import cn.hutool.core.util.ArrayUtil;
-
-import java.io.File;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.StandardCopyOption;
 
 /**
  * 静态代码文件生成
@@ -24,6 +16,6 @@ public class StaticFileGenerator {
      * @param dest 输出目录路径
      */
     public static void copyFileByHutool(final String src, String dest) {
-        FileUtil.copy(src, dest, false);
+        FileUtil.copy(src, dest, true);
     }
 }
