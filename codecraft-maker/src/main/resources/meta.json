@@ -5,7 +5,7 @@
   "version": "1.0",
   "author": "youyi",
   "createTime": "2024-01-21",
-  "versionControl": true,
+  "versionControl": false,
   "fileConfig": {
     "sourceRootPath": "/Users/codejuzi/Documents/CodeWorkSpace/Project/CodeCraft/codecraft/sample/acm-template-pro",
     "inputRootPath": ".source/acm-template-pro",
@@ -19,16 +19,24 @@
         "generateType": "dynamic"
       },
       {
-        "inputPath": ".gitignore",
-        "outputPath": ".gitignore",
-        "type": "file",
-        "generateType": "static"
-      },
-      {
-        "inputPath": "README.md",
-        "outputPath": "README.md",
-        "type": "file",
-        "generateType": "static"
+        "groupKey": "git",
+        "groupName": "open source",
+        "type": "group",
+        "condition": "needGit",
+        "files": [
+          {
+            "inputPath": ".gitignore",
+            "outputPath": ".gitignore",
+            "type": "file",
+            "generateType": "static"
+          },
+          {
+            "inputPath": "README.md",
+            "outputPath": "README.md",
+            "type": "file",
+            "generateType": "static"
+          }
+        ]
       }
     ]
   },
@@ -42,18 +50,33 @@
         "abbr": "l"
       },
       {
-        "fieldName": "author",
-        "type": "String",
-        "description": "作者",
-        "defaultValue": "youyi",
-        "abbr": "a"
+        "fieldName": "needGit",
+        "type": "boolean",
+        "description": "是否生成 .gitignore 文件",
+        "defaultValue": true
       },
       {
-        "fieldName": "outputText",
-        "type": "String",
-        "description": "输出文本",
-        "defaultValue": "sum = ",
-        "abbr": "o"
+        "groupKey": "mainTemplate",
+        "groupName": "核心模板",
+        "type": "MainTemplate",
+        "description": "用于生成核心模板文件",
+        "condition": "loop",
+        "models": [
+          {
+            "fieldName": "author",
+            "type": "String",
+            "description": "作者",
+            "defaultValue": "youyi",
+            "abbr": "a"
+          },
+          {
+            "fieldName": "outputText",
+            "type": "String",
+            "description": "输出文本",
+            "defaultValue": "sum = ",
+            "abbr": "o"
+          }
+        ]
       }
     ]
   }

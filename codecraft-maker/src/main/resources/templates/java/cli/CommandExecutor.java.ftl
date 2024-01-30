@@ -5,8 +5,6 @@ import ${basePackage}.cli.command.GenerateCommand;
 import ${basePackage}.cli.command.ListCommand;
 import picocli.CommandLine;
 
-import java.util.Arrays;
-
 
 @CommandLine.Command(name = "craft", mixinStandardHelpOptions = true)
 public class CommandExecutor implements Runnable {

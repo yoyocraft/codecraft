@@ -22,44 +22,27 @@ public class DynamicFileGenerator {
     /**
      * 生成文件
      *
-     * @param src   模板文件输入路径
-     * @param dest  输出路径
+     * @param inputPath   模板文件输入路径
+     * @param outputPath  输出路径
      * @param model 数据模型
      */
-    public static void doGenerate(final String src, String dest, Object model)
+    public static void doGenerate(final String inputPath, String outputPath, Object model)
             throws IOException, TemplateException {
-        File templateFile = new File(src);
+        Configuration configuration = new Configuration(Configuration.VERSION_2_3_32);
+        File templateDir = new File(inputPath).getParentFile();
+        configuration.setDirectoryForTemplateLoading(templateDir);
+        configuration.setDefaultEncoding("utf-8");
+        String templateName = new File(inputPath).getName();
+        Template template = configuration.getTemplate(templateName);
 
-        // Configure
-        Configuration cfg = getConfiguration(templateFile);
-
-        // get template
-        String templateName = templateFile.getName();
-        Template template = cfg.getTemplate(templateName);
-
-        // handle file is not exist
-        if (!FileUtil.exist(dest)) {
-            FileUtil.touch(dest);
+        if (!FileUtil.exist(outputPath)) {
+            FileUtil.touch(outputPath);
         }
 
         // process
-        Writer out = new FileWriter(dest);
+        Writer out = new FileWriter(outputPath);
         template.process(model, out);
 
         out.close();
-    }
-
-    private static Configuration getConfiguration(File templateFile) throws IOException {
-        Configuration cfg = new Configuration(Configuration.VERSION_2_3_32);
-        File templateDir = templateFile.getParentFile();
-        cfg.setDirectoryForTemplateLoading(templateDir);
-        cfg.setDefaultEncoding("UTF-8");
-        cfg.setNumberFormat("0.######");
-        cfg.setTemplateExceptionHandler(TemplateExceptionHandler.RETHROW_HANDLER);
-        cfg.setLogTemplateExceptions(false);
-        cfg.setWrapUncheckedExceptions(true);
-        cfg.setFallbackOnNullLoopVariable(false);
-        cfg.setSQLDateAndTimeTimeZone(TimeZone.getDefault());
-        return cfg;
     }
 }
