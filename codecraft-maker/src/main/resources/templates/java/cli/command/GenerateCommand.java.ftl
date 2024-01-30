@@ -12,7 +12,7 @@ import java.util.concurrent.Callable;
 public class GenerateCommand implements Callable<Integer> {
   <#list modelConfig.models as modelInfo>
     @CommandLine.Option(
-    names = {<#if modelInfo.abbr??>"-${modelInfo.abbr}"</#if>, "--${modelInfo.fieldName}"},
+    names = {<#if modelInfo.abbr??>"-${modelInfo.abbr}", </#if>"--${modelInfo.fieldName}"},
     arity = "0..1",
     <#if modelInfo.description??>description = "${modelInfo.description}",</#if>
     interactive = true,

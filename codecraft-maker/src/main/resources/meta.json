@@ -5,7 +5,7 @@
   "version": "1.0",
   "author": "youyi",
   "createTime": "2024-01-21",
-  "versionControl": true,
+  "versionControl": false,
   "fileConfig": {
     "sourceRootPath": "/Users/codejuzi/Documents/CodeWorkSpace/Project/CodeCraft/codecraft/sample/acm-template-pro",
     "inputRootPath": ".source/acm-template-pro",
@@ -22,7 +22,8 @@
         "inputPath": ".gitignore",
         "outputPath": ".gitignore",
         "type": "file",
-        "generateType": "static"
+        "generateType": "static",
+        "condition": "needGit"
       },
       {
         "inputPath": "README.md",
@@ -54,6 +55,12 @@
         "description": "输出文本",
         "defaultValue": "sum = ",
         "abbr": "o"
+      },
+      {
+        "fieldName": "needGit",
+        "type": "boolean",
+        "description": "是否生成 .gitignore 文件",
+        "defaultValue": true
       }
     ]
   }

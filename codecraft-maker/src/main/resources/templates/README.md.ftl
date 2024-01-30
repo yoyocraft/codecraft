@@ -14,7 +14,7 @@ craft <command> <options>
 
 e.g.
 ```shell
-craft generate <#list modelConfig.models as modelInfo>-${modelInfo.abbr}</#list>
+craft generate <#list modelConfig.models as modelInfo>--${modelInfo.fieldName} </#list>
 ```
 
 ## Options
@@ -25,5 +25,5 @@ craft generate <#list modelConfig.models as modelInfo>-${modelInfo.abbr}</#list>
   - type: ${modelInfo.type}
   - description: ${modelInfo.description}
   - defaultValue: ${modelInfo.defaultValue?c}
-  - abbreviations: ${modelInfo.abbr}
+  <#if modelInfo.abbr??>- abbreviations: ${modelInfo.abbr}</#if>
 </#list>

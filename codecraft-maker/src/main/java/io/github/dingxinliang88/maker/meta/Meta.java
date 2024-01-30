@@ -37,6 +37,7 @@ public class Meta {
             private String outputPath;
             private String type;
             private String generateType;
+            private String condition;
         }
     }
 
