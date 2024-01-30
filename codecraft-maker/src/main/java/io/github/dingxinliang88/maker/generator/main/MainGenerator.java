@@ -14,7 +14,7 @@ public class MainGenerator extends GeneratorTemplate {
     }
 
     @Override
-    protected void buildDist(String outputPath, String jarPath, String srcCopyDestPath) {
+    protected void buildDist(String outputPath, String jarPath, String sourceCopyDestPath) {
         // do nothing
     }
 }
