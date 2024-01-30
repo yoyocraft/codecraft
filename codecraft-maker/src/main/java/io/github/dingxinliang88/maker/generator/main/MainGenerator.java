@@ -14,14 +14,6 @@ public class MainGenerator extends GeneratorTemplate {
         new MainGenerator().doGenerate();
     }
 
-
-    @Override
-    protected String buildJar(Meta meta, String outputPath)
-            throws IOException, InterruptedException {
-        // do nothing
-        return "";
-    }
-
     @Override
     protected void buildScript(String outputPath, String jarPath) {
         // do nothing

@@ -61,6 +61,14 @@ public class Meta {
             private String description;
             private Object defaultValue;
             private String abbr;
+            private String condition;
+            // group config
+            private String groupKey;
+            private String groupName;
+            private List<ModelInfo> models;
+
+            // tmp args, not for command use
+            private String allArgsStr;
         }
     }
 }
