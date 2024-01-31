@@ -10,6 +10,10 @@ import io.github.dingxinliang88.maker.meta.Meta;
 import io.github.dingxinliang88.maker.meta.enums.FileGenerateTypeEnum;
 import io.github.dingxinliang88.maker.meta.enums.FileTypeEnum;
 import io.github.dingxinliang88.maker.meta.enums.ModelTypeEnum;
+import io.github.dingxinliang88.maker.template.enums.FileFilterRangeEnum;
+import io.github.dingxinliang88.maker.template.enums.FileFilterRuleEnum;
+import io.github.dingxinliang88.maker.template.model.FileFilterConfig;
+import io.github.dingxinliang88.maker.template.model.TemplateMakerFileConfig;
 import java.io.File;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -36,26 +40,34 @@ public class TemplateMaker {
         String originProjectPath =
                 new File(projectPath).getParent() + File.separator + "sample/springboot-init";
         String inputFilePath1 = "src/main/java/com/youyi/springbootinit/common";
-        String inputFilePath2 = "src/main/java/com/youyi/springbootinit/mapper";
+        String inputFilePath2 = "src/main/java/com/youyi/springbootinit/controller";
 
-        // 模型参数信息（首次）
+        // 模型参数信息
         Meta.ModelConfig.ModelInfo modelInfo = new Meta.ModelConfig.ModelInfo();
-        modelInfo.setFieldName("BaseResponse");
+        modelInfo.setFieldName("className");
         modelInfo.setType(ModelTypeEnum.STRING.getValue());
-        modelInfo.setDefaultValue("BaseResponse");
-        // 替换变量（首次）
+        // 替换变量
         String searchStr = "BaseResponse";
 
-        // 模型参数信息（第二次）
-//        Meta.ModelConfig.ModelInfo modelInfo = new Meta.ModelConfig.ModelInfo();
-//        modelInfo.setFieldName("className");
-//        modelInfo.setDescription("类名");
-//        modelInfo.setType(ModelTypeEnum.STRING.getValue());
-        // 替换变量（第二次）
-//        String searchStr = "MainTemplate";
+        // 文件过滤
+        TemplateMakerFileConfig templateMakerFileConfig = new TemplateMakerFileConfig();
+        TemplateMakerFileConfig.FileInfoConfig fileInfoConfig1 = new TemplateMakerFileConfig.FileInfoConfig();
+        fileInfoConfig1.setPath(inputFilePath1);
+        List<FileFilterConfig> fileFilterConfigList = new ArrayList<>();
+        fileInfoConfig1.setFilterConfigList(fileFilterConfigList);
+        FileFilterConfig fileFilterConfig = FileFilterConfig.builder()
+                .range(FileFilterRangeEnum.FILE_NAME.getValue())
+                .rule(FileFilterRuleEnum.CONTAINS.getValue())
+                .value("Base")
+                .build();
+        fileFilterConfigList.add(fileFilterConfig);
 
+        TemplateMakerFileConfig.FileInfoConfig fileInfoConfig2 = new TemplateMakerFileConfig.FileInfoConfig();
+        fileInfoConfig2.setPath(inputFilePath2);
+
+        templateMakerFileConfig.setFiles(Arrays.asList(fileInfoConfig1, fileInfoConfig2));
         long id = makeTemplate(meta, originProjectPath,
-                Arrays.asList(inputFilePath1, inputFilePath2), modelInfo, searchStr,
+                modelInfo, templateMakerFileConfig, searchStr,
                 1752657938160234496L);
         System.out.println("id = " + id);
     }
@@ -63,17 +75,17 @@ public class TemplateMaker {
     /**
      * 生成模板文件。
      *
-     * @param newMeta           新的元信息对象
-     * @param originProjectPath 原始项目路径
-     * @param inputFilePathList 输入文件路径集合
-     * @param modelInfo         模型信息对象
-     * @param searchStr         搜索字符串
-     * @param id                模板文件的唯一标识
+     * @param newMeta                 新的元信息对象
+     * @param originProjectPath       原始项目路径
+     * @param templateMakerFileConfig 模板制作文件配置
+     * @param modelInfo               模型信息对象
+     * @param searchStr               搜索字符串
+     * @param id                      模板文件的唯一标识
      * @return 模板文件的唯一标识
      */
     private static Long makeTemplate(Meta newMeta, String originProjectPath,
-            final List<String> inputFilePathList,
-            Meta.ModelConfig.ModelInfo modelInfo, String searchStr, Long id) {
+            Meta.ModelConfig.ModelInfo modelInfo, TemplateMakerFileConfig templateMakerFileConfig,
+            String searchStr, Long id) {
 
         if (Objects.isNull(id)) {
             id = IdUtil.getSnowflakeNextId();
@@ -96,26 +108,27 @@ public class TemplateMaker {
                 FileUtil.getLastPathEle(Paths.get(originProjectPath)).toString();
         // 兼容 win
         sourceRootPath = sourceRootPath.replaceAll("\\\\", "/");
+        List<TemplateMakerFileConfig.FileInfoConfig> fileConfigInfoList = templateMakerFileConfig.getFiles();
 
         // 2. 生成文件模板
         List<Meta.FileConfig.FileInfo> newFileInfoList = new ArrayList<>();
-        for (String inputFilePath : inputFilePathList) {
-            String inputFileAbsolutePath = sourceRootPath + File.separator + inputFilePath;
-            if (FileUtil.isDirectory(inputFileAbsolutePath)) {
-                // 2.1 输入为目录
-                List<File> fileList = FileUtil.loopFiles(inputFileAbsolutePath);
-                for (File file : fileList) {
-                    Meta.FileConfig.FileInfo fileInfo = makeFileTemplate(file, modelInfo, searchStr,
-                            sourceRootPath);
-                    newFileInfoList.add(fileInfo);
-                }
-            } else {
-                // 2.2 输入为文件
-                Meta.FileConfig.FileInfo fileInfo = makeFileTemplate(
-                        new File(inputFileAbsolutePath),
-                        modelInfo, searchStr, sourceRootPath);
+        for (TemplateMakerFileConfig.FileInfoConfig fileInfoConfig : fileConfigInfoList) {
+            String inputFilePath = fileInfoConfig.getPath();
+
+            // 如果填的是相对路径，改成绝对路径
+            if (!inputFilePath.startsWith(sourceRootPath)) {
+                inputFilePath = sourceRootPath + File.separator + inputFilePath;
+            }
+
+            // 获取过滤后的文件列表（不存在目录）
+            List<File> fileList = FileFilter.doFileFilter(inputFilePath,
+                    fileInfoConfig.getFilterConfigList());
+            for (File file : fileList) {
+                Meta.FileConfig.FileInfo fileInfo = makeFileTemplate(file, modelInfo, searchStr,
+                        sourceRootPath);
                 newFileInfoList.add(fileInfo);
             }
+
         }
 
         // 3. 生成 meta.json 文件，和 template 同级
