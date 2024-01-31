@@ -13,6 +13,7 @@ import io.github.dingxinliang88.maker.meta.enums.ModelTypeEnum;
 import java.io.File;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -33,16 +34,17 @@ public class TemplateMaker {
 
         String projectPath = System.getProperty("user.dir");
         String originProjectPath =
-                new File(projectPath).getParent() + File.separator + "sample/acm-template";
-        String inputFilePath = "src/io/github/dingxinliang88/acm/MainTemplate.java";
+                new File(projectPath).getParent() + File.separator + "sample/springboot-init";
+        String inputFilePath1 = "src/main/java/com/youyi/springbootinit/common";
+        String inputFilePath2 = "src/main/java/com/youyi/springbootinit/mapper";
 
         // 模型参数信息（首次）
         Meta.ModelConfig.ModelInfo modelInfo = new Meta.ModelConfig.ModelInfo();
-        modelInfo.setFieldName("outputText");
+        modelInfo.setFieldName("BaseResponse");
         modelInfo.setType(ModelTypeEnum.STRING.getValue());
-        modelInfo.setDefaultValue("sum = ");
+        modelInfo.setDefaultValue("BaseResponse");
         // 替换变量（首次）
-        String searchStr = "Sum: ";
+        String searchStr = "BaseResponse";
 
         // 模型参数信息（第二次）
 //        Meta.ModelConfig.ModelInfo modelInfo = new Meta.ModelConfig.ModelInfo();
@@ -52,7 +54,9 @@ public class TemplateMaker {
         // 替换变量（第二次）
 //        String searchStr = "MainTemplate";
 
-        long id = makeTemplate(meta, originProjectPath, inputFilePath, modelInfo, searchStr, 1L);
+        long id = makeTemplate(meta, originProjectPath,
+                Arrays.asList(inputFilePath1, inputFilePath2), modelInfo, searchStr,
+                1752657938160234496L);
         System.out.println("id = " + id);
     }
 
@@ -61,14 +65,14 @@ public class TemplateMaker {
      *
      * @param newMeta           新的元信息对象
      * @param originProjectPath 原始项目路径
-     * @param inputFilePath     输入文件路径
+     * @param inputFilePathList 输入文件路径集合
      * @param modelInfo         模型信息对象
      * @param searchStr         搜索字符串
      * @param id                模板文件的唯一标识
      * @return 模板文件的唯一标识
      */
     private static Long makeTemplate(Meta newMeta, String originProjectPath,
-            final String inputFilePath,
+            final List<String> inputFilePathList,
             Meta.ModelConfig.ModelInfo modelInfo, String searchStr, Long id) {
 
         if (Objects.isNull(id)) {
@@ -87,40 +91,32 @@ public class TemplateMaker {
         }
 
         // 1. 输入信息
-
         // 1.1 文件信息
         String sourceRootPath = templatePath + File.separator +
                 FileUtil.getLastPathEle(Paths.get(originProjectPath)).toString();
         // 兼容 win
         sourceRootPath = sourceRootPath.replaceAll("\\\\", "/");
 
-        String fileInputPath = inputFilePath;
-        String fileOutputPath = fileInputPath + ".ftl";
-
-        // 2. 使用字符串替换算法，生成 ftl 模板文件
-        String fileInputAbsolutePath = sourceRootPath + File.separator + fileInputPath;
-        String fileOutputAbsolutePath = sourceRootPath + File.separator + fileOutputPath;
-
-        String fileContent;
-        // 如果已有模板文件，说明不是第一次制作，需要在模板的基础上再次制作
-        if (FileUtil.exist(fileOutputAbsolutePath)) {
-            fileContent = FileUtil.readUtf8String(fileOutputAbsolutePath);
-        } else {
-            fileContent = FileUtil.readUtf8String(fileInputAbsolutePath);
+        // 2. 生成文件模板
+        List<Meta.FileConfig.FileInfo> newFileInfoList = new ArrayList<>();
+        for (String inputFilePath : inputFilePathList) {
+            String inputFileAbsolutePath = sourceRootPath + File.separator + inputFilePath;
+            if (FileUtil.isDirectory(inputFileAbsolutePath)) {
+                // 2.1 输入为目录
+                List<File> fileList = FileUtil.loopFiles(inputFileAbsolutePath);
+                for (File file : fileList) {
+                    Meta.FileConfig.FileInfo fileInfo = makeFileTemplate(file, modelInfo, searchStr,
+                            sourceRootPath);
+                    newFileInfoList.add(fileInfo);
+                }
+            } else {
+                // 2.2 输入为文件
+                Meta.FileConfig.FileInfo fileInfo = makeFileTemplate(
+                        new File(inputFileAbsolutePath),
+                        modelInfo, searchStr, sourceRootPath);
+                newFileInfoList.add(fileInfo);
+            }
         }
-
-        String replacement = String.format("${%s}", modelInfo.getFieldName());
-        String newFileContent = StrUtil.replace(fileContent, searchStr, replacement);
-
-        // 输出模板文件
-        FileUtil.writeUtf8String(newFileContent, fileOutputAbsolutePath);
-
-        // 文件配置信息
-        Meta.FileConfig.FileInfo fileInfo = new Meta.FileConfig.FileInfo();
-        fileInfo.setInputPath(fileInputPath);
-        fileInfo.setOutputPath(fileOutputPath);
-        fileInfo.setType(FileTypeEnum.FILE.getValue());
-        fileInfo.setGenerateType(FileGenerateTypeEnum.DYNAMIC.getValue());
 
         // 3. 生成 meta.json 文件，和 template 同级
         String metaOutputPath = templatePath + File.separator + "meta.json";
@@ -133,7 +129,7 @@ public class TemplateMaker {
 
             // 1. 追加配置参数
             List<Meta.FileConfig.FileInfo> fileInfoList = oldMeta.getFileConfig().getFiles();
-            fileInfoList.add(fileInfo);
+            fileInfoList.addAll(newFileInfoList);
             List<Meta.ModelConfig.ModelInfo> modelInfoList = oldMeta.getModelConfig().getModels();
             modelInfoList.add(modelInfo);
 
@@ -147,7 +143,7 @@ public class TemplateMaker {
             fileConfig.setSourceRootPath(sourceRootPath);
             List<Meta.FileConfig.FileInfo> fileInfoList = new ArrayList<>();
             fileConfig.setFiles(fileInfoList);
-            fileInfoList.add(fileInfo);
+            fileInfoList.addAll(newFileInfoList);
 
             Meta.ModelConfig modelConfig = new Meta.ModelConfig();
             newMeta.setModelConfig(modelConfig);
@@ -160,6 +156,59 @@ public class TemplateMaker {
         FileUtil.writeUtf8String(JSONUtil.toJsonPrettyStr(newMeta), metaOutputPath);
 
         return id;
+    }
+
+    /**
+     * 生成文件模板。
+     *
+     * @param inputFile      输入文件
+     * @param modelInfo      模型信息对象
+     * @param searchStr      搜索字符串
+     * @param sourceRootPath 源路径
+     * @return 文件配置信息对象
+     */
+    private static Meta.FileConfig.FileInfo makeFileTemplate(File inputFile,
+            Meta.ModelConfig.ModelInfo modelInfo, String searchStr, String sourceRootPath) {
+        // 1. 路径转换
+        // 绝对路径
+        String fileInputAbsolutePath = inputFile.getAbsolutePath()
+                .replaceAll("\\\\", "/"); // 兼容 win
+        String fileOutputAbsolutePath = fileInputAbsolutePath + ".ftl";
+
+        // 相对路径
+        String fileInputPath = fileInputAbsolutePath.replaceAll(sourceRootPath + "/", "");
+        String fileOutputPath = fileInputPath + ".ftl";
+
+        // 2. 使用字符串替换算法，生成 ftl 模板文件
+        String fileContent;
+        // 如果已有模板文件，说明不是第一次制作，需要在模板的基础上再次制作
+        if (FileUtil.exist(fileOutputAbsolutePath)) {
+            fileContent = FileUtil.readUtf8String(fileOutputAbsolutePath);
+        } else {
+            fileContent = FileUtil.readUtf8String(fileInputAbsolutePath);
+        }
+
+        String replacement = String.format("${%s}", modelInfo.getFieldName());
+        String newFileContent = StrUtil.replace(fileContent, searchStr, replacement);
+        // 文件配置信息
+        Meta.FileConfig.FileInfo fileInfo = new Meta.FileConfig.FileInfo();
+        fileInfo.setInputPath(fileInputPath);
+        fileInfo.setOutputPath(fileOutputPath);
+        fileInfo.setType(FileTypeEnum.FILE.getValue());
+
+        // 如果和源文件一致，则为静态生成
+        if (newFileContent.equals(fileContent)) {
+            // 输入路径 = 输出路径
+            fileInfo.setOutputPath(fileInputPath);
+            fileInfo.setGenerateType(FileGenerateTypeEnum.STATIC.getValue());
+        } else {
+            // 生成动态模板
+            fileInfo.setGenerateType(FileGenerateTypeEnum.DYNAMIC.getValue());
+            // 输出模板文件
+            FileUtil.writeUtf8String(newFileContent, fileOutputAbsolutePath);
+        }
+
+        return fileInfo;
     }
 
 
