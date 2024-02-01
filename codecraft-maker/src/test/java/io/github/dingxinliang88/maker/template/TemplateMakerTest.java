@@ -95,4 +95,15 @@ public class TemplateMakerTest {
         Long id = TemplateMaker.makeTemplate(templateMakerConfig);
         System.out.println("id = " + id);
     }
+
+
+    @Test
+    public void makeSpringBootTemplate() {
+        String rootPath = "example/springboot-init/";
+        String configJsonStr = ResourceUtil.readUtf8Str(rootPath + "template-maker.json");
+        TemplateMakerConfig templateMakerConfig = JSONUtil.toBean(configJsonStr,
+                TemplateMakerConfig.class);
+        Long id = TemplateMaker.makeTemplate(templateMakerConfig);
+        System.out.println("id = " + id);
+    }
 }
