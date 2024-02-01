@@ -13,6 +13,7 @@ import io.github.dingxinliang88.maker.meta.enums.FileTypeEnum;
 import io.github.dingxinliang88.maker.template.model.TemplateMakerConfig;
 import io.github.dingxinliang88.maker.template.model.TemplateMakerFileConfig;
 import io.github.dingxinliang88.maker.template.model.TemplateMakerModelConfig;
+import io.github.dingxinliang88.maker.template.model.TemplateMakerOutputConfig;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -35,29 +36,31 @@ public class TemplateMaker {
      * @return 创建的模板的ID
      */
     public static Long makeTemplate(TemplateMakerConfig templateMakerConfig) {
-        Long id = templateMakerConfig.getId(); // 获取模板的ID
-        String originProjectPath = templateMakerConfig.getOriginProjectPath(); // 获取原始项目路径
-        Meta meta = templateMakerConfig.getMeta(); // 获取元数据
-        TemplateMakerFileConfig fileConfig = templateMakerConfig.getFileConfig(); // 获取文件配置
-        TemplateMakerModelConfig modelConfig = templateMakerConfig.getModelConfig(); // 获取模型配置
-
+        Long id = templateMakerConfig.getId();
+        String originProjectPath = templateMakerConfig.getOriginProjectPath();
+        Meta meta = templateMakerConfig.getMeta();
+        TemplateMakerFileConfig fileConfig = templateMakerConfig.getFileConfig();
+        TemplateMakerModelConfig modelConfig = templateMakerConfig.getModelConfig();
+        TemplateMakerOutputConfig outputConfig = templateMakerConfig.getOutputConfig();
         return makeTemplate(meta, originProjectPath, fileConfig, modelConfig,
-                id); // 调用makeTemplate方法创建模板
+                outputConfig, id);
     }
 
     /**
      * 生成模板文件。
      *
-     * @param newMeta                  新的元信息对象
-     * @param originProjectPath        原始项目路径
-     * @param templateMakerFileConfig  模板制作文件配置
-     * @param templateMakerModelConfig 模板制作模型配置
-     * @param id                       模板文件的唯一标识
+     * @param newMeta                   新的元信息对象
+     * @param originProjectPath         原始项目路径
+     * @param templateMakerFileConfig   模板制作文件配置
+     * @param templateMakerModelConfig  模板制作模型配置
+     * @param templateMakerOutputConfig 模板制作输出配置
+     * @param id                        模板文件的唯一标识
      * @return 模板文件的唯一标识
      */
     public static Long makeTemplate(Meta newMeta, String originProjectPath,
             TemplateMakerFileConfig templateMakerFileConfig,
-            TemplateMakerModelConfig templateMakerModelConfig, Long id) {
+            TemplateMakerModelConfig templateMakerModelConfig,
+            TemplateMakerOutputConfig templateMakerOutputConfig, Long id) {
 
         if (Objects.isNull(id)) {
             id = IdUtil.getSnowflakeNextId();
@@ -126,7 +129,17 @@ public class TemplateMaker {
             modelInfoList.addAll(newModelInfoList);
         }
 
-        // 2. 输出 meta.json 元信息文件
+        // 2. 额外的输出配置
+        if (Objects.nonNull(templateMakerOutputConfig)) {
+            // 文件外层和分组去重
+            if (templateMakerOutputConfig.isRemoveGroupFilesFromRoot()) {
+                List<Meta.FileConfig.FileInfo> fileInfoList = newMeta.getFileConfig().getFiles();
+                newMeta.getFileConfig()
+                        .setFiles(TemplateMakerUtil.removeGroupFilesFromRoot(fileInfoList));
+            }
+        }
+
+        // 3. 输出 meta.json 元信息文件
         FileUtil.writeUtf8String(JSONUtil.toJsonPrettyStr(newMeta), metaOutputPath);
 
         return id;

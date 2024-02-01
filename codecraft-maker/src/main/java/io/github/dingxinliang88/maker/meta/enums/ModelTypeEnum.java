@@ -8,7 +8,7 @@ package io.github.dingxinliang88.maker.meta.enums;
 public enum ModelTypeEnum {
 
     STRING("字符串", "String"),
-    BOOLEAN("布尔值", "Boolean"),
+    BOOLEAN("布尔值", "boolean"),
     ;
 
     private final String text;
