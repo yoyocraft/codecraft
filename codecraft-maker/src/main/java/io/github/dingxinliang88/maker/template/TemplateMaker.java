@@ -231,8 +231,9 @@ public class TemplateMaker {
 
         // 文件配置信息
         Meta.FileConfig.FileInfo fileInfo = new Meta.FileConfig.FileInfo();
-        fileInfo.setInputPath(fileInputPath);
-        fileInfo.setOutputPath(fileOutputPath);
+        // 文件输入路径是 ftl 文件
+        fileInfo.setInputPath(fileOutputPath);
+        fileInfo.setOutputPath(fileInputPath);
         fileInfo.setType(FileTypeEnum.FILE.getValue());
         fileInfo.setGenerateType(FileGenerateTypeEnum.DYNAMIC.getValue());
 
@@ -241,7 +242,7 @@ public class TemplateMaker {
         if (!hasTemplateFile) {
             if (contentEquals) {
                 // 输入路径 = 输出路径
-                fileInfo.setOutputPath(fileInputPath);
+                fileInfo.setInputPath(fileInputPath);
                 fileInfo.setGenerateType(FileGenerateTypeEnum.STATIC.getValue());
             } else {
                 // 没有模板文件，输出模板文件
@@ -278,13 +279,13 @@ public class TemplateMaker {
         Map<String, Meta.FileConfig.FileInfo> groupKeyMergedFileInfoMap = new HashMap<>(); // 保存每个组对应的合并后的对象 map
         for (Map.Entry<String, List<Meta.FileConfig.FileInfo>> entry : groupKeyFileInfoListMap.entrySet()) {
             List<Meta.FileConfig.FileInfo> tmpFileInfoList = entry.getValue();
-            // 按照 inputPath 进行去重
+            // 按照 outputPath 进行去重，inputPath 是 ftl 文件
             List<Meta.FileConfig.FileInfo> newFileInfoList = new ArrayList<>(
                     tmpFileInfoList.stream()
                             .flatMap(fileInfo -> fileInfo.getFiles().stream())
                             .collect(
-                                    Collectors.toMap(Meta.FileConfig.FileInfo::getInputPath, o -> o,
-                                            (e, r) -> r)
+                                    Collectors.toMap(Meta.FileConfig.FileInfo::getOutputPath,
+                                            o -> o, (e, r) -> r)
                             ).values()
             );
             // 使用新的 group 配置
