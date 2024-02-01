@@ -1,8 +1,8 @@
 {
   "id": 1,
   "meta": {
-    "name": "acm-template-pro-generator",
-    "description": "ACM 示例模板生成器"
+    "name": "springboot-init-generator",
+    "description": "SpringBoot 示例项目生成器"
   },
   "originProjectPath": "../../../sample/springboot-init"
 }

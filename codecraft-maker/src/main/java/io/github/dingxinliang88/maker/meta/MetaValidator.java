@@ -72,7 +72,7 @@ public class MetaValidator {
         // inputRootPath: 默认为 .source + sourceRootPath 的最后一个层级的路径
         String inputRootPath = fileConfig.getInputRootPath();
         String defaultInputRootPath =
-                ".source" + File.separator + FileUtil.getLastPathEle(Paths.get(inputRootPath))
+                ".source/" + FileUtil.getLastPathEle(Paths.get(sourceRootPath))
                         .getFileName().toString();
         if (StrUtil.isEmpty(inputRootPath)) {
             fileConfig.setInputRootPath(defaultInputRootPath);

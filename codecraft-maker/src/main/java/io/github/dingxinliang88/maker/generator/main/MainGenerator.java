@@ -8,7 +8,8 @@ package io.github.dingxinliang88.maker.generator.main;
 public class MainGenerator extends GeneratorTemplate {
 
     @Override
-    protected void buildDist(String outputPath, String jarPath, String sourceCopyDestPath) {
+    protected void buildDist(String outputPath, String sourceCopyDestPath, String jarPath,
+            String shellOutputFilePath) {
         // do nothing
     }
 }
