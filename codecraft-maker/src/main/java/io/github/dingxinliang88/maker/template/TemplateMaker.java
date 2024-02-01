@@ -204,18 +204,18 @@ public class TemplateMaker {
     private static List<Meta.FileConfig.FileInfo> makeFileTemplates(
             TemplateMakerFileConfig templateMakerFileConfig,
             TemplateMakerModelConfig templateMakerModelConfig, String sourceRootPath) {
-        List<Meta.FileConfig.FileInfo> newFileInfoList = new ArrayList<>(); // 创建新的文件模板列表
+        List<Meta.FileConfig.FileInfo> newFileInfoList = new ArrayList<>();
         // npe validate
         if (Objects.isNull(templateMakerFileConfig)) {
             return newFileInfoList;
         }
 
-        List<TemplateMakerFileConfig.FileInfoConfig> fileConfigInfoList = templateMakerFileConfig.getFiles(); // 获取文件配置列表
+        List<TemplateMakerFileConfig.FileInfoConfig> fileConfigInfoList = templateMakerFileConfig.getFiles();
         if (CollUtil.isEmpty(fileConfigInfoList)) {
             return newFileInfoList;
         }
         for (TemplateMakerFileConfig.FileInfoConfig fileInfoConfig : fileConfigInfoList) {
-            String inputFilePath = fileInfoConfig.getPath(); // 获取输入文件路径
+            String inputFilePath = fileInfoConfig.getPath();
 
             // 如果填的是相对路径，改成绝对路径
             if (!inputFilePath.startsWith(sourceRootPath)) {
@@ -230,8 +230,8 @@ public class TemplateMaker {
                     .filter(file -> !file.getAbsolutePath().endsWith(".ftl"))
                     .collect(Collectors.toList());
             for (File file : fileList) {
-                Meta.FileConfig.FileInfo fileInfo = makeFileTemplate(file, templateMakerModelConfig,
-                        sourceRootPath); // 创建文件模板
+                Meta.FileConfig.FileInfo fileInfo = makeFileTemplate(file, fileInfoConfig,
+                        templateMakerModelConfig, sourceRootPath);
                 newFileInfoList.add(fileInfo);
             }
         }
@@ -266,6 +266,7 @@ public class TemplateMaker {
      * @return 文件配置信息对象
      */
     private static Meta.FileConfig.FileInfo makeFileTemplate(File inputFile,
+            TemplateMakerFileConfig.FileInfoConfig fileInfoConfig,
             TemplateMakerModelConfig templateMakerModelConfig, String sourceRootPath) {
         // 1. 路径转换
         // 绝对路径
@@ -311,6 +312,7 @@ public class TemplateMaker {
         // 文件输入路径是 ftl 文件
         fileInfo.setInputPath(fileOutputPath);
         fileInfo.setOutputPath(fileInputPath);
+        fileInfo.setCondition(fileInfoConfig.getCondition());
         fileInfo.setType(FileTypeEnum.FILE.getValue());
         fileInfo.setGenerateType(FileGenerateTypeEnum.DYNAMIC.getValue());
 
