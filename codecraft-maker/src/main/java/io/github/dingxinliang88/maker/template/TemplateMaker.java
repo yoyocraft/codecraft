@@ -14,7 +14,6 @@ import io.github.dingxinliang88.maker.template.model.TemplateMakerConfig;
 import io.github.dingxinliang88.maker.template.model.TemplateMakerFileConfig;
 import io.github.dingxinliang88.maker.template.model.TemplateMakerModelConfig;
 import java.io.File;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -76,9 +75,13 @@ public class TemplateMaker {
         }
 
         // 1. 输入信息
-        // 1.1 文件信息
-        String sourceRootPath = templatePath + File.separator +
-                FileUtil.getLastPathEle(Paths.get(originProjectPath)).toString();
+        // 1.1 文件信息，获取项目根目录 originProjectPath
+        String sourceRootPath = FileUtil.loopFiles(new File(templatePath), 1, null)
+                .stream()
+                .filter(File::isDirectory)
+                .findFirst()
+                .orElseThrow(() -> new RuntimeException("未找到模板文件"))
+                .getAbsolutePath();
         // 兼容 win
         sourceRootPath = sourceRootPath.replaceAll("\\\\", "/");
 
