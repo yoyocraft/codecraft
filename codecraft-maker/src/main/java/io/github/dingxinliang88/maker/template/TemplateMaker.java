@@ -78,6 +78,10 @@ public class TemplateMaker {
             // 获取过滤后的文件列表（不存在目录）
             List<File> fileList = FileFilter.doFileFilter(inputFilePath,
                     fileInfoConfig.getFilterConfigList());
+            // 不处理已生成的 ftl 模板文件
+            fileList = fileList.stream()
+                    .filter(file -> !file.getAbsolutePath().endsWith(".ftl"))
+                    .collect(Collectors.toList());
             for (File file : fileList) {
                 Meta.FileConfig.FileInfo fileInfo = makeFileTemplate(file, templateMakerModelConfig,
                         sourceRootPath);
