@@ -1,7 +1,10 @@
 package io.github.dingxinliang88.maker.template;
 
+import cn.hutool.core.io.resource.ResourceUtil;
+import cn.hutool.json.JSONUtil;
 import io.github.dingxinliang88.maker.meta.Meta;
 import io.github.dingxinliang88.maker.meta.enums.ModelTypeEnum;
+import io.github.dingxinliang88.maker.template.model.TemplateMakerConfig;
 import io.github.dingxinliang88.maker.template.model.TemplateMakerFileConfig;
 import io.github.dingxinliang88.maker.template.model.TemplateMakerModelConfig;
 import java.io.File;
@@ -81,6 +84,15 @@ public class TemplateMakerTest {
         long id = TemplateMaker.makeTemplate(meta, originProjectPath,
                 templateMakerFileConfig, templateMakerModelConfig,
                 1752657938160234496L);
+        System.out.println("id = " + id);
+    }
+
+    @Test
+    public void testMakeTemplateWithJSON() {
+        String configJsonStr = ResourceUtil.readUtf8Str("template-maker.json");
+        TemplateMakerConfig templateMakerConfig = JSONUtil.toBean(configJsonStr,
+                TemplateMakerConfig.class);
+        Long id = TemplateMaker.makeTemplate(templateMakerConfig);
         System.out.println("id = " + id);
     }
 }

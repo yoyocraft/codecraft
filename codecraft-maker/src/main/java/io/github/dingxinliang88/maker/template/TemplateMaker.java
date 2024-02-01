@@ -10,6 +10,7 @@ import cn.hutool.json.JSONUtil;
 import io.github.dingxinliang88.maker.meta.Meta;
 import io.github.dingxinliang88.maker.meta.enums.FileGenerateTypeEnum;
 import io.github.dingxinliang88.maker.meta.enums.FileTypeEnum;
+import io.github.dingxinliang88.maker.template.model.TemplateMakerConfig;
 import io.github.dingxinliang88.maker.template.model.TemplateMakerFileConfig;
 import io.github.dingxinliang88.maker.template.model.TemplateMakerModelConfig;
 import java.io.File;
@@ -27,6 +28,22 @@ import java.util.stream.Collectors;
  * @author <a href="https://github.com/dingxinliang88">youyi</a>
  */
 public class TemplateMaker {
+
+    /**
+     * 根据提供的模板制作者配置创建模板。
+     *
+     * @param templateMakerConfig 模板制作者配置对象，包含模板制作者所需的参数和配置
+     * @return 创建的模板的ID
+     */
+    public static Long makeTemplate(TemplateMakerConfig templateMakerConfig) {
+        Long id = templateMakerConfig.getId(); // 获取模板的ID
+        String originProjectPath = templateMakerConfig.getOriginProjectPath(); // 获取原始项目路径
+        Meta meta = templateMakerConfig.getMeta(); // 获取元数据
+        TemplateMakerFileConfig fileConfig = templateMakerConfig.getFileConfig(); // 获取文件配置
+        TemplateMakerModelConfig modelConfig = templateMakerConfig.getModelConfig(); // 获取模型配置
+
+        return makeTemplate(meta, originProjectPath, fileConfig, modelConfig, id); // 调用makeTemplate方法创建模板
+    }
 
     /**
      * 生成模板文件。
