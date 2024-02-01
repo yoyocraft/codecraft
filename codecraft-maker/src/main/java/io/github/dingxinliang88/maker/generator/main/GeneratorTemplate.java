@@ -12,6 +12,7 @@ import io.github.dingxinliang88.maker.meta.Meta;
 import io.github.dingxinliang88.maker.meta.MetaManager;
 import java.io.File;
 import java.io.IOException;
+import java.util.Objects;
 
 /**
  * 代码生成模板类
@@ -21,6 +22,7 @@ import java.io.IOException;
 public abstract class GeneratorTemplate {
 
     public void doGenerate() throws TemplateException, IOException, InterruptedException {
+        // 读取元数据
         Meta meta = MetaManager.getMeta();
 
         // 0. 输出根路径
@@ -47,13 +49,13 @@ public abstract class GeneratorTemplate {
         String jarPath = buildJar(meta, outputPath);
 
         // 4. 封装脚本
-        buildScript(outputPath, jarPath);
+        String shellOutputFilePath = buildScript(outputPath, jarPath);
 
         // 5. 版本控制
         versionControl(meta, inputResourcePath, outputPath);
 
         // 6. 生成精简版的程序（产物）
-        buildDist(outputPath, jarPath, sourceCopyDestPath);
+        buildDist(outputPath, sourceCopyDestPath, jarPath, shellOutputFilePath);
     }
 
     protected String copySource(Meta meta, String outputPath) {
@@ -158,17 +160,18 @@ public abstract class GeneratorTemplate {
         JarGenerator.doGenerate(outputPath);
         String jarName = String.format("%s-%s-jar-with-dependencies.jar", meta.getName(),
                 meta.getVersion());
-        return ".." + File.separator + "target" + File.separator + jarName;
+        return "target" + File.separator + jarName;
     }
 
-    protected void buildScript(String outputPath, String jarPath) {
-        String shellOutputPath = outputPath + File.separator + "bin" + File.separator + "craft";
+    protected String buildScript(String outputPath, String jarPath) {
+        String shellOutputPath = outputPath + File.separator + "craft";
         ScriptGenerator.doGenerate(jarPath, shellOutputPath);
+        return shellOutputPath;
     }
 
     protected void versionControl(Meta meta, String inputResourcePath, String outputPath)
             throws IOException, InterruptedException {
-        if (!meta.getVersionControl()) {
+        if (Objects.nonNull(meta.getVersionControl()) && !meta.getVersionControl()) {
             return;
         }
         // 拷贝 .gitignore 文件
@@ -178,23 +181,18 @@ public abstract class GeneratorTemplate {
         VersionControlGenerator.doGenerate(outputPath);
     }
 
-    protected void buildDist(String outputPath, String jarPath, String sourceCopyDestPath) {
-        String distDestPath = outputPath + "-dist";
-        // 1. 拷贝 Jar 包
-        String targetAbsolutePath = distDestPath + File.separator + "target";
-        if (FileUtil.exist(targetAbsolutePath)) {
-            FileUtil.del(targetAbsolutePath);
-        }
+    protected void buildDist(String outputPath, String sourceCopyDestPath, String jarPath,
+            String shellOutputFilePath) {
+        String distOutputPath = outputPath + "-dist";
+        // 拷贝 jar 包
+        String targetAbsolutePath = distOutputPath + File.separator + "target";
         FileUtil.mkdir(targetAbsolutePath);
-        String jarName = jarPath.substring(jarPath.lastIndexOf(File.separator) + 1);
-        String jarAbsolutePath =
-                outputPath + File.separator + "target" + File.separator + jarName;
+        String jarAbsolutePath = outputPath + File.separator + jarPath;
         FileUtil.copy(jarAbsolutePath, targetAbsolutePath, true);
-        // 2. 拷贝脚本文件
-        String scriptAbsolutePath = distDestPath + File.separator;
-        String scriptSrcPath = outputPath + File.separator + "bin" + File.separator;
-        FileUtil.copy(scriptSrcPath, scriptAbsolutePath, true);
-        // 3. 拷贝源模板文件
-        FileUtil.copy(sourceCopyDestPath, distDestPath, true);
+        // 拷贝脚本文件
+        FileUtil.copy(shellOutputFilePath, distOutputPath, true);
+        FileUtil.copy(shellOutputFilePath + ".bat", distOutputPath, true);
+        // 拷贝源模板文件
+        FileUtil.copy(sourceCopyDestPath, distOutputPath, true);
     }
 }
