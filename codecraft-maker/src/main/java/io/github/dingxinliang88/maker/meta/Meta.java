@@ -15,9 +15,9 @@ public class Meta {
     private String version;
     private String author;
     private String createTime;
+    private Boolean versionControl;
     private FileConfig fileConfig;
     private ModelConfig modelConfig;
-    private Boolean versionControl;
 
     @lombok.NoArgsConstructor
     @lombok.Data
