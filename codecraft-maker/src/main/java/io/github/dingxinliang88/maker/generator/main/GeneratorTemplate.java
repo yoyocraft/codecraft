@@ -21,6 +21,7 @@ import java.io.IOException;
 public abstract class GeneratorTemplate {
 
     public void doGenerate() throws TemplateException, IOException, InterruptedException {
+        // 读取元数据
         Meta meta = MetaManager.getMeta();
 
         // 0. 输出根路径
