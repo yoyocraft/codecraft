@@ -2,6 +2,7 @@ package io.github.dingxinliang88.maker.template;
 
 import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.bean.copier.CopyOptions;
+import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.io.FileUtil;
 import cn.hutool.core.util.IdUtil;
 import cn.hutool.core.util.StrUtil;
@@ -18,7 +19,9 @@ import java.io.File;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
@@ -40,7 +43,7 @@ public class TemplateMaker {
         String originProjectPath =
                 new File(projectPath).getParent() + File.separator + "sample/springboot-init";
         String inputFilePath1 = "src/main/java/com/youyi/springbootinit/common";
-        String inputFilePath2 = "src/main/java/com/youyi/springbootinit/controller";
+        String inputFilePath2 = "src/main/java/com/youyi/springbootinit/constant";
 
         // 模型参数信息
         Meta.ModelConfig.ModelInfo modelInfo = new Meta.ModelConfig.ModelInfo();
@@ -64,8 +67,15 @@ public class TemplateMaker {
 
         TemplateMakerFileConfig.FileInfoConfig fileInfoConfig2 = new TemplateMakerFileConfig.FileInfoConfig();
         fileInfoConfig2.setPath(inputFilePath2);
-
         templateMakerFileConfig.setFiles(Arrays.asList(fileInfoConfig1, fileInfoConfig2));
+
+        // 分组配置
+        TemplateMakerFileConfig.FileGroupConfig fileGroupConfig = new TemplateMakerFileConfig.FileGroupConfig();
+        fileGroupConfig.setCondition("outputText");
+        fileGroupConfig.setGroupKey("for test");
+        fileGroupConfig.setGroupName("测试分组");
+        templateMakerFileConfig.setFileGroupConfig(fileGroupConfig);
+
         long id = makeTemplate(meta, originProjectPath,
                 modelInfo, templateMakerFileConfig, searchStr,
                 1752657938160234496L);
@@ -108,9 +118,9 @@ public class TemplateMaker {
                 FileUtil.getLastPathEle(Paths.get(originProjectPath)).toString();
         // 兼容 win
         sourceRootPath = sourceRootPath.replaceAll("\\\\", "/");
-        List<TemplateMakerFileConfig.FileInfoConfig> fileConfigInfoList = templateMakerFileConfig.getFiles();
 
         // 2. 生成文件模板
+        List<TemplateMakerFileConfig.FileInfoConfig> fileConfigInfoList = templateMakerFileConfig.getFiles();
         List<Meta.FileConfig.FileInfo> newFileInfoList = new ArrayList<>();
         for (TemplateMakerFileConfig.FileInfoConfig fileInfoConfig : fileConfigInfoList) {
             String inputFilePath = fileInfoConfig.getPath();
@@ -128,7 +138,25 @@ public class TemplateMaker {
                         sourceRootPath);
                 newFileInfoList.add(fileInfo);
             }
+        }
 
+        // 如果是文件组
+        TemplateMakerFileConfig.FileGroupConfig fileGroupConfig = templateMakerFileConfig.getFileGroupConfig();
+        if (Objects.nonNull(fileGroupConfig)) {
+            String condition = fileGroupConfig.getCondition();
+            String groupKey = fileGroupConfig.getGroupKey();
+            String groupName = fileGroupConfig.getGroupName();
+
+            // 新增分组配置
+            Meta.FileConfig.FileInfo groupFileInfo = new Meta.FileConfig.FileInfo();
+            groupFileInfo.setType(FileTypeEnum.GROUP.getValue());
+            groupFileInfo.setCondition(condition);
+            groupFileInfo.setGroupKey(groupKey);
+            groupFileInfo.setGroupName(groupName);
+            groupFileInfo.setFiles(newFileInfoList); // 文件全放在一个分组下
+
+            newFileInfoList = new ArrayList<>();
+            newFileInfoList.add(groupFileInfo);
         }
 
         // 3. 生成 meta.json 文件，和 template 同级
@@ -233,12 +261,51 @@ public class TemplateMaker {
      */
     private static List<Meta.FileConfig.FileInfo> distinctFiles(
             List<Meta.FileConfig.FileInfo> fileInfoList) {
-        return new ArrayList<>(fileInfoList.stream()
+        // 针对分组的策略：相同分组下的文件 merge，不同分组保留
+
+        // 1. 将所有文件配置 FileInfo 分为有分组和无分组的
+        Map<String, List<Meta.FileConfig.FileInfo>> groupKeyFileInfoListMap = fileInfoList
+                .stream()
+                .filter(fileInfo -> StrUtil.isNotBlank(fileInfo.getGroupKey()))
+                .collect(
+                        Collectors.groupingBy(Meta.FileConfig.FileInfo::getGroupKey)
+                );
+
+        // 2. 对于有分组的文件配置，如果有相同的分组，同分组内的文件进行合并，不同分组可同时保留
+        Map<String, Meta.FileConfig.FileInfo> groupKeyMergedFileINfoMap = new HashMap<>(); // 保存每个组对应的合并后的对象 map
+        for (Map.Entry<String, List<Meta.FileConfig.FileInfo>> entry : groupKeyFileInfoListMap.entrySet()) {
+            List<Meta.FileConfig.FileInfo> tmpFileInfoList = entry.getValue();
+            // 按照 inputPath 进行去重
+            List<Meta.FileConfig.FileInfo> newFileInfoList = new ArrayList<>(
+                    tmpFileInfoList.stream()
+                            .flatMap(fileInfo -> fileInfo.getFiles().stream())
+                            .collect(
+                                    Collectors.toMap(Meta.FileConfig.FileInfo::getInputPath, o -> o,
+                                            (e, r) -> r)
+                            ).values()
+            );
+            // 使用新的 group 配置
+            Meta.FileConfig.FileInfo newFileInfo = CollUtil.getLast(tmpFileInfoList); // 最后一个元素是最新的
+            newFileInfo.setFiles(newFileInfoList);
+            String groupKey = entry.getKey();
+            groupKeyMergedFileINfoMap.put(groupKey, newFileInfo);
+        }
+
+        // 3. 创建新的文件配置列表，将合并后的分组添加到列表
+        List<Meta.FileConfig.FileInfo> resultFileInfoList = new ArrayList<>(
+                groupKeyMergedFileINfoMap.values());
+
+        // 4. 将无分组的文件配置添加的列表
+        List<Meta.FileConfig.FileInfo> noGroupFileInfoList = fileInfoList
+                .stream()
+                .filter(fileInfo -> StrUtil.isBlank(fileInfo.getGroupKey()))
+                .collect(Collectors.toList());
+        resultFileInfoList.addAll(new ArrayList<>(noGroupFileInfoList.stream()
                 .collect(
                         Collectors.toMap(Meta.FileConfig.FileInfo::getInputPath, o -> o,
-                                (e, r) -> r) // 使用新元素替换旧元素
-                ).values()
-        );
+                                (e, r) -> r)
+                ).values()));
+        return resultFileInfoList;
     }
 
     /**
