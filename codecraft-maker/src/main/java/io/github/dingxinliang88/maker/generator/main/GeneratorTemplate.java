@@ -3,6 +3,7 @@ package io.github.dingxinliang88.maker.generator.main;
 import cn.hutool.core.io.FileUtil;
 import cn.hutool.core.io.resource.ClassPathResource;
 import cn.hutool.core.util.StrUtil;
+import cn.hutool.core.util.ZipUtil;
 import freemarker.template.TemplateException;
 import io.github.dingxinliang88.maker.generator.JarGenerator;
 import io.github.dingxinliang88.maker.generator.ScriptGenerator;
@@ -181,7 +182,7 @@ public abstract class GeneratorTemplate {
         VersionControlGenerator.doGenerate(outputPath);
     }
 
-    protected void buildDist(String outputPath, String sourceCopyDestPath, String jarPath,
+    protected String buildDist(String outputPath, String sourceCopyDestPath, String jarPath,
             String shellOutputFilePath) {
         String distOutputPath = outputPath + "-dist";
         // 拷贝 jar 包
@@ -194,5 +195,12 @@ public abstract class GeneratorTemplate {
         FileUtil.copy(shellOutputFilePath + ".bat", distOutputPath, true);
         // 拷贝源模板文件
         FileUtil.copy(sourceCopyDestPath, distOutputPath, true);
+        return distOutputPath;
+    }
+
+    protected String buildZip(String outputPath) {
+        String zipPath = outputPath + ".zip";
+        ZipUtil.zip(outputPath, zipPath);
+        return zipPath;
     }
 }

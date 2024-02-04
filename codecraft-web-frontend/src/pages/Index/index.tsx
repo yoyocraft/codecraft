@@ -2,6 +2,7 @@ import { listGeneratorVoByPageUsingPost } from '@/services/backend/generatorCont
 import { UserOutlined } from '@ant-design/icons';
 import { PageContainer, ProFormSelect, ProFormText, QueryFilter } from '@ant-design/pro-components';
 import '@umijs/max';
+import { Link } from '@umijs/max';
 import { Avatar, Card, Flex, Input, List, message, Tabs, Tag, Typography } from 'antd';
 import moment from 'moment';
 import React, { useEffect, useState } from 'react';
@@ -147,31 +148,33 @@ const IndexPage: React.FC = () => {
         }}
         renderItem={(data) => (
           <List.Item>
-            <Card hoverable cover={<img alt={data.name} src={data.picture} />}>
-              <Card.Meta
-                title={<a>{data.name}</a>}
-                description={
-                  <Typography.Paragraph
-                    ellipsis={{
-                      rows: 2,
-                    }}
-                    style={{ height: 44 }}
-                  >
-                    {data.description}
+            <Link to={`/generator/detail/${data.id}`}>
+              <Card hoverable cover={<img alt={data.name} src={data.picture} />}>
+                <Card.Meta
+                  title={<a>{data.name}</a>}
+                  description={
+                    <Typography.Paragraph
+                      ellipsis={{
+                        rows: 2,
+                      }}
+                      style={{ height: 44 }}
+                    >
+                      {data.description}
+                    </Typography.Paragraph>
+                  }
+                />
+                {/* 展示标签 */}
+                {tagListView(data.tags)}
+                <Flex justify="space-between" align="center">
+                  <Typography.Paragraph type="secondary" style={{ fontSize: 12 }}>
+                    {moment(data.updateTime).fromNow()}
                   </Typography.Paragraph>
-                }
-              />
-              {/* 展示标签 */}
-              {tagListView(data.tags)}
-              <Flex justify="space-between" align="center">
-                <Typography.Paragraph type="secondary" style={{ fontSize: 12 }}>
-                  {moment(data.updateTime).fromNow()}
-                </Typography.Paragraph>
-                <div>
-                  <Avatar src={data.user?.userAvatar ?? <UserOutlined />} />
-                </div>
-              </Flex>
-            </Card>
+                  <div>
+                    <Avatar src={data.user?.userAvatar ?? <UserOutlined />} />
+                  </div>
+                </Flex>
+              </Card>
+            </Link>
           </List.Item>
         )}
       />

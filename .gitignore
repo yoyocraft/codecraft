@@ -13,6 +13,7 @@ codecraft-basic/src/main/resources/products/site.html
 generated/
 generated-dist/
 .tmp/
+application-local.yml
 
 
 ### MAC ###

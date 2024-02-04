@@ -1,7 +1,8 @@
 package io.github.dingxinliang88.maker;
 
 import freemarker.template.TemplateException;
-import io.github.dingxinliang88.maker.generator.main.MainGenerator;
+import io.github.dingxinliang88.maker.generator.main.GeneratorTemplate;
+import io.github.dingxinliang88.maker.generator.main.ZipGenerator;
 import java.io.IOException;
 
 /**
@@ -11,7 +12,10 @@ public class Main {
 
     public static void main(String[] args)
             throws TemplateException, IOException, InterruptedException {
-        new MainGenerator().doGenerate();
+//        GeneratorTemplate generatorTemplate = new MainGenerator();
+        GeneratorTemplate generatorTemplate = new ZipGenerator();
+
+        generatorTemplate.doGenerate();
     }
 
 }
