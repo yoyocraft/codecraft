@@ -26,4 +26,11 @@ export default [
   },
   { path: '/', icon: 'home', component: './Index', name: '主页' },
   { path: '*', layout: false, component: './404' },
+  {
+    path: '/test/file',
+    icon: 'home',
+    component: './Test/File',
+    name: '文件上传下载测试',
+    hideInMenu: true,
+  },
 ];

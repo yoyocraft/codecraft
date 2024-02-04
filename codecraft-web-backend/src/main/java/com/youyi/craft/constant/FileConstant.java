@@ -10,5 +10,5 @@ public interface FileConstant {
     /**
      * COS 访问地址
      */
-    String COS_HOST = "https://youyi.icu";
+    String COS_HOST = "https://codecraft-1314111286.cos.ap-nanjing.myqcloud.com";
 }
