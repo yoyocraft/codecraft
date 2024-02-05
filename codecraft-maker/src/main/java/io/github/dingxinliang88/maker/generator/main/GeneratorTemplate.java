@@ -1,7 +1,6 @@
 package io.github.dingxinliang88.maker.generator.main;
 
 import cn.hutool.core.io.FileUtil;
-import cn.hutool.core.io.resource.ClassPathResource;
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.core.util.ZipUtil;
 import freemarker.template.TemplateException;
@@ -22,29 +21,13 @@ import java.util.Objects;
  */
 public abstract class GeneratorTemplate {
 
-    public void doGenerate() throws TemplateException, IOException, InterruptedException {
-        // 读取元数据
-        Meta meta = MetaManager.getMeta();
-
-        // 0. 输出根路径
-        String projectPath = System.getProperty("user.dir");
-        String outputPath =
-                projectPath + File.separator + "generated" + File.separator + meta.getName();
-        // 清空目标目录
-        if (FileUtil.exist(outputPath)) {
-            FileUtil.del(outputPath);
-        }
-        FileUtil.mkdir(outputPath);
-
-        // 读取 resources 目录
-        ClassPathResource classPathResource = new ClassPathResource("");
-        String inputResourcePath = classPathResource.getAbsolutePath();
-
+    public void doGenerate(Meta meta, String outputPath)
+            throws TemplateException, IOException, InterruptedException {
         // 1. 复制原始文件
         String sourceCopyDestPath = copySource(meta, outputPath);
 
         // 2. 代码生成
-        generateCode(meta, outputPath, inputResourcePath);
+        generateCode(meta, outputPath);
 
         // 3. 构建 Jar 包
         String jarPath = buildJar(meta, outputPath);
@@ -53,10 +36,28 @@ public abstract class GeneratorTemplate {
         String shellOutputFilePath = buildScript(outputPath, jarPath);
 
         // 5. 版本控制
-        versionControl(meta, inputResourcePath, outputPath);
+        versionControl(meta, outputPath);
 
         // 6. 生成精简版的程序（产物）
         buildDist(outputPath, sourceCopyDestPath, jarPath, shellOutputFilePath);
+    }
+
+    public void doGenerate() throws TemplateException, IOException, InterruptedException {
+        // 读取元数据
+        Meta meta = MetaManager.getMeta();
+
+        // 0. 输出根路径
+        String projectPath = System.getProperty("user.dir");
+        String outputPath =
+                projectPath + File.separator + "generated/" + File.separator + meta.getName();
+        // 清空目标目录
+        if (FileUtil.exist(outputPath)) {
+            FileUtil.del(outputPath);
+        }
+        FileUtil.mkdir(outputPath);
+
+        // 生成
+        doGenerate(meta, outputPath);
     }
 
     protected String copySource(Meta meta, String outputPath) {
@@ -66,8 +67,12 @@ public abstract class GeneratorTemplate {
         return sourceCopyDestPath;
     }
 
-    protected void generateCode(Meta meta, String outputPath, String inputResourcePath)
+    protected void generateCode(Meta meta, String outputPath)
             throws IOException, TemplateException {
+
+        // 读取 resources 目录
+//        ClassPathResource classPathResource = new ClassPathResource("");
+        String inputResourcePath = "";
 
         // Java 包基础路径
         String outputBasePackage = meta.getBasePackage();
@@ -155,6 +160,12 @@ public abstract class GeneratorTemplate {
         inputFilePath = inputResourcePath + File.separator + "templates/README.md.ftl";
         outputFilePath = outputPath + File.separator + "README.md";
         DynamicFileGenerator.doGenerate(inputFilePath, outputFilePath, meta);
+
+        // .gitignore
+        // TODO 考虑 .gitignore 文件的 ftl 模板，区分项目，比如后端，前端，小程序，等等等等
+        inputFilePath = inputResourcePath + File.separator + "templates/.gitignore.ftl";
+        outputFilePath = outputPath + File.separator + ".gitignore";
+        DynamicFileGenerator.doGenerate(inputFilePath, outputFilePath, meta);
     }
 
     protected String buildJar(Meta meta, String outputPath)
@@ -171,15 +182,11 @@ public abstract class GeneratorTemplate {
         return shellOutputPath;
     }
 
-    protected void versionControl(Meta meta, String inputResourcePath, String outputPath)
+    protected void versionControl(Meta meta, String outputPath)
             throws IOException, InterruptedException {
         if (Objects.nonNull(meta.getVersionControl()) && !meta.getVersionControl()) {
             return;
         }
-        // 拷贝 .gitignore 文件
-        String gitIgnorePath =
-                inputResourcePath + File.separator + "templates" + File.separator + ".gitignore";
-        FileUtil.copy(gitIgnorePath, outputPath, true);
         VersionControlGenerator.doGenerate(outputPath);
     }
 

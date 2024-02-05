@@ -13,7 +13,7 @@ import React, { useEffect, useState } from 'react';
 const DEFAULT_PAGE_PARAMS: PageRequest = {
   current: 1,
   pageSize: 4,
-  sortField: 'createTime',
+  sortField: 'updateTime',
   sortOrder: 'descend',
 };
 
@@ -66,6 +66,7 @@ const IndexPage: React.FC = () => {
         <Input.Search
           allowClear
           enterButton="搜索"
+          placeholder="搜索生成器"
           size="large"
           onChange={(e) => {
             searchParams.searchText = e.target.value;

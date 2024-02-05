@@ -7,7 +7,6 @@ import cn.hutool.core.util.StrUtil;
 import io.github.dingxinliang88.maker.meta.enums.FileGenerateTypeEnum;
 import io.github.dingxinliang88.maker.meta.enums.FileTypeEnum;
 import io.github.dingxinliang88.maker.meta.enums.ModelTypeEnum;
-import java.io.File;
 import java.nio.file.Paths;
 import java.util.List;
 import java.util.stream.Collectors;

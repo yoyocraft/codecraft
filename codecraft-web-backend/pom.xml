@@ -14,8 +14,12 @@
   <version>0.0.1-SNAPSHOT</version>
   <name>codecraft-web-backend</name>
   <properties>
-    <java.version>1.8</java.version>
     <hutool.version>5.8.25</hutool.version>
+    <knife4j-spring.version>4.4.0</knife4j-spring.version>
+    <mybatis-spring.version>2.2.2</mybatis-spring.version>
+    <mybatis-plus-spring.version>3.5.2</mybatis-plus-spring.version>
+    <cos_api.version>5.6.155</cos_api.version>
+    <maven-checkstyle-plugin.version>3.2.0</maven-checkstyle-plugin.version>
   </properties>
   <dependencies>
     <dependency>
@@ -29,13 +33,13 @@
     <dependency>
       <groupId>org.mybatis.spring.boot</groupId>
       <artifactId>mybatis-spring-boot-starter</artifactId>
-      <version>2.2.2</version>
+      <version>${mybatis-spring.version}</version>
     </dependency>
     <!-- https://mvnrepository.com/artifact/com.baomidou/mybatis-plus-boot-starter -->
     <dependency>
       <groupId>com.baomidou</groupId>
       <artifactId>mybatis-plus-boot-starter</artifactId>
-      <version>3.5.2</version>
+      <version>${mybatis-plus-spring.version}</version>
     </dependency>
     <!-- redis -->
     <dependency>
@@ -50,13 +54,13 @@
     <dependency>
       <groupId>com.github.xiaoymin</groupId>
       <artifactId>knife4j-openapi2-spring-boot-starter</artifactId>
-      <version>4.4.0</version>
+      <version>${knife4j-spring.version}</version>
     </dependency>
     <!-- https://cloud.tencent.com/document/product/436/10199-->
     <dependency>
       <groupId>com.qcloud</groupId>
       <artifactId>cos_api</artifactId>
-      <version>5.6.155</version>
+      <version>${cos_api.version}</version>
     </dependency>
     <!-- https://mvnrepository.com/artifact/org.apache.commons/commons-lang3 -->
     <dependency>
@@ -69,6 +73,14 @@
       <artifactId>hutool-all</artifactId>
       <version>${hutool.version}</version>
     </dependency>
+
+    <!-- maker -->
+    <dependency>
+      <groupId>io.github.dingxinliang88</groupId>
+      <artifactId>codecraft-maker</artifactId>
+      <version>1.0</version>
+    </dependency>
+
     <dependency>
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-devtools</artifactId>
@@ -111,6 +123,29 @@
             </exclude>
           </excludes>
         </configuration>
+      </plugin>
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-checkstyle-plugin</artifactId>
+        <version>${maven-checkstyle-plugin.version}</version>
+        <executions>
+          <execution>
+            <id>validate</id>
+            <phase>validate</phase>
+            <configuration>
+              <configLocation>../config/checkstyle.xml</configLocation>
+              <inputEncoding>UTF-8</inputEncoding>
+              <consoleOutput>true</consoleOutput>
+              <failsOnError>true</failsOnError>
+              <includeTestSourceDirectory>true</includeTestSourceDirectory>
+              <excludes>**/generated*/**/*</excludes>
+            </configuration>
+            <goals>
+              <goal>check</goal>
+            </goals>
+          </execution>
+        </executions>
       </plugin>
     </plugins>
   </build>

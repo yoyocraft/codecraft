@@ -1,6 +1,6 @@
 package com.youyi.craft.model.dto.generator;
 
-import com.youyi.craft.meta.Meta;
+import io.github.dingxinliang88.maker.meta.Meta;
 import java.io.Serializable;
 import java.util.List;
 import lombok.Data;

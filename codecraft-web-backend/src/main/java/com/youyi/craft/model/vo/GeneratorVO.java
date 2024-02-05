@@ -1,8 +1,8 @@
 package com.youyi.craft.model.vo;
 
 import cn.hutool.json.JSONUtil;
-import com.youyi.craft.meta.Meta;
 import com.youyi.craft.model.entity.Generator;
+import io.github.dingxinliang88.maker.meta.Meta;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.List;

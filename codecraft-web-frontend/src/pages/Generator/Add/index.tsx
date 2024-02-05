@@ -1,33 +1,41 @@
 import FileUploader from '@/components/FileUploader';
 import PictureUploader from '@/components/PictureUploader';
 import { COS_HOST } from '@/constants';
+import FileConfigForm from '@/pages/Generator/Add/components/FileConfigForm';
+import GeneratorMaker from '@/pages/Generator/Add/components/GeneratorMaker';
+import ModelConfigForm from '@/pages/Generator/Add/components/ModelConfigForm';
 import {
   addGeneratorUsingPost,
   editGeneratorUsingPost,
   getGeneratorVoByIdUsingGet,
 } from '@/services/backend/generatorController';
+import { useSearchParams } from '@@/exports';
 import type { ProFormInstance } from '@ant-design/pro-components';
 import {
   ProCard,
-  ProFormItem,
   ProFormSelect,
   ProFormText,
   ProFormTextArea,
   StepsForm,
 } from '@ant-design/pro-components';
-import { history, useSearchParams } from '@umijs/max';
+import { ProFormItem } from '@ant-design/pro-form';
+import { history } from '@umijs/max';
 import { message, UploadFile } from 'antd';
-import { useEffect, useRef, useState } from 'react';
-import ModelConfigForm from './components/ModelConfigForm';
+import React, { useEffect, useRef, useState } from 'react';
 
 /**
- * 创建 && 修改生成器页面
+ * 创建生成器页面
+ * @constructor
  */
 const GeneratorAddPage: React.FC = () => {
   const [searchParams] = useSearchParams();
   const id = searchParams.get('id');
   const [oldData, setOldData] = useState<API.GeneratorEditRequest>();
   const formRef = useRef<ProFormInstance>();
+  // 记录表单已填数据
+  const [basicInfo, setBasicInfo] = useState<API.GeneratorEditRequest>();
+  const [modelConfig, setModelConfig] = useState<API.ModelConfig>();
+  const [fileConfig, setFileConfig] = useState<API.FileConfig>();
 
   /**
    * 加载数据
@@ -36,7 +44,6 @@ const GeneratorAddPage: React.FC = () => {
     if (!id) {
       return;
     }
-
     try {
       const res = await getGeneratorVoByIdUsingGet({
         // @ts-ignore
@@ -52,8 +59,8 @@ const GeneratorAddPage: React.FC = () => {
             {
               uid: id,
               name: '文件' + id,
-              url: COS_HOST + distPath,
               status: 'done',
+              url: COS_HOST + distPath,
               response: distPath,
             } as UploadFile,
           ];
@@ -61,7 +68,7 @@ const GeneratorAddPage: React.FC = () => {
         setOldData(res.data);
       }
     } catch (error: any) {
-      message.error('加载数据失败, ' + error.message);
+      message.error('加载数据失败，' + error.message);
     }
   };
 
@@ -83,7 +90,7 @@ const GeneratorAddPage: React.FC = () => {
         history.push(`/generator/detail/${res.data}`);
       }
     } catch (error: any) {
-      message.error('创建失败, ' + error.message);
+      message.error('创建失败，' + error.message);
     }
   };
 
@@ -99,7 +106,7 @@ const GeneratorAddPage: React.FC = () => {
         history.push(`/generator/detail/${id}`);
       }
     } catch (error: any) {
-      message.error('更新失败, ' + error.message);
+      message.error('更新失败，' + error.message);
     }
   };
 
@@ -121,7 +128,6 @@ const GeneratorAddPage: React.FC = () => {
       values.distPath = values.distPath[0].response;
     }
 
-    // 执行函数
     if (id) {
       await doUpdate({
         // @ts-ignore
@@ -137,7 +143,7 @@ const GeneratorAddPage: React.FC = () => {
     <ProCard>
       {/* 创建或者已加载要更新的数据时，才渲染表单，顺利填充默认值 */}
       {(!id || oldData) && (
-        <StepsForm<API.GeneratorAddRequest>
+        <StepsForm<API.GeneratorAddRequest | API.GeneratorEditRequest>
           formRef={formRef}
           formProps={{
             initialValues: oldData,
@@ -147,8 +153,8 @@ const GeneratorAddPage: React.FC = () => {
           <StepsForm.StepForm
             name="base"
             title="基本信息"
-            onFinish={async () => {
-              console.log(formRef.current?.getFieldsValue());
+            onFinish={async (values) => {
+              setBasicInfo(values);
               return true;
             }}
           >
@@ -166,19 +172,33 @@ const GeneratorAddPage: React.FC = () => {
             name="modelConfig"
             title="模型配置"
             onFinish={async (values) => {
-              console.log(values);
-              return false;
+              setModelConfig(values);
+              return true;
             }}
           >
             <ModelConfigForm formRef={formRef} oldData={oldData} />
           </StepsForm.StepForm>
-          <StepsForm.StepForm name="fileConfig" title="文件配置">
-            {/* TODO */}
+          <StepsForm.StepForm
+            name="fileConfig"
+            title="文件配置"
+            onFinish={async (values) => {
+              setFileConfig(values);
+              return true;
+            }}
+          >
+            <FileConfigForm formRef={formRef} oldData={oldData} />
           </StepsForm.StepForm>
           <StepsForm.StepForm name="dist" title="生成器文件">
             <ProFormItem label="产物包" name="distPath">
               <FileUploader biz="generator_dist" description="请上传生成器文件压缩包" />
             </ProFormItem>
+            <GeneratorMaker
+              meta={{
+                ...basicInfo,
+                ...modelConfig,
+                ...fileConfig,
+              }}
+            />
           </StepsForm.StepForm>
         </StepsForm>
       )}
