@@ -30,7 +30,6 @@ import com.youyi.craft.model.entity.User;
 import com.youyi.craft.model.vo.GeneratorVO;
 import com.youyi.craft.service.GeneratorService;
 import com.youyi.craft.service.UserService;
-import freemarker.template.TemplateException;
 import io.github.dingxinliang88.maker.generator.main.GeneratorTemplate;
 import io.github.dingxinliang88.maker.generator.main.ZipGenerator;
 import io.github.dingxinliang88.maker.meta.Meta;
@@ -511,7 +510,7 @@ public class GeneratorController {
             throw new BusinessException(ErrorCode.SYSTEM_ERROR, "制作失败");
         }
 
-        // 将下载好的生成器写回前端
+        // 将下载好的生成器写回前端，注意是要完整的文件打包，因为用户可能还会修改
         String zipSuffix = "-dist.zip";
         String zipFileName = meta.getName() + zipSuffix;
         String distZipFilePath = outputPath + zipSuffix;
