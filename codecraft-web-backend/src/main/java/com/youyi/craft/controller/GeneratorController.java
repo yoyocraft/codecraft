@@ -1,6 +1,8 @@
 package com.youyi.craft.controller;
 
+import cn.hutool.core.io.FileUtil;
 import cn.hutool.core.util.StrUtil;
+import cn.hutool.core.util.ZipUtil;
 import cn.hutool.json.JSONUtil;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.qcloud.cos.model.COSObject;
@@ -20,13 +22,26 @@ import com.youyi.craft.model.dto.generator.GeneratorAddRequest;
 import com.youyi.craft.model.dto.generator.GeneratorEditRequest;
 import com.youyi.craft.model.dto.generator.GeneratorQueryRequest;
 import com.youyi.craft.model.dto.generator.GeneratorUpdateRequest;
+import com.youyi.craft.model.dto.generator.GeneratorUseRequest;
 import com.youyi.craft.model.entity.Generator;
 import com.youyi.craft.model.entity.User;
 import com.youyi.craft.model.vo.GeneratorVO;
 import com.youyi.craft.service.GeneratorService;
 import com.youyi.craft.service.UserService;
+import java.io.BufferedReader;
+import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.nio.file.attribute.PosixFilePermission;
+import java.nio.file.attribute.PosixFilePermissions;
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
+import java.util.concurrent.CompletableFuture;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -303,7 +318,7 @@ public class GeneratorController {
             // 处理下载到的流
             byte[] bytes = IOUtils.toByteArray(cosObjectInput);
             // 设置响应头
-            response.setContentType("application/octet-stream");
+            response.setContentType("application/octet-stream;charSet=UTF-8");
             response.setHeader("Content-Disposition", "attachment; filename=" + filepath);
             // 写入响应
             response.getOutputStream().write(bytes);
@@ -316,5 +331,122 @@ public class GeneratorController {
                 cosObjectInput.close();
             }
         }
+    }
+
+    /**
+     * 在线使用生成器
+     *
+     * @param generatorUseRequest
+     * @param request
+     * @param response
+     */
+    @PostMapping("/use")
+    public void onlineUseGenerator(@RequestBody GeneratorUseRequest generatorUseRequest,
+            HttpServletRequest request, HttpServletResponse response) throws IOException {
+
+        // 获取用户的输入参数
+        Long id = generatorUseRequest.getId();
+        Map<String, Object> dataModel = generatorUseRequest.getDataModel();
+
+        // 需要用户登录
+        User loginUser = userService.getLoginUser(request);
+        log.info("userId: {} use generator, generatorId: {}", loginUser.getId(), id);
+
+        // 获取到生成器存储路径
+        Generator generator = generatorService.getById(id);
+        if (Objects.isNull(generator)) {
+            throw new BusinessException(ErrorCode.NOT_FOUND_ERROR);
+        }
+        String distPath = generator.getDistPath();
+        if (StrUtil.isBlank(distPath)) {
+            throw new BusinessException(ErrorCode.NOT_FOUND_ERROR, "产物包不存在");
+        }
+
+        // 从对象存储中下载生成器压缩包
+
+        // 定义独立的工作空间
+        String projectPath = System.getProperty("user.dir");
+        String tmpDirPath = String.format("%s/.tmp/use/%s/%s", projectPath, loginUser.getId(), id);
+        String zipFilePath = tmpDirPath + "/dist.zip";
+
+        if (!FileUtil.exist(zipFilePath)) {
+            FileUtil.touch(zipFilePath);
+        }
+        // 下载文件
+        try {
+            cosManager.download(distPath, zipFilePath);
+        } catch (InterruptedException e) {
+            throw new BusinessException(ErrorCode.SYSTEM_ERROR, "生成器下载失败");
+        }
+
+        // 解压压缩包，得到脚本文件
+        File unzipDistDir = ZipUtil.unzip(zipFilePath);
+
+        // 将用户输入的参数写入到 json 文件中
+        String dataModelFilePath = tmpDirPath + "/dataModel.json";
+        String dataModelJsonStr = JSONUtil.toJsonStr(dataModel);
+        FileUtil.writeUtf8String(dataModelJsonStr, dataModelFilePath);
+
+        // 执行脚本
+        // 查找脚本路径，注意区分系统
+        String os = System.getProperty("os.name");
+        boolean isWin = os.toLowerCase().contains("windows");
+        String scriptFileName = isWin ? "craft.bat" : "craft";
+        File scriptFile = FileUtil.loopFiles(unzipDistDir, 2, null)
+                .stream()
+                .filter(file -> file.isFile() && scriptFileName.equals(file.getName()))
+                .findFirst()
+                .orElseThrow(
+                        () -> new BusinessException(ErrorCode.NOT_FOUND_ERROR,
+                                "脚本文件 " + scriptFileName + "不存在"));
+
+        // 添加执行权限
+        try {
+            // 赋予执行权限
+            Set<PosixFilePermission> permissions = PosixFilePermissions.fromString("rwxrwxrwx");
+            Files.setPosixFilePermissions(scriptFile.toPath(), permissions);
+        } catch (IOException ignored) {
+        }
+
+        // 构造命令
+        File scriptDir = scriptFile.getParentFile();
+        String scriptAbsolutePath = scriptFile.getAbsolutePath().replace("\\", "/");
+        String[] commands = new String[]{scriptAbsolutePath, "json-generate",
+                "--file=" + dataModelFilePath};
+
+        // 执行命令
+        ProcessBuilder processBuilder = new ProcessBuilder(commands);
+        processBuilder.directory(scriptDir);
+
+        try {
+            Process process = processBuilder.start();
+
+            // 读取命令的输出
+            InputStream inputStream = process.getInputStream();
+            BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
+            String line;
+            while ((line = reader.readLine()) != null) {
+                log.info(line);
+            }
+            int exitCode = process.waitFor();
+            log.info("execute script finished! exit code = {}", exitCode);
+        } catch (Exception e) {
+            log.error("execute script error, ", e);
+            throw new BusinessException(ErrorCode.SYSTEM_ERROR, "脚本执行失败");
+        }
+
+        // 压缩得到生成的结果，写入给前端
+        String generatedPath = scriptDir.getAbsolutePath() + "/generated";
+        String resultPath = tmpDirPath + "/result.zip";
+        File resultFile = ZipUtil.zip(generatedPath, resultPath);
+
+        // 设置响应头
+        response.setContentType("application/octet-stream;charSet=UTF-8");
+        response.setHeader("Content-Disposition", "attachment; filename=" + resultFile.getName());
+        Files.copy(resultFile.toPath(), response.getOutputStream());
+
+        // 清理文件
+        // TODO 设置线程池
+        CompletableFuture.runAsync(() -> FileUtil.del(tmpDirPath));
     }
 }
