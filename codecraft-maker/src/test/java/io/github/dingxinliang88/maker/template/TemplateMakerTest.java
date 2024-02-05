@@ -10,11 +10,13 @@ import io.github.dingxinliang88.maker.template.model.TemplateMakerModelConfig;
 import java.io.File;
 import java.util.Collections;
 import java.util.List;
+import lombok.extern.slf4j.Slf4j;
 import org.junit.Test;
 
 /**
  * @author <a href="https://github.com/dingxinliang88">youyi</a>
  */
+@Slf4j
 public class TemplateMakerTest {
 
     @Test
@@ -51,7 +53,7 @@ public class TemplateMakerTest {
         long id = TemplateMaker.makeTemplate(meta, originProjectPath,
                 templateMakerFileConfig, templateMakerModelConfig, null,
                 1752657938160234496L);
-        System.out.println("id = " + id);
+        log.info("生成的模板id为:{}", id);
     }
 
     @Test
@@ -81,10 +83,10 @@ public class TemplateMakerTest {
                 = Collections.singletonList(modelInfoConfig1);
         templateMakerModelConfig.setModels(modelInfoConfigList);
 
-        long id = TemplateMaker.makeTemplate(meta, originProjectPath,
+        Long id = TemplateMaker.makeTemplate(meta, originProjectPath,
                 templateMakerFileConfig, templateMakerModelConfig, null,
                 1752657938160234496L);
-        System.out.println("id = " + id);
+        log.info("id = {}", id);
     }
 
     @Test
@@ -93,7 +95,7 @@ public class TemplateMakerTest {
         TemplateMakerConfig templateMakerConfig = JSONUtil.toBean(configJsonStr,
                 TemplateMakerConfig.class);
         Long id = TemplateMaker.makeTemplate(templateMakerConfig);
-        System.out.println("id = " + id);
+        log.info("id = {}", id);
     }
 
 
@@ -145,6 +147,6 @@ public class TemplateMakerTest {
                 TemplateMakerConfig.class);
         TemplateMaker.makeTemplate(templateMakerConfig);
 
-        System.out.println("id = " + id);
+        log.info("id = {}", id);
     }
 }

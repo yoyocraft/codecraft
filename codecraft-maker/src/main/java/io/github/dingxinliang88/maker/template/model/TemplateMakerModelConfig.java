@@ -1,6 +1,5 @@
 package io.github.dingxinliang88.maker.template.model;
 
-import io.github.dingxinliang88.maker.meta.Meta;
 import java.util.List;
 import lombok.Data;
 import lombok.NoArgsConstructor;
