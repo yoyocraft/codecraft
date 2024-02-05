@@ -1,7 +1,6 @@
 package io.github.dingxinliang88.maker.generator.main;
 
 import cn.hutool.core.io.FileUtil;
-import cn.hutool.core.io.resource.ClassPathResource;
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.core.util.ZipUtil;
 import freemarker.template.TemplateException;
@@ -9,7 +8,6 @@ import io.github.dingxinliang88.maker.generator.JarGenerator;
 import io.github.dingxinliang88.maker.generator.ScriptGenerator;
 import io.github.dingxinliang88.maker.generator.VersionControlGenerator;
 import io.github.dingxinliang88.maker.generator.file.DynamicFileGenerator;
-import io.github.dingxinliang88.maker.generator.file.StaticFileGenerator;
 import io.github.dingxinliang88.maker.meta.Meta;
 import io.github.dingxinliang88.maker.meta.MetaManager;
 import java.io.File;
@@ -165,10 +163,9 @@ public abstract class GeneratorTemplate {
 
         // .gitignore
         // TODO 考虑 .gitignore 文件的 ftl 模板，区分项目，比如后端，前端，小程序，等等等等
-        inputResourcePath = new ClassPathResource("").getAbsolutePath();
-        inputFilePath = inputResourcePath + File.separator + "templates/.gitignore";
+        inputFilePath = inputResourcePath + File.separator + "templates/.gitignore.ftl";
         outputFilePath = outputPath + File.separator + ".gitignore";
-        StaticFileGenerator.copyFileByHutool(inputFilePath, outputFilePath);
+        DynamicFileGenerator.doGenerate(inputFilePath, outputFilePath, meta);
     }
 
     protected String buildJar(Meta meta, String outputPath)
