@@ -14,7 +14,6 @@ public class Main {
             throws TemplateException, IOException, InterruptedException {
 //        GeneratorTemplate generatorTemplate = new MainGenerator();
         GeneratorTemplate generatorTemplate = new ZipGenerator();
-
         generatorTemplate.doGenerate();
     }
 

@@ -1,13 +1,21 @@
 package com.youyi.craft.manager;
 
 import com.qcloud.cos.COSClient;
+import com.qcloud.cos.exception.CosClientException;
+import com.qcloud.cos.exception.CosServiceException;
 import com.qcloud.cos.model.COSObject;
 import com.qcloud.cos.model.GetObjectRequest;
 import com.qcloud.cos.model.PutObjectRequest;
 import com.qcloud.cos.model.PutObjectResult;
+import com.qcloud.cos.transfer.Download;
+import com.qcloud.cos.transfer.TransferManager;
 import com.youyi.craft.config.CosClientConfig;
 import java.io.File;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
 /**
@@ -15,6 +23,7 @@ import org.springframework.stereotype.Component;
  *
  * @author <a href="https://github.com/dingxinliang88">youyi</a>
  */
+@Slf4j
 @Component
 public class CosManager {
 
@@ -23,6 +32,15 @@ public class CosManager {
 
     @Resource
     private COSClient cosClient;
+
+    private TransferManager transferManager;
+
+    @PostConstruct
+    public void init() {
+        log.info("init transferManager");
+        ExecutorService threadPool = Executors.newFixedThreadPool(32);
+        transferManager = new TransferManager(cosClient, threadPool);
+    }
 
     /**
      * 上传对象
@@ -60,4 +78,15 @@ public class CosManager {
         GetObjectRequest getObjectRequest = new GetObjectRequest(cosClientConfig.getBucket(), key);
         return cosClient.getObject(getObjectRequest);
     }
+
+    public Download download(String key, String localFilePath) throws InterruptedException {
+        File downloadFile = new File(localFilePath);
+
+        GetObjectRequest getObjectRequest = new GetObjectRequest(cosClientConfig.getBucket(), key);
+        Download download = transferManager.download(getObjectRequest, downloadFile);
+        // 等待下载完成
+        download.waitForCompletion();
+        return download;
+    }
+
 }

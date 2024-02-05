@@ -18,6 +18,7 @@ import {
 import { history, useSearchParams } from '@umijs/max';
 import { message, UploadFile } from 'antd';
 import { useEffect, useRef, useState } from 'react';
+import ModelConfigForm from './components/ModelConfigForm';
 
 /**
  * 创建 && 修改生成器页面
@@ -161,10 +162,17 @@ const GeneratorAddPage: React.FC = () => {
               <PictureUploader biz="generator_picture" />
             </ProFormItem>
           </StepsForm.StepForm>
-          <StepsForm.StepForm name="fileConfig" title="文件配置">
-            {/* TODO */}
+          <StepsForm.StepForm
+            name="modelConfig"
+            title="模型配置"
+            onFinish={async (values) => {
+              console.log(values);
+              return false;
+            }}
+          >
+            <ModelConfigForm formRef={formRef} oldData={oldData} />
           </StepsForm.StepForm>
-          <StepsForm.StepForm name="modelConfig" title="模型配置">
+          <StepsForm.StepForm name="fileConfig" title="文件配置">
             {/* TODO */}
           </StepsForm.StepForm>
           <StepsForm.StepForm name="dist" title="生成器文件">
