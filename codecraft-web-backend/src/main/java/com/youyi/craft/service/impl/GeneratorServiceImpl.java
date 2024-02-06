@@ -18,6 +18,7 @@ import com.youyi.craft.mapper.GeneratorMapper;
 import com.youyi.craft.service.UserService;
 import com.youyi.craft.utils.SqlUtils;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -37,6 +38,9 @@ import org.springframework.stereotype.Service;
 @Service
 public class GeneratorServiceImpl extends ServiceImpl<GeneratorMapper, Generator>
         implements GeneratorService {
+
+    @Resource
+    private GeneratorMapper generatorMapper;
 
     @Resource
     private UserService userService;
@@ -162,6 +166,14 @@ public class GeneratorServiceImpl extends ServiceImpl<GeneratorMapper, Generator
         }).collect(Collectors.toList());
         generatorVOPage.setRecords(generatorVOList);
         return generatorVOPage;
+    }
+
+    @Override
+    public List<Generator> getBatchByIds(List<Long> idList) {
+        if (CollUtil.isEmpty(idList)) {
+            return Collections.emptyList();
+        }
+        return generatorMapper.selectBatchIds(idList);
     }
 
 }
