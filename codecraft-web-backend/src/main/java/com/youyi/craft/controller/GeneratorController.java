@@ -20,6 +20,7 @@ import com.youyi.craft.exception.BusinessException;
 import com.youyi.craft.exception.ThrowUtils;
 import com.youyi.craft.manager.CosManager;
 import com.youyi.craft.model.dto.generator.GeneratorAddRequest;
+import com.youyi.craft.model.dto.generator.GeneratorCacheRequest;
 import com.youyi.craft.model.dto.generator.GeneratorEditRequest;
 import com.youyi.craft.model.dto.generator.GeneratorMakeRequest;
 import com.youyi.craft.model.dto.generator.GeneratorQueryRequest;
@@ -39,6 +40,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.file.attribute.PosixFilePermission;
@@ -53,6 +55,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
+import org.springframework.util.StopWatch;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -303,6 +306,10 @@ public class GeneratorController {
             throw new BusinessException(ErrorCode.PARAMS_ERROR);
         }
 
+        StopWatch stopWatch = new StopWatch();
+
+        stopWatch.start("【下载生成器接口】查询数据库");
+
         User loginUser = userService.getLoginUser(request);
         Generator generator = generatorService.getById(id);
         if (generator == null) {
@@ -314,21 +321,45 @@ public class GeneratorController {
             throw new BusinessException(ErrorCode.NOT_FOUND_ERROR, "产物包路径不存在");
         }
 
+        stopWatch.stop();
+
         // 追踪事件
         log.info("user {} download {}", loginUser, filepath);
 
+        // 设置响应头
+        response.setContentType("application/octet-stream;charSet=UTF-8");
+        response.setHeader("Content-Disposition", "attachment; filename=" + filepath);
+
+        // 查询本地缓存
+        String zipFilePath = getCacheFilePath(id, generator.getDistPath());
+        if (FileUtil.exist(zipFilePath)) {
+            log.info("download generator from cache, id = {}", id);
+            // 从缓存下载
+            Files.copy(Paths.get(zipFilePath), response.getOutputStream());
+            return;
+        }
         COSObjectInputStream cosObjectInput = null;
+
         try {
+            stopWatch.start("【下载生成器接口】从对象存储下载数据");
+
             COSObject cosObject = cosManager.getObject(filepath);
             cosObjectInput = cosObject.getObjectContent();
             // 处理下载到的流
             byte[] bytes = IOUtils.toByteArray(cosObjectInput);
-            // 设置响应头
-            response.setContentType("application/octet-stream;charSet=UTF-8");
-            response.setHeader("Content-Disposition", "attachment; filename=" + filepath);
+
+            stopWatch.stop();
+
+            stopWatch.start("【下载生成器接口】写入响应");
+
             // 写入响应
             response.getOutputStream().write(bytes);
             response.getOutputStream().flush();
+
+            stopWatch.stop();
+
+            // 打印测试结果
+            System.out.println(stopWatch.prettyPrint());
         } catch (Exception e) {
             log.error("file download error, filepath = " + filepath, e);
             throw new BusinessException(ErrorCode.SYSTEM_ERROR, "下载失败");
@@ -521,6 +552,59 @@ public class GeneratorController {
 
         // 清理工作空间
         CompletableFuture.runAsync(() -> FileUtil.del(tmpDirPath));
+    }
+
+    /**
+     * 缓存代码生成器
+     *
+     * @param generatorCacheRequest
+     * @param request
+     * @param response
+     */
+    @PostMapping("/cache")
+    public void cacheGenerator(@RequestBody GeneratorCacheRequest generatorCacheRequest,
+            HttpServletRequest request, HttpServletResponse response) throws IOException {
+
+        if (Objects.isNull(generatorCacheRequest) || Objects.isNull(generatorCacheRequest.getId())
+                || generatorCacheRequest.getId() <= 0) {
+            throw new BusinessException(ErrorCode.PARAMS_ERROR);
+        }
+        Long id = generatorCacheRequest.getId();
+
+        Generator generator = generatorService.getById(id);
+        if (Objects.isNull(generator)) {
+            throw new BusinessException(ErrorCode.NOT_FOUND_ERROR);
+        }
+        String distPath = generator.getDistPath();
+        if (StrUtil.isBlank(distPath)) {
+            throw new BusinessException(ErrorCode.NOT_FOUND_ERROR, "产物包不存在");
+        }
+
+        String zipFilePath = getCacheFilePath(id, distPath);
+
+        if (!FileUtil.exist(zipFilePath)) {
+            FileUtil.touch(zipFilePath);
+        }
+
+        try {
+            cosManager.download(distPath, zipFilePath);
+        } catch (InterruptedException e) {
+            throw new BusinessException(ErrorCode.SYSTEM_ERROR, "生成器下载失败");
+        }
+
+    }
+
+    /**
+     * 获取缓存文件路径
+     *
+     * @param id
+     * @param distPath
+     * @return
+     */
+    private String getCacheFilePath(Long id, String distPath) {
+        String projectPath = System.getProperty("user.dir");
+        String tmpDirPath = String.format("%s/.tmp/cache/%s", projectPath, id);
+        return tmpDirPath + "/" + distPath;
     }
 
 }
