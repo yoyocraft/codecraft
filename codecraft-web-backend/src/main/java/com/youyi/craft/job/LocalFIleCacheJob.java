@@ -12,6 +12,9 @@ import org.springframework.stereotype.Component;
 @Component
 public class LocalFIleCacheJob {
 
+    /**
+     * 一周一次
+     */
     @Scheduled(fixedDelay = 60 * 60 * 24 * 7)
     public void clearCache() {
         LocalFileCacheManager.clearExpireCache();
