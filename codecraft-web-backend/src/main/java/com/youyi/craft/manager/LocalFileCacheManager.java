@@ -96,4 +96,26 @@ public class LocalFileCacheManager {
         clearCache(expiredCacheFilePaths);
     }
 
+    /**
+     * 判断缓存是否存在
+     *
+     * @param cacheKey
+     * @return
+     */
+    public static boolean isCached(String cacheKey) {
+        return CACHE_EXPIRATION_MAP.containsKey(cacheKey);
+    }
+
+    /**
+     * 判断缓存是否存在
+     *
+     * @param id
+     * @param distPath
+     * @return
+     */
+    public static boolean isCached(Long id, String distPath) {
+        String cacheFilePath = getCacheFilePath(id, distPath);
+        return CACHE_EXPIRATION_MAP.containsKey(cacheFilePath);
+    }
+
 }

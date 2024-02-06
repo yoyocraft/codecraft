@@ -58,6 +58,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
+import org.springframework.util.StopWatch;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -373,9 +374,13 @@ public class GeneratorController {
     public void onlineUseGenerator(@RequestBody GeneratorUseRequest generatorUseRequest,
             HttpServletRequest request, HttpServletResponse response) throws IOException {
 
+        StopWatch stopWatch = new StopWatch("测试生成器接口");
+
         // 获取用户的输入参数
         Long id = generatorUseRequest.getId();
         Map<String, Object> dataModel = generatorUseRequest.getDataModel();
+
+        stopWatch.start("【使用生成器接口】查询数据库");
 
         // 需要用户登录
         User loginUser = userService.getLoginUser(request);
@@ -391,7 +396,7 @@ public class GeneratorController {
             throw new BusinessException(ErrorCode.NOT_FOUND_ERROR, "产物包不存在");
         }
 
-        // 从对象存储中下载生成器压缩包
+        stopWatch.stop();
 
         // 定义独立的工作空间
         String projectPath = System.getProperty("user.dir");
@@ -401,20 +406,40 @@ public class GeneratorController {
         if (!FileUtil.exist(zipFilePath)) {
             FileUtil.touch(zipFilePath);
         }
-        // 下载文件
-        try {
-            cosManager.download(distPath, zipFilePath);
-        } catch (InterruptedException e) {
-            throw new BusinessException(ErrorCode.SYSTEM_ERROR, "生成器下载失败");
+
+        String cacheFilePath = LocalFileCacheManager.getCacheFilePath(id, distPath);
+        // 判断当前要执行的生成器是否在缓存中
+        if (LocalFileCacheManager.isCached(cacheFilePath)) {
+            stopWatch.start("【使用生成器接口】从本地缓存下载文件");
+            // 复制
+            FileUtil.copy(cacheFilePath, zipFilePath, true);
+            stopWatch.stop();
+        } else {
+            stopWatch.start("【使用生成器接口】从对象存储下载文件");
+            // 从对象存储中下载生成器压缩包
+            try {
+                cosManager.download(distPath, zipFilePath);
+            } catch (InterruptedException e) {
+                throw new BusinessException(ErrorCode.SYSTEM_ERROR, "生成器下载失败");
+            }
+            stopWatch.stop();
         }
+
+        stopWatch.start("【使用生成器接口】解压压缩包");
 
         // 解压压缩包，得到脚本文件
         File unzipDistDir = ZipUtil.unzip(zipFilePath);
+
+        stopWatch.stop();
+
+        stopWatch.start("【使用生成器接口】写文件");
 
         // 将用户输入的参数写入到 json 文件中
         String dataModelFilePath = tmpDirPath + "/dataModel.json";
         String dataModelJsonStr = JSONUtil.toJsonStr(dataModel);
         FileUtil.writeUtf8String(dataModelJsonStr, dataModelFilePath);
+
+        stopWatch.stop();
 
         // 执行脚本
         // 查找脚本路径，注意区分系统
@@ -448,6 +473,7 @@ public class GeneratorController {
         processBuilder.directory(scriptDir);
 
         try {
+            stopWatch.start("【使用生成器接口】执行生成命令");
             Process process = processBuilder.start();
 
             // 读取命令的输出
@@ -459,21 +485,32 @@ public class GeneratorController {
             }
             int exitCode = process.waitFor();
             log.info("execute script finished! exit code = {}", exitCode);
+            stopWatch.stop();
         } catch (Exception e) {
             log.error("execute script error, ", e);
             throw new BusinessException(ErrorCode.SYSTEM_ERROR, "脚本执行失败");
         }
+
+        stopWatch.start("【使用生成器接口】压缩文件");
 
         // 压缩得到生成的结果，写入给前端
         String generatedPath = scriptDir.getAbsolutePath() + "/generated";
         String resultPath = tmpDirPath + "/result.zip";
         File resultFile = ZipUtil.zip(generatedPath, resultPath);
 
+        stopWatch.stop();
+
+        stopWatch.start("【使用生成器接口】写回文件");
+
         // 设置响应头
         response.setContentType("application/octet-stream;charSet=UTF-8");
         response.setHeader("Content-Disposition", "attachment; filename=" + resultFile.getName());
         Files.copy(resultFile.toPath(), response.getOutputStream());
 
+        stopWatch.stop();
+
+        // 打印测试结果
+        System.out.println(stopWatch.prettyPrint());
         // 清理文件
         // TODO 设置线程池
         CompletableFuture.runAsync(() -> FileUtil.del(tmpDirPath));
