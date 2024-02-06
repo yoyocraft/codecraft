@@ -6,6 +6,7 @@ import com.youyi.craft.model.dto.generator.GeneratorQueryRequest;
 import com.youyi.craft.model.entity.Generator;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.youyi.craft.model.vo.GeneratorVO;
+import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 
 /**
@@ -47,4 +48,5 @@ public interface GeneratorService extends IService<Generator> {
      */
     Page<GeneratorVO> getGeneratorVOPage(Page<Generator> generatorPage, HttpServletRequest request);
 
+    List<Generator> getBatchByIds(List<Long> idList);
 }

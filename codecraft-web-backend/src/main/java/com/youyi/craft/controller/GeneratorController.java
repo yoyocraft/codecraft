@@ -1,5 +1,6 @@
 package com.youyi.craft.controller;
 
+import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.io.FileUtil;
 import cn.hutool.core.util.IdUtil;
 import cn.hutool.core.util.RandomUtil;
@@ -19,7 +20,10 @@ import com.youyi.craft.constant.UserConstant;
 import com.youyi.craft.exception.BusinessException;
 import com.youyi.craft.exception.ThrowUtils;
 import com.youyi.craft.manager.CosManager;
+import com.youyi.craft.manager.LocalFileCacheManager;
 import com.youyi.craft.model.dto.generator.GeneratorAddRequest;
+import com.youyi.craft.model.dto.generator.GeneratorCacheRequest;
+import com.youyi.craft.model.dto.generator.GeneratorDelCacheRequest;
 import com.youyi.craft.model.dto.generator.GeneratorEditRequest;
 import com.youyi.craft.model.dto.generator.GeneratorMakeRequest;
 import com.youyi.craft.model.dto.generator.GeneratorQueryRequest;
@@ -31,6 +35,7 @@ import com.youyi.craft.model.vo.GeneratorVO;
 import com.youyi.craft.service.GeneratorService;
 import com.youyi.craft.service.UserService;
 import io.github.dingxinliang88.maker.generator.main.GeneratorTemplate;
+import io.github.dingxinliang88.maker.generator.main.SrcZipGenerator;
 import io.github.dingxinliang88.maker.generator.main.ZipGenerator;
 import io.github.dingxinliang88.maker.meta.Meta;
 import io.github.dingxinliang88.maker.meta.MetaValidator;
@@ -48,11 +53,13 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
+import java.util.stream.Collectors;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -288,6 +295,12 @@ public class GeneratorController {
             throw new BusinessException(ErrorCode.NO_AUTH_ERROR);
         }
         boolean result = generatorService.updateById(generator);
+        if (result) {
+            String cacheFilePath = LocalFileCacheManager.getCacheFilePath(id,
+                    generatorEditRequest.getDistPath());
+            // 删除缓存
+            FileUtil.del(cacheFilePath);
+        }
         return ResultUtils.success(result);
     }
 
@@ -317,15 +330,26 @@ public class GeneratorController {
         // 追踪事件
         log.info("user {} download {}", loginUser, filepath);
 
+        // 设置响应头
+        response.setContentType("application/octet-stream;charSet=UTF-8");
+        response.setHeader("Content-Disposition", "attachment; filename=" + filepath);
+
+        // 查询本地缓存
+        String zipFilePath = LocalFileCacheManager.getCacheFilePath(id, generator.getDistPath());
+        if (FileUtil.exist(zipFilePath)) {
+            log.info("download generator from cache, id = {}", id);
+            // 从缓存下载
+            Files.copy(Paths.get(zipFilePath), response.getOutputStream());
+            return;
+        }
         COSObjectInputStream cosObjectInput = null;
+
         try {
             COSObject cosObject = cosManager.getObject(filepath);
             cosObjectInput = cosObject.getObjectContent();
             // 处理下载到的流
             byte[] bytes = IOUtils.toByteArray(cosObjectInput);
-            // 设置响应头
-            response.setContentType("application/octet-stream;charSet=UTF-8");
-            response.setHeader("Content-Disposition", "attachment; filename=" + filepath);
+
             // 写入响应
             response.getOutputStream().write(bytes);
             response.getOutputStream().flush();
@@ -349,7 +373,6 @@ public class GeneratorController {
     @PostMapping("/use")
     public void onlineUseGenerator(@RequestBody GeneratorUseRequest generatorUseRequest,
             HttpServletRequest request, HttpServletResponse response) throws IOException {
-
         // 获取用户的输入参数
         Long id = generatorUseRequest.getId();
         Map<String, Object> dataModel = generatorUseRequest.getDataModel();
@@ -368,8 +391,6 @@ public class GeneratorController {
             throw new BusinessException(ErrorCode.NOT_FOUND_ERROR, "产物包不存在");
         }
 
-        // 从对象存储中下载生成器压缩包
-
         // 定义独立的工作空间
         String projectPath = System.getProperty("user.dir");
         String tmpDirPath = String.format("%s/.tmp/use/%s/%s", projectPath, loginUser.getId(), id);
@@ -378,11 +399,19 @@ public class GeneratorController {
         if (!FileUtil.exist(zipFilePath)) {
             FileUtil.touch(zipFilePath);
         }
-        // 下载文件
-        try {
-            cosManager.download(distPath, zipFilePath);
-        } catch (InterruptedException e) {
-            throw new BusinessException(ErrorCode.SYSTEM_ERROR, "生成器下载失败");
+
+        String cacheFilePath = LocalFileCacheManager.getCacheFilePath(id, distPath);
+        // 判断当前要执行的生成器是否在缓存中
+        if (LocalFileCacheManager.isCached(cacheFilePath)) {
+            // 复制
+            FileUtil.copy(cacheFilePath, zipFilePath, true);
+        } else {
+            // 从对象存储中下载生成器压缩包
+            try {
+                cosManager.download(distPath, zipFilePath);
+            } catch (InterruptedException e) {
+                throw new BusinessException(ErrorCode.SYSTEM_ERROR, "生成器下载失败");
+            }
         }
 
         // 解压压缩包，得到脚本文件
@@ -502,15 +531,16 @@ public class GeneratorController {
         String outputPath = tmpDirPath + "/generated/" + meta.getName();
 
         // 调用 maker 制作生成器
-        GeneratorTemplate generatorTemplate = new ZipGenerator();
+        GeneratorTemplate generatorTemplate = new SrcZipGenerator();
         try {
+            // TODO 异步化操作
+            // 将下载好的生成器写回前端，注意是要完整的文件打包，因为用户可能还会修改
             generatorTemplate.doGenerate(meta, outputPath);
         } catch (Exception e) {
             log.error("make generator failed, ", e);
             throw new BusinessException(ErrorCode.SYSTEM_ERROR, "制作失败");
         }
 
-        // 将下载好的生成器写回前端，注意是要完整的文件打包，因为用户可能还会修改
         String zipSuffix = "-dist.zip";
         String zipFileName = meta.getName() + zipSuffix;
         String distZipFilePath = outputPath + zipSuffix;
@@ -521,6 +551,65 @@ public class GeneratorController {
 
         // 清理工作空间
         CompletableFuture.runAsync(() -> FileUtil.del(tmpDirPath));
+    }
+
+    /**
+     * 缓存代码生成器
+     *
+     * @param generatorCacheRequest
+     */
+    @PostMapping("/cache")
+    @AuthCheck(mustRole = UserConstant.ADMIN_ROLE)
+    public void cacheGenerator(@RequestBody GeneratorCacheRequest generatorCacheRequest) {
+        // TODO 设置热点阈值，比如生成器的使用次数，通过定时任务或者每次下载之后判断
+        if (Objects.isNull(generatorCacheRequest) || Objects.isNull(generatorCacheRequest.getId())
+                || generatorCacheRequest.getId() <= 0) {
+            throw new BusinessException(ErrorCode.PARAMS_ERROR);
+        }
+        Long id = generatorCacheRequest.getId();
+
+        Generator generator = generatorService.getById(id);
+        if (Objects.isNull(generator)) {
+            throw new BusinessException(ErrorCode.NOT_FOUND_ERROR);
+        }
+        String distPath = generator.getDistPath();
+        if (StrUtil.isBlank(distPath)) {
+            throw new BusinessException(ErrorCode.NOT_FOUND_ERROR, "产物包不存在");
+        }
+
+        String zipFilePath = LocalFileCacheManager.getCacheFilePath(id, distPath);
+
+        if (FileUtil.exist(zipFilePath)) {
+            FileUtil.del(zipFilePath);
+        }
+        FileUtil.touch(zipFilePath);
+
+        try {
+            cosManager.download(distPath, zipFilePath);
+            // 给缓存设置过期时间
+            LocalFileCacheManager.updateCacheExpiration(zipFilePath);
+        } catch (InterruptedException e) {
+            throw new BusinessException(ErrorCode.SYSTEM_ERROR, "生成器下载失败");
+        }
+    }
+
+    @DeleteMapping("/del/cache")
+    @AuthCheck(mustRole = UserConstant.ADMIN_ROLE)
+    public void delCache(@RequestBody GeneratorDelCacheRequest generatorDelCacheRequest) {
+        if (Objects.isNull(generatorDelCacheRequest) || CollUtil.isEmpty(
+                generatorDelCacheRequest.getIds())) {
+            LocalFileCacheManager.clearExpireCache();
+            return;
+        }
+
+        List<Long> ids = generatorDelCacheRequest.getIds();
+        List<Generator> generatorList = generatorService.getBatchByIds(ids);
+        List<String> cacheKeyList = generatorList.stream()
+                .filter(generator -> StrUtil.isNotBlank(generator.getDistPath()))
+                .map(generator -> LocalFileCacheManager.getCacheFilePath(generator.getId(),
+                        generator.getDistPath()))
+                .collect(Collectors.toList());
+        LocalFileCacheManager.clearCache(cacheKeyList);
     }
 
 }
