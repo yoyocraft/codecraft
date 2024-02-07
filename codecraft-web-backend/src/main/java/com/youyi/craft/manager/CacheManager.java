@@ -1,13 +1,14 @@
 package com.youyi.craft.manager;
 
-import cn.hutool.core.util.StrUtil;
+import cn.hutool.core.codec.Base64Encoder;
+import cn.hutool.json.JSONUtil;
 import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
+import com.youyi.craft.model.dto.generator.GeneratorQueryRequest;
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 import javax.annotation.Resource;
 import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Component;
 
 /**
@@ -68,5 +69,17 @@ public class CacheManager {
         redisTemplate.delete(key);
     }
 
+    /**
+     * 获得缓存key
+     *
+     * @param generatorQueryRequest
+     * @return
+     */
+    public String getPageCacheKey(GeneratorQueryRequest generatorQueryRequest) {
+        String jsonStr = JSONUtil.toJsonStr(generatorQueryRequest);
+        // 请求参数编码
+        String base64 = Base64Encoder.encode(jsonStr);
+        return "generator:page:" + base64;
+    }
 
 }

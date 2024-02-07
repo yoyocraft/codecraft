@@ -1,8 +1,6 @@
 package com.youyi.craft.manager;
 
 import com.qcloud.cos.COSClient;
-import com.qcloud.cos.exception.CosClientException;
-import com.qcloud.cos.exception.CosServiceException;
 import com.qcloud.cos.model.COSObject;
 import com.qcloud.cos.model.GetObjectRequest;
 import com.qcloud.cos.model.PutObjectRequest;

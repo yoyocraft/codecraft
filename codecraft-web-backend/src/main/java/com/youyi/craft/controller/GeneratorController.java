@@ -1,14 +1,11 @@
 package com.youyi.craft.controller;
 
-import cn.hutool.core.codec.Base64Encoder;
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.io.FileUtil;
-import cn.hutool.core.lang.TypeReference;
 import cn.hutool.core.util.IdUtil;
 import cn.hutool.core.util.RandomUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.core.util.ZipUtil;
-import cn.hutool.crypto.digest.DigestUtil;
 import cn.hutool.json.JSONUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -41,7 +38,6 @@ import com.youyi.craft.service.GeneratorService;
 import com.youyi.craft.service.UserService;
 import io.github.dingxinliang88.maker.generator.main.GeneratorTemplate;
 import io.github.dingxinliang88.maker.generator.main.SrcZipGenerator;
-import io.github.dingxinliang88.maker.generator.main.ZipGenerator;
 import io.github.dingxinliang88.maker.meta.Meta;
 import io.github.dingxinliang88.maker.meta.MetaValidator;
 import java.io.BufferedReader;
@@ -58,17 +54,12 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
-import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.data.redis.core.StringRedisTemplate;
-import org.springframework.data.redis.core.ValueOperations;
-import org.springframework.util.StopWatch;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -241,20 +232,10 @@ public class GeneratorController {
         // 限制爬虫
         ThrowUtils.throwIf(size > 20, ErrorCode.PARAMS_ERROR);
 
-        StopWatch stopWatch = new StopWatch("分页查询生成器");
-        stopWatch.start("查询生成器");
         Page<Generator> generatorPage = generatorService.page(new Page<>(current, size),
                 generatorService.getQueryWrapper(generatorQueryRequest));
-        stopWatch.stop();
-
-        stopWatch.start("关联查询信息");
-        Page<GeneratorVO> generatorVOPage = generatorService.getGeneratorVOPage(generatorPage,
-                request);
-        stopWatch.stop();
-
-        // 打印测试结果
-        System.out.println(stopWatch.prettyPrint());
-        return ResultUtils.success(generatorVOPage);
+        return ResultUtils.success(generatorService.getGeneratorVOPage(generatorPage,
+                request));
     }
 
     /**
@@ -274,7 +255,7 @@ public class GeneratorController {
         ThrowUtils.throwIf(size > 20, ErrorCode.PARAMS_ERROR);
 
         // 优先从缓存获取
-        String cacheKey = getPageCacheKey(generatorQueryRequest);
+        String cacheKey = cacheManager.getPageCacheKey(generatorQueryRequest);
         Object cache = cacheManager.get(cacheKey);
         if (Objects.nonNull(cache)) {
             //noinspection unchecked
@@ -505,8 +486,7 @@ public class GeneratorController {
         // 构造命令
         File scriptDir = scriptFile.getParentFile();
         String scriptAbsolutePath = scriptFile.getAbsolutePath().replace("\\", "/");
-        String[] commands = new String[]{scriptAbsolutePath, "json-generate",
-                "--file=" + dataModelFilePath};
+        String[] commands = {scriptAbsolutePath, "json-generate", "--file=" + dataModelFilePath};
 
         // 执行命令
         ProcessBuilder processBuilder = new ProcessBuilder(commands);
@@ -669,19 +649,6 @@ public class GeneratorController {
                         generator.getDistPath()))
                 .collect(Collectors.toList());
         LocalFileCacheManager.clearCache(cacheKeyList);
-    }
-
-    /**
-     * 获得缓存key
-     *
-     * @param generatorQueryRequest
-     * @return
-     */
-    private static String getPageCacheKey(GeneratorQueryRequest generatorQueryRequest) {
-        String jsonStr = JSONUtil.toJsonStr(generatorQueryRequest);
-        // 请求参数编码
-        String base64 = Base64Encoder.encode(jsonStr);
-        return "generator:page:" + base64;
     }
 
 }

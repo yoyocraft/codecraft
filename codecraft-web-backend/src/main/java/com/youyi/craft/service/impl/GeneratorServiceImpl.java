@@ -8,18 +8,16 @@ import com.youyi.craft.common.ErrorCode;
 import com.youyi.craft.constant.CommonConstant;
 import com.youyi.craft.exception.BusinessException;
 import com.youyi.craft.exception.ThrowUtils;
+import com.youyi.craft.mapper.GeneratorMapper;
 import com.youyi.craft.model.dto.generator.GeneratorQueryRequest;
 import com.youyi.craft.model.entity.Generator;
 import com.youyi.craft.model.entity.User;
 import com.youyi.craft.model.vo.GeneratorVO;
 import com.youyi.craft.model.vo.UserVO;
 import com.youyi.craft.service.GeneratorService;
-import com.youyi.craft.mapper.GeneratorMapper;
 import com.youyi.craft.service.UserService;
 import com.youyi.craft.utils.SqlUtils;
-import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -29,7 +27,6 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 /**
