@@ -1,11 +1,14 @@
 package com.youyi.craft.controller;
 
+import cn.hutool.core.codec.Base64Encoder;
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.io.FileUtil;
+import cn.hutool.core.lang.TypeReference;
 import cn.hutool.core.util.IdUtil;
 import cn.hutool.core.util.RandomUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.core.util.ZipUtil;
+import cn.hutool.crypto.digest.DigestUtil;
 import cn.hutool.json.JSONUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -54,12 +57,16 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.StringRedisTemplate;
+import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.util.StopWatch;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -86,6 +93,8 @@ public class GeneratorController {
 
     @Resource
     private CosManager cosManager;
+    @Resource
+    private StringRedisTemplate stringRedisTemplate;
 
     // region 增删改查
 
@@ -263,14 +272,26 @@ public class GeneratorController {
         // 限制爬虫
         ThrowUtils.throwIf(size > 20, ErrorCode.PARAMS_ERROR);
 
+        // 优先从缓存获取
+        String cacheKey = getPageCacheKey(generatorQueryRequest);
+        ValueOperations<String, String> valueOperations = stringRedisTemplate.opsForValue();
+        String cache = valueOperations.get(cacheKey);
+        if (StrUtil.isNotBlank(cache)) {
+            return ResultUtils.success(JSONUtil.toBean(cache,
+                    new TypeReference<Page<GeneratorVO>>() {
+                    }, false));
+        }
         QueryWrapper<Generator> queryWrapper = generatorService.getQueryWrapper(
                 generatorQueryRequest);
         queryWrapper.select("id", "name", "description", "author", "tags",
                 "picture", "userId", "createTime", "updateTime");
-        Page<Generator> generatorPage = generatorService.page(new Page<>(current, size),
-                queryWrapper);
-        return ResultUtils.success(generatorService.getGeneratorVOPage(generatorPage,
-                request));
+        Page<GeneratorVO> generatorVOPage = generatorService.getGeneratorVOPage(
+                generatorService.page(new Page<>(current, size), queryWrapper),
+                request);
+        // 写入缓存
+        valueOperations
+                .set(cacheKey, JSONUtil.toJsonStr(generatorVOPage), 100, TimeUnit.MINUTES);
+        return ResultUtils.success(generatorVOPage);
     }
 
     /**
@@ -650,6 +671,19 @@ public class GeneratorController {
                         generator.getDistPath()))
                 .collect(Collectors.toList());
         LocalFileCacheManager.clearCache(cacheKeyList);
+    }
+
+    /**
+     * 获得缓存key
+     *
+     * @param generatorQueryRequest
+     * @return
+     */
+    private static String getPageCacheKey(GeneratorQueryRequest generatorQueryRequest) {
+        String jsonStr = JSONUtil.toJsonStr(generatorQueryRequest);
+        // 请求参数编码
+        String base64 = Base64Encoder.encode(jsonStr);
+        return "generator:page:" + base64;
     }
 
 }

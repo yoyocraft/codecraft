@@ -13,7 +13,7 @@ import org.springframework.util.DigestUtils;
  *
  * @author <a href="https://github.com/dingxinliang88">youyi</a>
  */
-@SpringBootApplication(exclude = {RedisAutoConfiguration.class})
+@SpringBootApplication
 @MapperScan("com.youyi.craft.mapper")
 @EnableAspectJAutoProxy(proxyTargetClass = true, exposeProxy = true)
 public class MainApplication {
