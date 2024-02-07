@@ -48,5 +48,11 @@ public interface GeneratorService extends IService<Generator> {
      */
     Page<GeneratorVO> getGeneratorVOPage(Page<Generator> generatorPage, HttpServletRequest request);
 
+    /**
+     * 批量获取
+     *
+     * @param idList
+     * @return
+     */
     List<Generator> getBatchByIds(List<Long> idList);
 }

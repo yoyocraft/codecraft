@@ -7,6 +7,7 @@ import cn.hutool.core.util.RandomUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.core.util.ZipUtil;
 import cn.hutool.json.JSONUtil;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.qcloud.cos.model.COSObject;
 import com.qcloud.cos.model.COSObjectInputStream;
@@ -59,6 +60,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
+import org.springframework.util.StopWatch;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -228,9 +230,47 @@ public class GeneratorController {
         long size = generatorQueryRequest.getPageSize();
         // 限制爬虫
         ThrowUtils.throwIf(size > 20, ErrorCode.PARAMS_ERROR);
+
+        StopWatch stopWatch = new StopWatch("分页查询生成器");
+        stopWatch.start("查询生成器");
         Page<Generator> generatorPage = generatorService.page(new Page<>(current, size),
                 generatorService.getQueryWrapper(generatorQueryRequest));
-        return ResultUtils.success(generatorService.getGeneratorVOPage(generatorPage, request));
+        stopWatch.stop();
+
+        stopWatch.start("关联查询信息");
+        Page<GeneratorVO> generatorVOPage = generatorService.getGeneratorVOPage(generatorPage,
+                request);
+        stopWatch.stop();
+
+        // 打印测试结果
+        System.out.println(stopWatch.prettyPrint());
+        return ResultUtils.success(generatorVOPage);
+    }
+
+    /**
+     * 分页获取列表（封装类）
+     *
+     * @param generatorQueryRequest
+     * @param request
+     * @return
+     */
+    @PostMapping("/list/page/vo/v2")
+    public BaseResponse<Page<GeneratorVO>> listGeneratorVOByPageSimplifyData(
+            @RequestBody GeneratorQueryRequest generatorQueryRequest,
+            HttpServletRequest request) {
+        long current = generatorQueryRequest.getCurrent();
+        long size = generatorQueryRequest.getPageSize();
+        // 限制爬虫
+        ThrowUtils.throwIf(size > 20, ErrorCode.PARAMS_ERROR);
+
+        QueryWrapper<Generator> queryWrapper = generatorService.getQueryWrapper(
+                generatorQueryRequest);
+        queryWrapper.select("id", "name", "description", "author", "tags",
+                "picture", "userId", "createTime", "updateTime");
+        Page<Generator> generatorPage = generatorService.page(new Page<>(current, size),
+                queryWrapper);
+        return ResultUtils.success(generatorService.getGeneratorVOPage(generatorPage,
+                request));
     }
 
     /**
