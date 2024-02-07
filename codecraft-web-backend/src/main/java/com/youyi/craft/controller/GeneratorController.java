@@ -23,6 +23,7 @@ import com.youyi.craft.common.ResultUtils;
 import com.youyi.craft.constant.UserConstant;
 import com.youyi.craft.exception.BusinessException;
 import com.youyi.craft.exception.ThrowUtils;
+import com.youyi.craft.manager.CacheManager;
 import com.youyi.craft.manager.CosManager;
 import com.youyi.craft.manager.LocalFileCacheManager;
 import com.youyi.craft.model.dto.generator.GeneratorAddRequest;
@@ -94,7 +95,7 @@ public class GeneratorController {
     @Resource
     private CosManager cosManager;
     @Resource
-    private StringRedisTemplate stringRedisTemplate;
+    private CacheManager cacheManager;
 
     // region 增删改查
 
@@ -274,12 +275,10 @@ public class GeneratorController {
 
         // 优先从缓存获取
         String cacheKey = getPageCacheKey(generatorQueryRequest);
-        ValueOperations<String, String> valueOperations = stringRedisTemplate.opsForValue();
-        String cache = valueOperations.get(cacheKey);
-        if (StrUtil.isNotBlank(cache)) {
-            return ResultUtils.success(JSONUtil.toBean(cache,
-                    new TypeReference<Page<GeneratorVO>>() {
-                    }, false));
+        Object cache = cacheManager.get(cacheKey);
+        if (Objects.nonNull(cache)) {
+            //noinspection unchecked
+            return ResultUtils.success((Page<GeneratorVO>) cache);
         }
         QueryWrapper<Generator> queryWrapper = generatorService.getQueryWrapper(
                 generatorQueryRequest);
@@ -289,8 +288,7 @@ public class GeneratorController {
                 generatorService.page(new Page<>(current, size), queryWrapper),
                 request);
         // 写入缓存
-        valueOperations
-                .set(cacheKey, JSONUtil.toJsonStr(generatorVOPage), 100, TimeUnit.MINUTES);
+        cacheManager.put(cacheKey, generatorVOPage);
         return ResultUtils.success(generatorVOPage);
     }
 
