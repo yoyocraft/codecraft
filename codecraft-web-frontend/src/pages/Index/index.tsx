@@ -1,4 +1,4 @@
-import { listGeneratorVoByPageUsingPost } from '@/services/backend/generatorController';
+import { listGeneratorVoByPageSimplifyDataUsingPost } from '@/services/backend/generatorController';
 import { UserOutlined } from '@ant-design/icons';
 import { PageContainer, ProFormSelect, ProFormText, QueryFilter } from '@ant-design/pro-components';
 import '@umijs/max';
@@ -12,7 +12,7 @@ import React, { useEffect, useState } from 'react';
  */
 const DEFAULT_PAGE_PARAMS: PageRequest = {
   current: 1,
-  pageSize: 4,
+  pageSize: 12,
   sortField: 'updateTime',
   sortOrder: 'descend',
 };
@@ -29,7 +29,8 @@ const IndexPage: React.FC = () => {
   const doSearch = async () => {
     setLoading(true);
     try {
-      const res = await listGeneratorVoByPageUsingPost(searchParams);
+      // const res = await listGeneratorVoByPageUsingPost(searchParams);
+      const res = await listGeneratorVoByPageSimplifyDataUsingPost(searchParams);
       setDataList(res.data?.records ?? []);
       setTotal(Number(res.data?.total) ?? 0);
     } catch (error: any) {
@@ -139,6 +140,7 @@ const IndexPage: React.FC = () => {
           current: searchParams.current,
           pageSize: searchParams.pageSize,
           total: total,
+          showSizeChanger: false,
           onChange(current: number, pageSize: number) {
             setSearchParams({
               ...searchParams,

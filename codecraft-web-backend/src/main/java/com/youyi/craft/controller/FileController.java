@@ -1,17 +1,13 @@
 package com.youyi.craft.controller;
 
 import cn.hutool.core.io.FileUtil;
-import com.qcloud.cos.exception.CosClientException;
-import com.qcloud.cos.exception.CosServiceException;
 import com.qcloud.cos.model.COSObject;
 import com.qcloud.cos.model.COSObjectInputStream;
-import com.qcloud.cos.model.GetObjectRequest;
 import com.qcloud.cos.utils.IOUtils;
 import com.youyi.craft.annotation.AuthCheck;
 import com.youyi.craft.common.BaseResponse;
 import com.youyi.craft.common.ErrorCode;
 import com.youyi.craft.common.ResultUtils;
-import com.youyi.craft.constant.FileConstant;
 import com.youyi.craft.constant.UserConstant;
 import com.youyi.craft.exception.BusinessException;
 import com.youyi.craft.manager.CosManager;
@@ -22,7 +18,6 @@ import com.youyi.craft.service.UserService;
 import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
-import java.util.Objects;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -173,9 +168,9 @@ public class FileController {
         long fileSize = multipartFile.getSize();
         // 文件后缀
         String fileSuffix = FileUtil.getSuffix(multipartFile.getOriginalFilename());
-        final long ONE_MB = 1024 * 1024L;
+        final long oneMB = 1024 * 1024L;
         if (FileUploadBizEnum.USER_AVATAR.equals(fileUploadBizEnum)) {
-            if (fileSize > ONE_MB) {
+            if (fileSize > oneMB) {
                 throw new BusinessException(ErrorCode.PARAMS_ERROR, "文件大小不能超过 1M");
             }
             if (!Arrays.asList("jpeg", "jpg", "svg", "png", "webp").contains(fileSuffix)) {

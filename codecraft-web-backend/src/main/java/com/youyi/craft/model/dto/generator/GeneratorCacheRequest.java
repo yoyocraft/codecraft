@@ -1,7 +1,6 @@
 package com.youyi.craft.model.dto.generator;
 
 import java.io.Serializable;
-import java.util.Map;
 import lombok.Data;
 
 /**

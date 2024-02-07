@@ -7,6 +7,7 @@ import cn.hutool.core.util.RandomUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.core.util.ZipUtil;
 import cn.hutool.json.JSONUtil;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.qcloud.cos.model.COSObject;
 import com.qcloud.cos.model.COSObjectInputStream;
@@ -19,6 +20,7 @@ import com.youyi.craft.common.ResultUtils;
 import com.youyi.craft.constant.UserConstant;
 import com.youyi.craft.exception.BusinessException;
 import com.youyi.craft.exception.ThrowUtils;
+import com.youyi.craft.manager.CacheManager;
 import com.youyi.craft.manager.CosManager;
 import com.youyi.craft.manager.LocalFileCacheManager;
 import com.youyi.craft.model.dto.generator.GeneratorAddRequest;
@@ -36,7 +38,6 @@ import com.youyi.craft.service.GeneratorService;
 import com.youyi.craft.service.UserService;
 import io.github.dingxinliang88.maker.generator.main.GeneratorTemplate;
 import io.github.dingxinliang88.maker.generator.main.SrcZipGenerator;
-import io.github.dingxinliang88.maker.generator.main.ZipGenerator;
 import io.github.dingxinliang88.maker.meta.Meta;
 import io.github.dingxinliang88.maker.meta.MetaValidator;
 import java.io.BufferedReader;
@@ -84,6 +85,8 @@ public class GeneratorController {
 
     @Resource
     private CosManager cosManager;
+    @Resource
+    private CacheManager cacheManager;
 
     // region 增删改查
 
@@ -228,9 +231,46 @@ public class GeneratorController {
         long size = generatorQueryRequest.getPageSize();
         // 限制爬虫
         ThrowUtils.throwIf(size > 20, ErrorCode.PARAMS_ERROR);
+
         Page<Generator> generatorPage = generatorService.page(new Page<>(current, size),
                 generatorService.getQueryWrapper(generatorQueryRequest));
-        return ResultUtils.success(generatorService.getGeneratorVOPage(generatorPage, request));
+        return ResultUtils.success(generatorService.getGeneratorVOPage(generatorPage,
+                request));
+    }
+
+    /**
+     * 分页获取列表（封装类）
+     *
+     * @param generatorQueryRequest
+     * @param request
+     * @return
+     */
+    @PostMapping("/list/page/vo/v2")
+    public BaseResponse<Page<GeneratorVO>> listGeneratorVOByPageSimplifyData(
+            @RequestBody GeneratorQueryRequest generatorQueryRequest,
+            HttpServletRequest request) {
+        long current = generatorQueryRequest.getCurrent();
+        long size = generatorQueryRequest.getPageSize();
+        // 限制爬虫
+        ThrowUtils.throwIf(size > 20, ErrorCode.PARAMS_ERROR);
+
+        // 优先从缓存获取
+        String cacheKey = cacheManager.getPageCacheKey(generatorQueryRequest);
+        Object cache = cacheManager.get(cacheKey);
+        if (Objects.nonNull(cache)) {
+            //noinspection unchecked
+            return ResultUtils.success((Page<GeneratorVO>) cache);
+        }
+        QueryWrapper<Generator> queryWrapper = generatorService.getQueryWrapper(
+                generatorQueryRequest);
+        queryWrapper.select("id", "name", "description", "author", "tags",
+                "picture", "userId", "createTime", "updateTime");
+        Page<GeneratorVO> generatorVOPage = generatorService.getGeneratorVOPage(
+                generatorService.page(new Page<>(current, size), queryWrapper),
+                request);
+        // 写入缓存
+        cacheManager.put(cacheKey, generatorVOPage);
+        return ResultUtils.success(generatorVOPage);
     }
 
     /**
@@ -446,8 +486,7 @@ public class GeneratorController {
         // 构造命令
         File scriptDir = scriptFile.getParentFile();
         String scriptAbsolutePath = scriptFile.getAbsolutePath().replace("\\", "/");
-        String[] commands = new String[]{scriptAbsolutePath, "json-generate",
-                "--file=" + dataModelFilePath};
+        String[] commands = {scriptAbsolutePath, "json-generate", "--file=" + dataModelFilePath};
 
         // 执行命令
         ProcessBuilder processBuilder = new ProcessBuilder(commands);

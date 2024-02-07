@@ -17,6 +17,36 @@ export async function addGeneratorUsingPost(
   });
 }
 
+/** cacheGenerator POST /api/generator/cache */
+export async function cacheGeneratorUsingPost(
+  body: API.GeneratorCacheRequest,
+  options?: { [key: string]: any },
+) {
+  return request<any>('/api/generator/cache', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    data: body,
+    ...(options || {}),
+  });
+}
+
+/** delCache DELETE /api/generator/del/cache */
+export async function delCacheUsingDelete(
+  body: API.GeneratorDelCacheRequest,
+  options?: { [key: string]: any },
+) {
+  return request<any>('/api/generator/del/cache', {
+    method: 'DELETE',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    data: body,
+    ...(options || {}),
+  });
+}
+
 /** deleteGenerator POST /api/generator/delete */
 export async function deleteGeneratorUsingPost(
   body: API.DeleteRequest,
@@ -98,6 +128,21 @@ export async function listGeneratorVoByPageUsingPost(
   options?: { [key: string]: any },
 ) {
   return request<API.BaseResponsePageGeneratorVO_>('/api/generator/list/page/vo', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    data: body,
+    ...(options || {}),
+  });
+}
+
+/** listGeneratorVOByPageSimplifyData POST /api/generator/list/page/vo/v2 */
+export async function listGeneratorVoByPageSimplifyDataUsingPost(
+  body: API.GeneratorQueryRequest,
+  options?: { [key: string]: any },
+) {
+  return request<API.BaseResponsePageGeneratorVO_>('/api/generator/list/page/vo/v2', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',

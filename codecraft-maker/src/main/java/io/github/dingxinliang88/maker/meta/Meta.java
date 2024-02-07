@@ -1,5 +1,6 @@
 package io.github.dingxinliang88.maker.meta;
 
+import java.io.Serializable;
 import java.util.List;
 
 /**
@@ -7,7 +8,7 @@ import java.util.List;
  */
 @lombok.NoArgsConstructor
 @lombok.Data
-public class Meta {
+public class Meta implements Serializable {
 
     private String name;
     private String description;
@@ -21,7 +22,7 @@ public class Meta {
 
     @lombok.NoArgsConstructor
     @lombok.Data
-    public static class FileConfig {
+    public static class FileConfig implements Serializable {
 
         private String sourceRootPath;
         private String inputRootPath;
@@ -31,7 +32,7 @@ public class Meta {
 
         @lombok.NoArgsConstructor
         @lombok.Data
-        public static class FileInfo {
+        public static class FileInfo implements Serializable {
 
             private String inputPath;
             private String outputPath;
@@ -48,13 +49,13 @@ public class Meta {
 
     @lombok.NoArgsConstructor
     @lombok.Data
-    public static class ModelConfig {
+    public static class ModelConfig implements Serializable {
 
         private List<ModelInfo> models;
 
         @lombok.NoArgsConstructor
         @lombok.Data
-        public static class ModelInfo {
+        public static class ModelInfo implements Serializable {
 
             private String fieldName;
             private String type;
