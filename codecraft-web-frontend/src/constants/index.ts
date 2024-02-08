@@ -6,7 +6,7 @@ export const BACKEND_HOST_LOCAL = 'http://localhost:8120';
 /**
  * 线上后端地址
  */
-export const BACKEND_HOST_PROD = 'https://youyi.icu';
+export const BACKEND_HOST_PROD = 'http://101.37.12.185';
 
 /**
  * COS 访问地址
