@@ -184,7 +184,7 @@ public abstract class GeneratorTemplate {
 
     protected void versionControl(Meta meta, String outputPath)
             throws IOException, InterruptedException {
-        if (Objects.nonNull(meta.getVersionControl()) && !meta.getVersionControl()) {
+        if (Objects.isNull(meta.getVersionControl()) || !meta.getVersionControl()) {
             return;
         }
         VersionControlGenerator.doGenerate(outputPath);

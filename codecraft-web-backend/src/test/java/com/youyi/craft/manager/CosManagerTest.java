@@ -1,6 +1,5 @@
 package com.youyi.craft.manager;
 
-import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.Arrays;
 import javax.annotation.Resource;

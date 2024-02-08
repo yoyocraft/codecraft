@@ -484,11 +484,13 @@ public class GeneratorController {
         }
 
         // 构造命令
-        File scriptDir = scriptFile.getParentFile();
         String scriptAbsolutePath = scriptFile.getAbsolutePath().replace("\\", "/");
         String[] commands = {scriptAbsolutePath, "json-generate", "--file=" + dataModelFilePath};
 
+//        log.info("scriptAbsolutePath: {}", scriptAbsolutePath);
+//        log.info("dataModelFilePath: {}", dataModelFilePath);
         // 执行命令
+        File scriptDir = scriptFile.getParentFile();
         ProcessBuilder processBuilder = new ProcessBuilder(commands);
         processBuilder.directory(scriptDir);
 
