@@ -20,6 +20,12 @@ spring:
     url: jdbc:mysql://localhost:3306/code_craft
     username: root
     password: 12345678
+  # Redis
+  redis:
+    database: 2
+    host: localhost
+    port: 6379
+    timeout: 5000
   # 文件上传
   servlet:
     multipart:
@@ -62,3 +68,24 @@ knife4j:
         api-rule: package
         api-rule-resources:
           - com.youyi.craft.controller
+
+# xxl-job
+xxl:
+  job:
+    admin:
+      # xxl-job admin address list, such as "http://address" or "http://address01,http://address02"
+      addresses: http://127.0.0.1:8080/xxl-job-admin
+    # xxl-job, access token
+    accessToken: default_token
+    executor:
+      # xxl-job executor appname
+      appname: codecraft-web-backend
+      # xxl-job executor registry-address: default use address to registry , otherwise use ip:port if address is null
+      address:
+      # xxl-job executor server-info
+      ip:
+      port: 9999
+      # xxl-job executor log-path
+      logpath: logs/jobhandler
+      # xxl-job executor log-retention-days
+      logretentiondays: 30
