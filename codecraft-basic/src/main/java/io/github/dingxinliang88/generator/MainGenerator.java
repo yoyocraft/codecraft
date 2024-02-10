@@ -23,20 +23,25 @@ public class MainGenerator {
         String projectPath = System.getProperty("user.dir");
         File parentFile = new File(projectPath).getParentFile();
         // 输入路径
-        final String src = new File(parentFile, "sample/acm-template").getAbsolutePath();
+        final String inputPath = new File(parentFile, "sample/acm-template").getAbsolutePath();
+        String outputPath = projectPath + File.separator + ".tmp";
         // 输出路径：输出到项目的根路径
-        StaticGenerator.copyFileByHutool(src, projectPath);
+        StaticGenerator.copyFileByHutool(inputPath, outputPath);
 
-        final String dynamicFileSrc = projectPath + File.separator + "src/main/resources/templates/MainTemplate.java.ftl";
-        String dynamicFileDest = projectPath + File.separator + "acm-template/src/com/juzi/acm/MainTemplate.java";
-        DynamicGenerator.doGenerate(dynamicFileSrc, dynamicFileDest, model);
+        // 动态模板生成
+        String inputSourceRoot = "";
+        final String inputDynamicFilePath =
+                inputSourceRoot + File.separator + "templates/MainTemplate.java.ftl";
+        String outputDynamicFilePath = projectPath + File.separator
+                + ".tmp/acm-template/src/io/github/dingxinliang88/acm/MainTemplate.java";
+        DynamicGenerator.doGenerate(inputDynamicFilePath, outputDynamicFilePath, model);
     }
 
     public static void main(String[] args) throws TemplateException, IOException {
         MainTemplateModel dataModel = new MainTemplateModel();
         dataModel.setLoop(true);
-        dataModel.setAuthor("youyi");
-        dataModel.setOutputText("Sum：");
+        dataModel.setAuthor("youyichannel");
+        dataModel.setOutputText("Sum ==> ");
         doGenerate(dataModel);
     }
 }
