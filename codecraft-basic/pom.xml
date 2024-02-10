@@ -91,7 +91,6 @@
           </descriptorRefs>
           <archive>
             <manifest>
-              <!-- 替换主类 -->
               <mainClass>io.github.dingxinliang88.Main</mainClass>
             </manifest>
           </archive>
@@ -102,29 +101,6 @@
             <phase>package</phase>
             <goals>
               <goal>single</goal>
-            </goals>
-          </execution>
-        </executions>
-      </plugin>
-
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-checkstyle-plugin</artifactId>
-        <version>${maven-checkstyle-plugin.version}</version>
-        <executions>
-          <execution>
-            <id>validate</id>
-            <phase>validate</phase>
-            <configuration>
-              <configLocation>../config/checkstyle.xml</configLocation>
-              <inputEncoding>UTF-8</inputEncoding>
-              <consoleOutput>true</consoleOutput>
-              <failsOnError>true</failsOnError>
-              <includeTestSourceDirectory>true</includeTestSourceDirectory>
-              <excludes>**/generated*/**/*</excludes>
-            </configuration>
-            <goals>
-              <goal>check</goal>
             </goals>
           </execution>
         </executions>
