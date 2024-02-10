@@ -1,4 +1,4 @@
-package com.juzi.acm;
+package io.github.dingxinliang88.acm;
 
 import java.util.*;
 
@@ -33,7 +33,6 @@ public class MainTemplate {
     <#if loop>
         }
     </#if>
-
         sc.close();
     }
 }

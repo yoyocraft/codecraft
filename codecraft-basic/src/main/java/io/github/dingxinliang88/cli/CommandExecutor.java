@@ -6,8 +6,6 @@ import io.github.dingxinliang88.cli.command.ListCommand;
 import io.github.dingxinliang88.cli.valid.CommandPreParser;
 import picocli.CommandLine;
 
-import java.util.Arrays;
-
 
 /**
  * @author <a href="https://github.com/dingxinliang88">youyi</a>
@@ -40,7 +38,6 @@ public class CommandExecutor implements Runnable {
      */
     public Integer doExecute(String[] args) {
         args = commandPreParser.parse(args);
-        System.out.println(Arrays.toString(args));
         return commandLine.execute(args);
     }
 

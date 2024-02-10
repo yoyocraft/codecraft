@@ -1,14 +1,17 @@
 package generator;
 
+import io.github.dingxinliang88.cli.CommandRegistry;
 import io.github.dingxinliang88.cli.command.ConfigCommand;
 import io.github.dingxinliang88.cli.command.GenerateCommand;
 import io.github.dingxinliang88.cli.command.ListCommand;
-import io.github.dingxinliang88.cli.utils.CommandUtils;
+import java.lang.reflect.Field;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Optional;
 import org.junit.Test;
 import picocli.CommandLine;
-
-import java.lang.reflect.Field;
-import java.util.*;
 
 /**
  * @author <a href="https://github.com/dingxinliang88">youyi</a>
@@ -28,7 +31,7 @@ public class RequiredTest {
         }
     }
 
-    static final Map<String, Class<?>> COMMAND_MAP = new HashMap<String, Class<?>>() {{
+    static final Map<String, Class<?>> COMMAND_MAP = new HashMap<>() {{
         put("generate", GenerateCommand.class);
         put("list", ListCommand.class);
         put("config", ConfigCommand.class);
@@ -63,7 +66,7 @@ public class RequiredTest {
 
     @Test
     public void testCommandUtils() {
-        Optional<Class<?>> commandOpt = CommandUtils.getCommandClass("generate");
+        Optional<Class<?>> commandOpt = CommandRegistry.getCommandClass("generate");
         if (commandOpt.isPresent()) {
             Class<?> commandClass = commandOpt.get();
             System.out.println(commandClass);

@@ -1,6 +1,6 @@
 package io.github.dingxinliang88.cli.valid;
 
-import io.github.dingxinliang88.cli.utils.CommandUtils;
+import io.github.dingxinliang88.cli.CommandRegistry;
 import picocli.CommandLine;
 
 import java.lang.reflect.Field;
@@ -18,10 +18,11 @@ public class CommandPreParser {
             return args;
         }
         String mainCommand = args[0];
-        Optional<Class<?>> commandClassOpt = CommandUtils.getCommandClass(mainCommand);
-        if (!commandClassOpt.isPresent()) {
+        Optional<Class<?>> commandClassOpt = CommandRegistry.getCommandClass(mainCommand);
+        if (commandClassOpt.isEmpty()) {
             return args;
         }
+        // 保证命令的顺序
         Set<String> argsSet = new LinkedHashSet<>(Arrays.asList(args));
 
         for (Field field : commandClassOpt.get().getDeclaredFields()) {

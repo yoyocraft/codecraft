@@ -1,2 +1,2 @@
 @echo off
-java -jar target/codecraft-basic-1.0-jar-with-dependencies.jar %*
+java -jar target/codecraft-basic-1.0.0-jar-with-dependencies.jar %*

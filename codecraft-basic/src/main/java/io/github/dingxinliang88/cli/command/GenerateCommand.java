@@ -3,15 +3,21 @@ package io.github.dingxinliang88.cli.command;
 import cn.hutool.core.bean.BeanUtil;
 import io.github.dingxinliang88.generator.MainGenerator;
 import io.github.dingxinliang88.model.MainTemplateModel;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import picocli.CommandLine;
 
 import java.util.concurrent.Callable;
 
 /**
+ * 生成代码命令
+ *
  * @author <a href="https://github.com/dingxinliang88">youyi</a>
  */
 @CommandLine.Command(name = "generate", description = "generate code", mixinStandardHelpOptions = true)
 public class GenerateCommand implements Callable<Integer> {
+
+    private static final Logger logger = LoggerFactory.getLogger(GenerateCommand.class);
 
     /**
      * 是否生成循环
@@ -51,7 +57,7 @@ public class GenerateCommand implements Callable<Integer> {
     public Integer call() throws Exception {
         MainTemplateModel mainTemplateModel = new MainTemplateModel();
         BeanUtil.copyProperties(this, mainTemplateModel);
-        System.out.println("配置信息 = " + mainTemplateModel);
+        logger.info("配置信息 = {}", mainTemplateModel);
         MainGenerator.doGenerate(mainTemplateModel);
         return 0;
     }
