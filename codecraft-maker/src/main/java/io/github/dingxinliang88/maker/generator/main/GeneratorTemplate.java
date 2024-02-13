@@ -69,9 +69,6 @@ public abstract class GeneratorTemplate {
 
     protected void generateCode(Meta meta, String outputPath)
             throws IOException, TemplateException {
-
-        // 读取 resources 目录
-//        ClassPathResource classPathResource = new ClassPathResource("");
         String inputResourcePath = "";
 
         // Java 包基础路径
@@ -116,6 +113,20 @@ public abstract class GeneratorTemplate {
                 + "templates/java/cli/command/ListCommand.java.ftl";
         outputFilePath =
                 outputBaseJavaPackagePath + File.separator + "cli/command/ListCommand.java";
+        DynamicFileGenerator.doGenerate(inputFilePath, outputFilePath, meta);
+
+        // cli.CommandRegistry
+        inputFilePath =
+                inputResourcePath + File.separator + "templates/java/cli/CommandRegistry.java.ftl";
+        outputFilePath = outputBaseJavaPackagePath + File.separator + "cli/CommandRegistry.java";
+        DynamicFileGenerator.doGenerate(inputFilePath, outputFilePath, meta);
+
+        // cli.valid.CommandPreParser
+        inputFilePath =
+                inputResourcePath + File.separator
+                        + "templates/java/cli/valid/CommandPreParser.java.ftl";
+        outputFilePath =
+                outputBaseJavaPackagePath + File.separator + "cli/valid/CommandPreParser.java";
         DynamicFileGenerator.doGenerate(inputFilePath, outputFilePath, meta);
 
         // cli.CommandExecutor

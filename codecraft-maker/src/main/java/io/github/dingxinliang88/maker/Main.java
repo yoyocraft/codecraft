@@ -12,8 +12,6 @@ public class Main {
 
     public static void main(String[] args)
             throws TemplateException, IOException, InterruptedException {
-//        GeneratorTemplate generatorTemplate = new MainGenerator();
-//        GeneratorTemplate generatorTemplate = new ZipGenerator();
         GeneratorTemplate generatorTemplate = new SrcZipGenerator();
         generatorTemplate.doGenerate();
     }
