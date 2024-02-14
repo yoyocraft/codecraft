@@ -6,13 +6,11 @@ import cn.hutool.core.util.ZipUtil;
 import freemarker.template.TemplateException;
 import io.github.dingxinliang88.maker.generator.JarGenerator;
 import io.github.dingxinliang88.maker.generator.ScriptGenerator;
-import io.github.dingxinliang88.maker.generator.VersionControlGenerator;
 import io.github.dingxinliang88.maker.generator.file.DynamicFileGenerator;
 import io.github.dingxinliang88.maker.meta.Meta;
 import io.github.dingxinliang88.maker.meta.MetaManager;
 import java.io.File;
 import java.io.IOException;
-import java.util.Objects;
 
 /**
  * 代码生成模板类
@@ -35,10 +33,7 @@ public abstract class GeneratorTemplate {
         // 4. 封装脚本
         String shellOutputFilePath = buildScript(outputPath, jarPath);
 
-        // 5. 版本控制
-        versionControl(meta, outputPath);
-
-        // 6. 生成精简版的程序（产物）
+        // 5. 生成精简版的程序（产物）
         buildDist(outputPath, sourceCopyDestPath, jarPath, shellOutputFilePath);
     }
 
@@ -191,14 +186,6 @@ public abstract class GeneratorTemplate {
         String shellOutputPath = outputPath + File.separator + "craft";
         ScriptGenerator.doGenerate(jarPath, shellOutputPath);
         return shellOutputPath;
-    }
-
-    protected void versionControl(Meta meta, String outputPath)
-            throws IOException, InterruptedException {
-        if (Objects.isNull(meta.getVersionControl()) || !meta.getVersionControl()) {
-            return;
-        }
-        VersionControlGenerator.doGenerate(outputPath);
     }
 
     protected String buildDist(String outputPath, String sourceCopyDestPath, String jarPath,
