@@ -168,7 +168,7 @@ public abstract class GeneratorTemplate {
         DynamicFileGenerator.doGenerate(inputFilePath, outputFilePath, meta);
 
         // .gitignore
-        // TODO 考虑 .gitignore 文件的 ftl 模板，区分项目，比如后端，前端，小程序，等等等等
+        // TODO 考虑 .gitignore 文件的 ftl 模板，区分项目，比如后端，前端，小程序，等等
         inputFilePath = inputResourcePath + File.separator + "templates/.gitignore.ftl";
         outputFilePath = outputPath + File.separator + ".gitignore";
         DynamicFileGenerator.doGenerate(inputFilePath, outputFilePath, meta);

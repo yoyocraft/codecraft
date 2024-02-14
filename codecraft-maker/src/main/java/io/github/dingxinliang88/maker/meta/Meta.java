@@ -49,7 +49,7 @@ public class Meta implements Serializable {
             private String groupKey;
             private String groupName;
             private List<FileInfo> files;
-            // TODO 补充：是否必需 => required=true/false
+            // TODO 补充：必需 => required=true/false
         }
     }
 

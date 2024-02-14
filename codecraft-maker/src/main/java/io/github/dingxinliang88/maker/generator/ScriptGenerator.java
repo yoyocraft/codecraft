@@ -9,29 +9,30 @@ import java.nio.file.attribute.PosixFilePermissions;
 import java.util.Set;
 
 /**
+ * 脚本生成器
+ *
  * @author <a href="https://github.com/dingxinliang88">youyi</a>
  */
 public class ScriptGenerator {
 
-    // 直接写入脚本
-    public static void doGenerate(final String jarPath, String dest) {
-        // windows
+    public static void doGenerate(final String jarPath, String shellOutputPath) {
+        // 直接写入脚本
+        // windows：craft.bat
         StringBuilder scriptBuilder = new StringBuilder();
         scriptBuilder.append("@echo off\n");
         scriptBuilder.append(String.format("java -jar %s %%*", jarPath)).append("\n");
-        FileUtil.writeBytes(scriptBuilder.toString().getBytes(), dest + ".bat");
+        FileUtil.writeBytes(scriptBuilder.toString().getBytes(), shellOutputPath + ".bat");
 
-        // other
+        // other: craft
         scriptBuilder = new StringBuilder();
         scriptBuilder.append("#!/bin/bash\n");
         scriptBuilder.append(String.format("java -jar %s \"$@\"", jarPath)).append("\n");
-        FileUtil.writeBytes(scriptBuilder.toString().getBytes(), dest);
+        FileUtil.writeBytes(scriptBuilder.toString().getBytes(), shellOutputPath);
         try {
             // 赋予执行权限
             Set<PosixFilePermission> permissions = PosixFilePermissions.fromString("rwxrwxrwx");
-            Files.setPosixFilePermissions(Paths.get(dest), permissions);
+            Files.setPosixFilePermissions(Paths.get(shellOutputPath), permissions);
         } catch (IOException ignored) {
-
         }
     }
 }

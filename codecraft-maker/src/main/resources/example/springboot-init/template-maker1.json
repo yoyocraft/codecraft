@@ -3,7 +3,14 @@
   "fileConfig": {
     "files": [
       {
-        "path": ""
+        "path": "",
+        "filterConfigList": [
+          {
+            "range": "fileName",
+            "rule": "nonStartsWith",
+            "value": ".DS_Store"
+          }
+        ]
       }
     ]
   },

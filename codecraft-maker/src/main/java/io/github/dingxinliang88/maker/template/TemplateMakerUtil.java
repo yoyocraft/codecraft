@@ -25,12 +25,12 @@ public class TemplateMakerUtil {
         // 1. 获取所有分组
         List<Meta.FileConfig.FileInfo> groupFileInfoList = fileInfoList.stream()
                 .filter(fileInfo -> StrUtil.isNotBlank(fileInfo.getGroupKey()))
-                .collect(Collectors.toList());
+                .toList();
 
         // 2. 获取所有分组内的文件列表
         List<Meta.FileConfig.FileInfo> groupInnerFileInfoList = groupFileInfoList.stream()
                 .flatMap(fileInfo -> fileInfo.getFiles().stream())
-                .collect(Collectors.toList());
+                .toList();
 
         // 3. 获取所有分组内文件的输入路径集合
         Set<String> fileInputPathSet = groupInnerFileInfoList.stream()

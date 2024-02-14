@@ -20,11 +20,12 @@ public class FileFilter {
     /**
      * 对指定文件路径下的文件进行过滤处理
      *
-     * @param filePath 文件路径
+     * @param filePath         文件路径
      * @param filterConfigList 文件过滤配置列表
      * @return 过滤后的文件列表
      */
-    public static List<File> doFileFilter(String filePath, List<FileFilterConfig> filterConfigList) {
+    public static List<File> doFileFilter(String filePath,
+            List<FileFilterConfig> filterConfigList) {
         // 获取路径下的所有文件
         List<File> fileList = FileUtil.loopFiles(filePath);
         return fileList.stream()
@@ -79,8 +80,14 @@ public class FileFilter {
                 case CONTAINS:
                     filterRes = filterContent.contains(value);
                     break;
+                case NON_CONTAINS:
+                    filterRes = !filterContent.contains(value);
+                    break;
                 case START_WITH:
                     filterRes = filterContent.startsWith(value);
+                    break;
+                case NON_START_WITH:
+                    filterRes = !filterContent.startsWith(value);
                     break;
                 case END_WITH:
                     filterRes = filterContent.endsWith(value);

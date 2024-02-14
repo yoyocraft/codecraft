@@ -15,6 +15,6 @@ public class StaticGenerator {
     * @param dest 输出目录路径
     */
     public static void copyFileByHutool(final String src, String dest) {
-        FileUtil.copy(src, dest, false);
+        FileUtil.copy(src, dest, true);
     }
 }

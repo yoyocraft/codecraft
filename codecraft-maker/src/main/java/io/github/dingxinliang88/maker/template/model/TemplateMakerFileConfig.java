@@ -15,7 +15,7 @@ public class TemplateMakerFileConfig {
             "files": [
                 {
                     "path": "文件（目录）路径",
-                    "filters": [
+                    "filterConfigList": [
                         {
                             "range": "fileName",
                             "rule": "regex",

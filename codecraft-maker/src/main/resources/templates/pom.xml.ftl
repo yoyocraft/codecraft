@@ -9,8 +9,6 @@
   <version>${version}</version>
 
   <properties>
-    <maven.compiler.source>8</maven.compiler.source>
-    <maven.compiler.target>8</maven.compiler.target>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <hutool.version>5.8.25</hutool.version>
     <picocli.version>4.7.5</picocli.version>

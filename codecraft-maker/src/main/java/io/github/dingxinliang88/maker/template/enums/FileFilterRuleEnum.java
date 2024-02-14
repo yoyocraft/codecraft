@@ -11,7 +11,9 @@ import lombok.Getter;
 @Getter
 public enum FileFilterRuleEnum {
     CONTAINS("包含", "contains"),
+    NON_CONTAINS("不包含", "nonContains"),
     START_WITH("前缀匹配", "startsWith"),
+    NON_START_WITH("前缀不匹配", "nonStartsWith"),
     END_WITH("后缀匹配", "endsWith"),
     REGEX("正则", "regex"),
     EQUALS("等于", "equals"),
