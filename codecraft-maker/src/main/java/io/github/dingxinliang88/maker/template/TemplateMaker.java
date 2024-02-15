@@ -361,6 +361,25 @@ public class TemplateMaker {
             }
         }
 
+        // 转义字符转换 <#noparse>...</#noparse>
+        TemplateMakerFileConfig.CodeSnippetConfig noParseConfig = fileInfoConfig.getNoParseConfig();
+        if (Objects.nonNull(noParseConfig)) {
+            String code = noParseConfig.getCode();
+            List<String> noParserContentList = ReUtil.findAll(code, fileContent, 0);
+            if (CollUtil.isNotEmpty(noParserContentList)) {
+                for (String noParserContent : noParserContentList) {
+                    String replaceCodeSnippets = String.format("<#noparse>%s</#noparse>",
+                            noParserContent);
+                    // 判断目前内容中是否存在我们需要生成的内容，如果有，说明替换过了，不需要操作
+                    boolean contains = StrUtil.contains(newFileContent, replaceCodeSnippets);
+                    if (!contains) {
+                        newFileContent = StrUtil.replace(newFileContent, noParserContent,
+                                replaceCodeSnippets);
+                    }
+                }
+            }
+        }
+
         // 文件配置信息
         Meta.FileConfig.FileInfo fileInfo = new Meta.FileConfig.FileInfo();
         fileInfo.setInputPath(fileOutputPath); // 文件输入路径是 ftl 文件

@@ -51,6 +51,11 @@ public class TemplateMakerFileConfig {
          * 代码片段配置
          */
         private List<CodeSnippetConfig> codeSnippetConfigList;
+
+        /**
+         * 转义转换配置
+         */
+        private CodeSnippetConfig noParseConfig;
     }
 
     @NoArgsConstructor
