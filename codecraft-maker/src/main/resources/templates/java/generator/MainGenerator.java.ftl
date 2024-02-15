@@ -2,10 +2,6 @@
 ${indent}inputPath = new File(inputRootPath, "${fileInfo.inputPath}").getAbsolutePath();
 <#-- 处理包名配置 -->
 <#if fileInfo.outputPath?index_of("{") != -1 && fileInfo.outputPath?index_of("}") != -1>
-<#assign input = fileInfo.outputPath>
-<#assign openBracketIndex = input?index_of("{")>
-<#assign closeBracketIndex = input?index_of("}")>
-<#assign basePackage = input?substring(openBracketIndex + 1, closeBracketIndex)>
 ${indent}outputPath = new File(outputRootPath, "${fileInfo.outputPath}".replace("{basePackage}", basePackage.replace(".","/"))).getAbsolutePath();
 <#else>
 ${indent}outputPath = new File(outputRootPath, "${fileInfo.outputPath}").getAbsolutePath();
