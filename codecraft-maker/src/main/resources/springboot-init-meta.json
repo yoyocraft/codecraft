@@ -35,8 +35,8 @@
             "generateType": "dynamic"
           },
           {
-            "inputPath": "src/main/java/com/youyi/springbootinit/model/dto/post/PostAddRequest.java.ftl",
-            "outputPath": "src/main/java/com/youyi/springbootinit/model/dto/post/PostAddRequest.java",
+            "inputPath": "src/main/java/com/youyi/springbootinit/service/PostService.java.ftl",
+            "outputPath": "src/main/java/com/youyi/springbootinit/service/PostService.java",
             "type": "file",
             "generateType": "dynamic"
           },
@@ -47,8 +47,8 @@
             "generateType": "dynamic"
           },
           {
-            "inputPath": "src/main/java/com/youyi/springbootinit/service/PostService.java.ftl",
-            "outputPath": "src/main/java/com/youyi/springbootinit/service/PostService.java",
+            "inputPath": "src/main/java/com/youyi/springbootinit/model/dto/post/PostAddRequest.java.ftl",
+            "outputPath": "src/main/java/com/youyi/springbootinit/model/dto/post/PostAddRequest.java",
             "type": "file",
             "generateType": "dynamic"
           },
@@ -59,13 +59,6 @@
             "generateType": "dynamic"
           },
           {
-            "inputPath": "src/main/java/com/youyi/springbootinit/model/dto/post/PostEsDTO.java.ftl",
-            "outputPath": "src/main/java/com/youyi/springbootinit/model/dto/post/PostEsDTO.java",
-            "type": "file",
-            "generateType": "dynamic",
-            "condition": "needPost && needEs"
-          },
-          {
             "inputPath": "src/main/java/com/youyi/springbootinit/controller/PostController.java.ftl",
             "outputPath": "src/main/java/com/youyi/springbootinit/controller/PostController.java",
             "type": "file",
@@ -74,22 +67,22 @@
         ]
       },
       {
-        "inputPath": "src/main/resources/application.yml.ftl",
-        "outputPath": "src/main/resources/application.yml",
+        "inputPath": "src/main/java/com/youyi/springbootinit/model/dto/user/UserAddRequest.java.ftl",
+        "outputPath": "src/main/java/com/youyi/springbootinit/model/dto/user/UserAddRequest.java",
         "type": "file",
         "generateType": "dynamic"
       },
       {
-        "inputPath": "src/main/java/com/youyi/springbootinit/model/dto/user/UserRegisterRequest.java.ftl",
-        "outputPath": "src/main/java/com/youyi/springbootinit/model/dto/user/UserRegisterRequest.java",
+        "inputPath": "src/main/java/com/youyi/springbootinit/config/MyBatisPlusConfig.java.ftl",
+        "outputPath": "src/main/java/com/youyi/springbootinit/config/MyBatisPlusConfig.java",
         "type": "file",
         "generateType": "dynamic"
       },
       {
-        "inputPath": "src/main/.DS_Store",
-        "outputPath": "src/main/.DS_Store",
+        "inputPath": "src/main/java/com/youyi/springbootinit/exception/GlobalExceptionHandler.java.ftl",
+        "outputPath": "src/main/java/com/youyi/springbootinit/exception/GlobalExceptionHandler.java",
         "type": "file",
-        "generateType": "static"
+        "generateType": "dynamic"
       },
       {
         "inputPath": ".gitignore",
@@ -104,11 +97,64 @@
         "generateType": "dynamic"
       },
       {
-        "inputPath": "src/main/java/com/youyi/springbootinit/config/Knife4jConfig.java.ftl",
-        "outputPath": "src/main/java/com/youyi/springbootinit/config/Knife4jConfig.java",
+        "inputPath": "src/main/java/com/youyi/springbootinit/common/ErrorCode.java.ftl",
+        "outputPath": "src/main/java/com/youyi/springbootinit/common/ErrorCode.java",
         "type": "file",
-        "generateType": "dynamic",
-        "condition": "needDocs"
+        "generateType": "dynamic"
+      },
+      {
+        "inputPath": "src/main/java/com/youyi/springbootinit/model/dto/user/UserRegisterRequest.java.ftl",
+        "outputPath": "src/main/java/com/youyi/springbootinit/model/dto/user/UserRegisterRequest.java",
+        "type": "file",
+        "generateType": "dynamic"
+      },
+      {
+        "inputPath": "src/main/java/com/youyi/springbootinit/constant/UserConstant.java.ftl",
+        "outputPath": "src/main/java/com/youyi/springbootinit/constant/UserConstant.java",
+        "type": "file",
+        "generateType": "dynamic"
+      },
+      {
+        "inputPath": "src/main/java/com/youyi/springbootinit/model/enums/UserRoleEnum.java.ftl",
+        "outputPath": "src/main/java/com/youyi/springbootinit/model/enums/UserRoleEnum.java",
+        "type": "file",
+        "generateType": "dynamic"
+      },
+      {
+        "inputPath": "pom.xml.ftl",
+        "outputPath": "pom.xml",
+        "type": "file",
+        "generateType": "dynamic"
+      },
+      {
+        "inputPath": "src/main/resources/mapper/UserMapper.xml.ftl",
+        "outputPath": "src/main/resources/mapper/UserMapper.xml",
+        "type": "file",
+        "generateType": "dynamic"
+      },
+      {
+        "inputPath": "src/main/java/com/youyi/springbootinit/common/ResultUtils.java.ftl",
+        "outputPath": "src/main/java/com/youyi/springbootinit/common/ResultUtils.java",
+        "type": "file",
+        "generateType": "dynamic"
+      },
+      {
+        "inputPath": "src/main/java/com/youyi/springbootinit/model/dto/user/UserUpdateRequest.java.ftl",
+        "outputPath": "src/main/java/com/youyi/springbootinit/model/dto/user/UserUpdateRequest.java",
+        "type": "file",
+        "generateType": "dynamic"
+      },
+      {
+        "inputPath": "src/main/java/com/youyi/springbootinit/MainApplication.java.ftl",
+        "outputPath": "src/main/java/com/youyi/springbootinit/MainApplication.java",
+        "type": "file",
+        "generateType": "dynamic"
+      },
+      {
+        "inputPath": "src/main/java/com/youyi/springbootinit/exception/BusinessException.java.ftl",
+        "outputPath": "src/main/java/com/youyi/springbootinit/exception/BusinessException.java",
+        "type": "file",
+        "generateType": "dynamic"
       },
       {
         "inputPath": "src/main/java/com/youyi/springbootinit/model/entity/User.java.ftl",
@@ -123,46 +169,10 @@
         "generateType": "dynamic"
       },
       {
-        "inputPath": "src/main/java/com/youyi/springbootinit/MainApplication.java.ftl",
-        "outputPath": "src/main/java/com/youyi/springbootinit/MainApplication.java",
+        "inputPath": "src/main/java/com/youyi/springbootinit/common/DeleteRequest.java.ftl",
+        "outputPath": "src/main/java/com/youyi/springbootinit/common/DeleteRequest.java",
         "type": "file",
         "generateType": "dynamic"
-      },
-      {
-        "inputPath": "src/main/java/com/youyi/springbootinit/common/BaseResponse.java.ftl",
-        "outputPath": "src/main/java/com/youyi/springbootinit/common/BaseResponse.java",
-        "type": "file",
-        "generateType": "dynamic"
-      },
-      {
-        "inputPath": "src/main/java/com/youyi/springbootinit/common/ErrorCode.java.ftl",
-        "outputPath": "src/main/java/com/youyi/springbootinit/common/ErrorCode.java",
-        "type": "file",
-        "generateType": "dynamic"
-      },
-      {
-        "inputPath": "src/test/.DS_Store",
-        "outputPath": "src/test/.DS_Store",
-        "type": "file",
-        "generateType": "static"
-      },
-      {
-        "inputPath": "pom.xml.ftl",
-        "outputPath": "pom.xml",
-        "type": "file",
-        "generateType": "dynamic"
-      },
-      {
-        "inputPath": ".DS_Store",
-        "outputPath": ".DS_Store",
-        "type": "file",
-        "generateType": "static"
-      },
-      {
-        "inputPath": "src/.DS_Store",
-        "outputPath": "src/.DS_Store",
-        "type": "file",
-        "generateType": "static"
       },
       {
         "inputPath": "src/main/java/com/youyi/springbootinit/model/dto/user/UserLoginRequest.java.ftl",
@@ -171,80 +181,15 @@
         "generateType": "dynamic"
       },
       {
-        "inputPath": "src/main/java/com/youyi/springbootinit/exception/ThrowUtils.java.ftl",
-        "outputPath": "src/main/java/com/youyi/springbootinit/exception/ThrowUtils.java",
+        "inputPath": "src/main/java/com/youyi/springbootinit/config/Knife4jConfig.java.ftl",
+        "outputPath": "src/main/java/com/youyi/springbootinit/config/Knife4jConfig.java",
         "type": "file",
-        "generateType": "dynamic"
+        "generateType": "dynamic",
+        "condition": "needDocs"
       },
       {
-        "inputPath": "src/main/java/com/youyi/springbootinit/model/dto/user/UserAddRequest.java.ftl",
-        "outputPath": "src/main/java/com/youyi/springbootinit/model/dto/user/UserAddRequest.java",
-        "type": "file",
-        "generateType": "dynamic"
-      },
-      {
-        "inputPath": "src/main/java/com/youyi/springbootinit/model/dto/user/UserQueryRequest.java.ftl",
-        "outputPath": "src/main/java/com/youyi/springbootinit/model/dto/user/UserQueryRequest.java",
-        "type": "file",
-        "generateType": "dynamic"
-      },
-      {
-        "inputPath": "src/main/java/com/youyi/springbootinit/exception/BusinessException.java.ftl",
-        "outputPath": "src/main/java/com/youyi/springbootinit/exception/BusinessException.java",
-        "type": "file",
-        "generateType": "dynamic"
-      },
-      {
-        "inputPath": "src/main/java/com/youyi/springbootinit/exception/GlobalExceptionHandler.java.ftl",
-        "outputPath": "src/main/java/com/youyi/springbootinit/exception/GlobalExceptionHandler.java",
-        "type": "file",
-        "generateType": "dynamic"
-      },
-      {
-        "inputPath": "src/main/java/com/youyi/springbootinit/constant/UserConstant.java.ftl",
-        "outputPath": "src/main/java/com/youyi/springbootinit/constant/UserConstant.java",
-        "type": "file",
-        "generateType": "dynamic"
-      },
-      {
-        "inputPath": "src/main/java/com/youyi/springbootinit/common/DeleteRequest.java.ftl",
-        "outputPath": "src/main/java/com/youyi/springbootinit/common/DeleteRequest.java",
-        "type": "file",
-        "generateType": "dynamic"
-      },
-      {
-        "inputPath": "src/main/java/com/youyi/springbootinit/model/enums/UserRoleEnum.java.ftl",
-        "outputPath": "src/main/java/com/youyi/springbootinit/model/enums/UserRoleEnum.java",
-        "type": "file",
-        "generateType": "dynamic"
-      },
-      {
-        "inputPath": "src/main/java/com/youyi/springbootinit/common/PageRequest.java.ftl",
-        "outputPath": "src/main/java/com/youyi/springbootinit/common/PageRequest.java",
-        "type": "file",
-        "generateType": "dynamic"
-      },
-      {
-        "inputPath": "src/main/java/com/youyi/springbootinit/config/MyBatisPlusConfig.java.ftl",
-        "outputPath": "src/main/java/com/youyi/springbootinit/config/MyBatisPlusConfig.java",
-        "type": "file",
-        "generateType": "dynamic"
-      },
-      {
-        "inputPath": "src/main/java/com/youyi/springbootinit/service/UserService.java.ftl",
-        "outputPath": "src/main/java/com/youyi/springbootinit/service/UserService.java",
-        "type": "file",
-        "generateType": "dynamic"
-      },
-      {
-        "inputPath": "src/main/java/com/youyi/springbootinit/model/dto/user/UserUpdateRequest.java.ftl",
-        "outputPath": "src/main/java/com/youyi/springbootinit/model/dto/user/UserUpdateRequest.java",
-        "type": "file",
-        "generateType": "dynamic"
-      },
-      {
-        "inputPath": "src/main/java/com/youyi/springbootinit/mapper/UserMapper.java.ftl",
-        "outputPath": "src/main/java/com/youyi/springbootinit/mapper/UserMapper.java",
+        "inputPath": "src/main/java/com/youyi/springbootinit/service/impl/UserServiceImpl.java.ftl",
+        "outputPath": "src/main/java/com/youyi/springbootinit/service/impl/UserServiceImpl.java",
         "type": "file",
         "generateType": "dynamic"
       },
@@ -268,46 +213,53 @@
         "generateType": "static"
       },
       {
-        "inputPath": "src/main/java/.DS_Store",
-        "outputPath": "src/main/java/.DS_Store",
-        "type": "file",
-        "generateType": "static"
-      },
-      {
-        "inputPath": "src/main/java/com/youyi/.DS_Store",
-        "outputPath": "src/main/java/com/youyi/.DS_Store",
-        "type": "file",
-        "generateType": "static"
-      },
-      {
-        "inputPath": "src/main/java/com/youyi/springbootinit/service/impl/UserServiceImpl.java.ftl",
-        "outputPath": "src/main/java/com/youyi/springbootinit/service/impl/UserServiceImpl.java",
+        "inputPath": "src/main/java/com/youyi/springbootinit/common/BaseResponse.java.ftl",
+        "outputPath": "src/main/java/com/youyi/springbootinit/common/BaseResponse.java",
         "type": "file",
         "generateType": "dynamic"
       },
       {
-        "inputPath": "src/main/java/com/youyi/springbootinit/common/ResultUtils.java.ftl",
-        "outputPath": "src/main/java/com/youyi/springbootinit/common/ResultUtils.java",
+        "inputPath": "src/main/java/com/youyi/springbootinit/service/UserService.java.ftl",
+        "outputPath": "src/main/java/com/youyi/springbootinit/service/UserService.java",
         "type": "file",
         "generateType": "dynamic"
       },
       {
-        "inputPath": "src/main/java/com/.DS_Store",
-        "outputPath": "src/main/java/com/.DS_Store",
+        "inputPath": "src/main/java/com/youyi/springbootinit/common/PageRequest.java.ftl",
+        "outputPath": "src/main/java/com/youyi/springbootinit/common/PageRequest.java",
         "type": "file",
-        "generateType": "static"
+        "generateType": "dynamic"
       },
       {
-        "inputPath": "src/main/resources/application.yml",
+        "inputPath": "src/main/java/com/youyi/springbootinit/exception/ThrowUtils.java.ftl",
+        "outputPath": "src/main/java/com/youyi/springbootinit/exception/ThrowUtils.java",
+        "type": "file",
+        "generateType": "dynamic"
+      },
+      {
+        "inputPath": "src/main/java/com/youyi/springbootinit/model/dto/user/UserQueryRequest.java.ftl",
+        "outputPath": "src/main/java/com/youyi/springbootinit/model/dto/user/UserQueryRequest.java",
+        "type": "file",
+        "generateType": "dynamic"
+      },
+      {
+        "inputPath": "src/main/resources/application.yml.ftl",
         "outputPath": "src/main/resources/application.yml",
         "type": "file",
-        "generateType": "static"
+        "generateType": "dynamic"
       },
       {
-        "inputPath": "src/main/resources/mapper/UserMapper.xml.ftl",
-        "outputPath": "src/main/resources/mapper/UserMapper.xml",
+        "inputPath": "src/main/java/com/youyi/springbootinit/mapper/UserMapper.java.ftl",
+        "outputPath": "src/main/java/com/youyi/springbootinit/mapper/UserMapper.java",
         "type": "file",
         "generateType": "dynamic"
+      },
+      {
+        "inputPath": "src/main/java/com/youyi/springbootinit/model/dto/post/PostEsDTO.java.ftl",
+        "outputPath": "src/main/java/com/youyi/springbootinit/model/dto/post/PostEsDTO.java",
+        "type": "file",
+        "generateType": "dynamic",
+        "condition": "needPost && needEs"
       }
     ]
   },

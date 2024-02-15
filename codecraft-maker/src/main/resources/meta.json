@@ -5,7 +5,6 @@
   "version": "1.0",
   "author": "youyi",
   "createTime": "2024-01-21",
-  "versionControl": false,
   "fileConfig": {
     "sourceRootPath": "/Users/codejuzi/Documents/CodeWorkSpace/Project/CodeCraft/codecraft/sample/acm-template-pro",
     "inputRootPath": ".source/acm-template-pro",
@@ -19,24 +18,17 @@
         "generateType": "dynamic"
       },
       {
-        "groupKey": "git",
-        "groupName": "open source",
-        "type": "group",
-        "condition": "needGit",
-        "files": [
-          {
-            "inputPath": ".gitignore",
-            "outputPath": ".gitignore",
-            "type": "file",
-            "generateType": "static"
-          },
-          {
-            "inputPath": "README.md",
-            "outputPath": "README.md",
-            "type": "file",
-            "generateType": "static"
-          }
-        ]
+        "inputPath": "README.md",
+        "outputPath": "README.md",
+        "type": "file",
+        "generateType": "static"
+      },
+      {
+        "inputPath": ".gitignore",
+        "outputPath": ".gitignore",
+        "type": "file",
+        "generateType": "static",
+        "condition": "needGit"
       }
     ]
   },
@@ -60,6 +52,7 @@
         "groupName": "核心模板",
         "type": "MainTemplate",
         "description": "用于生成核心模板文件",
+        "condition": "loop",
         "models": [
           {
             "fieldName": "author",

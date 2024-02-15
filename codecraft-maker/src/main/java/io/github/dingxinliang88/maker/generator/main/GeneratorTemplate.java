@@ -6,13 +6,11 @@ import cn.hutool.core.util.ZipUtil;
 import freemarker.template.TemplateException;
 import io.github.dingxinliang88.maker.generator.JarGenerator;
 import io.github.dingxinliang88.maker.generator.ScriptGenerator;
-import io.github.dingxinliang88.maker.generator.VersionControlGenerator;
 import io.github.dingxinliang88.maker.generator.file.DynamicFileGenerator;
 import io.github.dingxinliang88.maker.meta.Meta;
 import io.github.dingxinliang88.maker.meta.MetaManager;
 import java.io.File;
 import java.io.IOException;
-import java.util.Objects;
 
 /**
  * 代码生成模板类
@@ -35,10 +33,7 @@ public abstract class GeneratorTemplate {
         // 4. 封装脚本
         String shellOutputFilePath = buildScript(outputPath, jarPath);
 
-        // 5. 版本控制
-        versionControl(meta, outputPath);
-
-        // 6. 生成精简版的程序（产物）
+        // 5. 生成精简版的程序（产物）
         buildDist(outputPath, sourceCopyDestPath, jarPath, shellOutputFilePath);
     }
 
@@ -69,9 +64,6 @@ public abstract class GeneratorTemplate {
 
     protected void generateCode(Meta meta, String outputPath)
             throws IOException, TemplateException {
-
-        // 读取 resources 目录
-//        ClassPathResource classPathResource = new ClassPathResource("");
         String inputResourcePath = "";
 
         // Java 包基础路径
@@ -118,6 +110,20 @@ public abstract class GeneratorTemplate {
                 outputBaseJavaPackagePath + File.separator + "cli/command/ListCommand.java";
         DynamicFileGenerator.doGenerate(inputFilePath, outputFilePath, meta);
 
+        // cli.CommandRegistry
+        inputFilePath =
+                inputResourcePath + File.separator + "templates/java/cli/CommandRegistry.java.ftl";
+        outputFilePath = outputBaseJavaPackagePath + File.separator + "cli/CommandRegistry.java";
+        DynamicFileGenerator.doGenerate(inputFilePath, outputFilePath, meta);
+
+        // cli.valid.CommandPreParser
+        inputFilePath =
+                inputResourcePath + File.separator
+                        + "templates/java/cli/valid/CommandPreParser.java.ftl";
+        outputFilePath =
+                outputBaseJavaPackagePath + File.separator + "cli/valid/CommandPreParser.java";
+        DynamicFileGenerator.doGenerate(inputFilePath, outputFilePath, meta);
+
         // cli.CommandExecutor
         inputFilePath =
                 inputResourcePath + File.separator + "templates/java/cli/CommandExecutor.java.ftl";
@@ -162,7 +168,7 @@ public abstract class GeneratorTemplate {
         DynamicFileGenerator.doGenerate(inputFilePath, outputFilePath, meta);
 
         // .gitignore
-        // TODO 考虑 .gitignore 文件的 ftl 模板，区分项目，比如后端，前端，小程序，等等等等
+        // TODO 考虑 .gitignore 文件的 ftl 模板，区分项目，比如后端，前端，小程序，等等
         inputFilePath = inputResourcePath + File.separator + "templates/.gitignore.ftl";
         outputFilePath = outputPath + File.separator + ".gitignore";
         DynamicFileGenerator.doGenerate(inputFilePath, outputFilePath, meta);
@@ -180,14 +186,6 @@ public abstract class GeneratorTemplate {
         String shellOutputPath = outputPath + File.separator + "craft";
         ScriptGenerator.doGenerate(jarPath, shellOutputPath);
         return shellOutputPath;
-    }
-
-    protected void versionControl(Meta meta, String outputPath)
-            throws IOException, InterruptedException {
-        if (Objects.isNull(meta.getVersionControl()) || !meta.getVersionControl()) {
-            return;
-        }
-        VersionControlGenerator.doGenerate(outputPath);
     }
 
     protected String buildDist(String outputPath, String sourceCopyDestPath, String jarPath,

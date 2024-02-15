@@ -101,7 +101,8 @@ public class TemplateMakerTest {
 
     @Test
     public void makeSpringBootTemplate() {
-        String rootPath = "example/springboot-init/";
+        // String rootPath = "example/springboot-init/";
+        String rootPath = "example/springboot-init-plus/";
         String configJsonStr = ResourceUtil.readUtf8Str(rootPath + "template-maker0.json");
         TemplateMakerConfig templateMakerConfig = JSONUtil.toBean(configJsonStr,
                 TemplateMakerConfig.class);

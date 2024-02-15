@@ -1,5 +1,5 @@
 {
-  "id": 1,
+  "id": 2,
   "fileConfig": {
     "files": [
       {
@@ -15,6 +15,10 @@
     ]
   },
   "modelConfig": {
+    "fileDirPathConfig": {
+      "fieldName": "basePackage",
+      "replaceText": "com.youyi"
+    },
     "models": [
       {
         "fieldName": "basePackage",

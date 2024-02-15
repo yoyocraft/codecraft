@@ -38,6 +38,7 @@ public class GenerateCommand implements Callable<Integer> {
             names = {"-a", "--author"},
             arity = "0..1",
             description = "作者",
+            required = true,
             interactive = true,
             echo = true)
     private String author = "youyi";

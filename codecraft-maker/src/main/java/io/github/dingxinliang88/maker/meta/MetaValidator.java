@@ -24,36 +24,21 @@ public class MetaValidator {
         validateAndFillModel(meta);
     }
 
-    private static void validateAndFillModel(Meta meta) {
-        // modelConfig 校验和默认值
-        Meta.ModelConfig modelConfig = meta.getModelConfig();
-        List<Meta.ModelConfig.ModelInfo> modelInfoList = modelConfig.getModels();
-        if (CollUtil.isEmpty(modelInfoList)) {
-            return;
-        }
-        for (Meta.ModelConfig.ModelInfo modelInfo : modelInfoList) {
-            // group 不检验
-            String groupKey = modelInfo.getGroupKey();
-            if (StrUtil.isNotEmpty(groupKey)) {
-                // 生成中间参数
-                List<Meta.ModelConfig.ModelInfo> subModelInfoList = modelInfo.getModels();
-                String allArgsStr = subModelInfoList.stream()
-                        .map(subModelInfo -> String.format("\"--%s\"", subModelInfo.getFieldName()))
-                        .collect(Collectors.joining(", "));
-                modelInfo.setAllArgsStr(allArgsStr);
-                continue;
-            }
-            // 输出字段必填
-            String fieldName = modelInfo.getFieldName();
-            if (StrUtil.isBlank(fieldName)) {
-                throw new MetaException("fieldName is required");
-            }
+    private static void validateAndFillBasic(Meta meta) {
+        // 基础信息校验和默认值
+        String name = StrUtil.blankToDefault(meta.getName(), "my-generator");
+        String description = StrUtil.emptyToDefault(meta.getDescription(), "my code generator");
+        String author = StrUtil.emptyToDefault(meta.getAuthor(), "youyi");
+        String basePackage = StrUtil.blankToDefault(meta.getBasePackage(), "com.youyi");
+        String version = StrUtil.emptyToDefault(meta.getVersion(), "1.0.0");
+        String createTime = StrUtil.emptyToDefault(meta.getCreateTime(), DateUtil.now());
 
-            String modelInfoType = modelInfo.getType();
-            if (StrUtil.isEmpty(modelInfoType)) {
-                modelInfo.setType(ModelTypeEnum.STRING.getValue());
-            }
-        }
+        meta.setName(name);
+        meta.setDescription(description);
+        meta.setBasePackage(basePackage);
+        meta.setVersion(version);
+        meta.setAuthor(author);
+        meta.setCreateTime(createTime);
     }
 
     private static void validateAndFillFile(Meta meta) {
@@ -136,20 +121,42 @@ public class MetaValidator {
         }
     }
 
-    private static void validateAndFillBasic(Meta meta) {
-        // 基础信息校验和默认值
-        String name = StrUtil.blankToDefault(meta.getName(), "my-generator");
-        String description = StrUtil.emptyToDefault(meta.getDescription(), "my code generator");
-        String author = StrUtil.emptyToDefault(meta.getAuthor(), "youyi");
-        String basePackage = StrUtil.blankToDefault(meta.getBasePackage(), "com.youyi");
-        String version = StrUtil.emptyToDefault(meta.getVersion(), "1.0.0");
-        String createTime = StrUtil.emptyToDefault(meta.getCreateTime(), DateUtil.now());
+    private static void validateAndFillModel(Meta meta) {
+        // modelConfig 校验和默认值
+        Meta.ModelConfig modelConfig = meta.getModelConfig();
+        List<Meta.ModelConfig.ModelInfo> modelInfoList = modelConfig.getModels();
+        if (CollUtil.isEmpty(modelInfoList)) {
+            return;
+        }
+        for (Meta.ModelConfig.ModelInfo modelInfo : modelInfoList) {
+            // group，需要校验分组
+            String groupKey = modelInfo.getGroupKey();
+            if (StrUtil.isNotEmpty(groupKey)) {
+                List<Meta.ModelConfig.ModelInfo> subModelInfoList = modelInfo.getModels();
+                // 校验分组下的模型有无信息
+                subModelInfoList.forEach(MetaValidator::validateAndSetDefaults);
 
-        meta.setName(name);
-        meta.setDescription(description);
-        meta.setBasePackage(basePackage);
-        meta.setVersion(version);
-        meta.setAuthor(author);
-        meta.setCreateTime(createTime);
+                // 生成中间参数，便于后续子参数传递
+                String allArgsStr = subModelInfoList.stream()
+                        .map(subModelInfo -> String.format("\"--%s\"", subModelInfo.getFieldName()))
+                        .collect(Collectors.joining(", "));
+                modelInfo.setAllArgsStr(allArgsStr);
+                continue;
+            }
+            // 不是 group，直接校验
+            validateAndSetDefaults(modelInfo);
+        }
+    }
+
+    private static void validateAndSetDefaults(Meta.ModelConfig.ModelInfo modelInfo) {
+        // 输出字段必填
+        if (StrUtil.isBlank(modelInfo.getFieldName())) {
+            throw new MetaException("fieldName is required");
+        }
+
+        // 模型信息类型，默认为 String
+        if (StrUtil.isEmpty(modelInfo.getType())) {
+            modelInfo.setType(ModelTypeEnum.STRING.getValue());
+        }
     }
 }

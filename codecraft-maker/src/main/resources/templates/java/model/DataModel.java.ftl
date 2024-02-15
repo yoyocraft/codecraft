@@ -1,3 +1,4 @@
+<#-- 生成模型字段，包含注释和默认值，访问类型为 public，便于后续操作-->
 <#macro generateModel indent modelInfo>
 <#if modelInfo.description??>
 ${indent}/**
@@ -10,16 +11,14 @@ package ${basePackage}.model;
 
 import lombok.Data;
 
-
 /**
  * 数据模型
  */
 @Data
 public class DataModel {
 <#list modelConfig.models as modelInfo>
-    <#-- 有分组 -->
     <#if modelInfo.groupKey??>
-
+    <#-- 有分组 -->
     /**
      * ${modelInfo.groupName}
      */

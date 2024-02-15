@@ -9,6 +9,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
+ * Jar 包生成器
+ *
  * @author <a href="https://github.com/dingxinliang88">youyi</a>
  */
 public class JarGenerator {

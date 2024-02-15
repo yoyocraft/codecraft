@@ -4,6 +4,8 @@ import java.io.Serializable;
 import java.util.List;
 
 /**
+ * 元信息
+ *
  * @author <a href="https://github.com/dingxinliang88">youyi</a>
  */
 @lombok.NoArgsConstructor
@@ -16,15 +18,19 @@ public class Meta implements Serializable {
     private String version;
     private String author;
     private String createTime;
-    private Boolean versionControl;
     private FileConfig fileConfig;
     private ModelConfig modelConfig;
 
+    /**
+     * 路径选择 折叠路径结构,后续如果有更复杂的情况或者需求变更，可以使用层级递归的形式
+     */
     @lombok.NoArgsConstructor
     @lombok.Data
     public static class FileConfig implements Serializable {
 
+        // 源文件绝对路径
         private String sourceRootPath;
+        // 拷贝，针对项目相对路径，可移植性优化
         private String inputRootPath;
         private String outputRootPath;
         private String type;
@@ -43,7 +49,7 @@ public class Meta implements Serializable {
             private String groupKey;
             private String groupName;
             private List<FileInfo> files;
-
+            // TODO 补充：必需 => required=true/false
         }
     }
 
