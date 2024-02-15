@@ -1,0 +1,45 @@
+{
+  "id": 2,
+  "fileConfig": {
+    "files": [
+      {
+        "path": "src/main/resources/application.yml"
+      }
+    ]
+  },
+  "modelConfig": {
+    "fileDirPathConfig": {
+      "fieldName": "basePackage",
+      "replaceText": "com.youyi"
+    },
+    "modelGroupConfig": {
+      "groupKey": "mysqlConfig",
+      "groupName": "MySQL 数据库配置",
+      "type": "MySQLConfig",
+      "description": "用于生成 MySQL 数据库配置"
+    },
+    "models": [
+      {
+        "fieldName": "url",
+        "type": "String",
+        "description": "MySQL URL 地址",
+        "defaultValue": "jdbc:mysql://localhost:3306/my_db",
+        "replaceText": "jdbc:mysql://localhost:3306/my_db"
+      },
+      {
+        "fieldName": "username",
+        "type": "String",
+        "description": "MySQL username",
+        "defaultValue": "root",
+        "replaceText": "root"
+      },
+      {
+        "fieldName": "password",
+        "type": "String",
+        "description": "MySQL password",
+        "defaultValue": "123456",
+        "replaceText": "123456"
+      }
+    ]
+  }
+}

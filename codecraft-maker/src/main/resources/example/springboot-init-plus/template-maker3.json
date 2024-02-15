@@ -1,0 +1,25 @@
+{
+  "id": 2,
+  "fileConfig": {
+    "files": [
+      {
+        "path": "src/main/java/com/youyi/springbootinit/config/CorsConfig.java",
+        "condition": "needCors"
+      }
+    ]
+  },
+  "modelConfig": {
+    "fileDirPathConfig": {
+      "fieldName": "basePackage",
+      "replaceText": "com.youyi"
+    },
+    "models": [
+      {
+        "fieldName": "needCors",
+        "type": "boolean",
+        "description": "是否开启跨域功能",
+        "defaultValue": true
+      }
+    ]
+  }
+}

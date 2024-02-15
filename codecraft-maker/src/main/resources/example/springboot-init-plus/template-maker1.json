@@ -1,0 +1,32 @@
+{
+  "id": 2,
+  "fileConfig": {
+    "files": [
+      {
+        "path": "",
+        "filterConfigList": [
+          {
+            "range": "fileName",
+            "rule": "nonStartsWith",
+            "value": ".DS_Store"
+          }
+        ]
+      }
+    ]
+  },
+  "modelConfig": {
+    "fileDirPathConfig": {
+      "fieldName": "basePackage",
+      "replaceText": "com.youyi"
+    },
+    "models": [
+      {
+        "fieldName": "basePackage",
+        "type": "String",
+        "description": "基础包名",
+        "defaultValue": "com.youyi",
+        "replaceText": "com.youyi"
+      }
+    ]
+  }
+}

@@ -308,6 +308,22 @@ public class TemplateMaker {
                     replacement);
         }
 
+        // 文件路径替换
+        TemplateMakerModelConfig.ModelInfoConfig fileDirPathConfig = templateMakerModelConfig.getFileDirPathConfig();
+        if (Objects.nonNull(fileDirPathConfig)) {
+            String[] inputPathAndFileSuffix = fileInputPath.split("\\.");
+            if (inputPathAndFileSuffix.length > 1) {
+                String fileSuffix = inputPathAndFileSuffix[1];
+                // 拿到要替换的包名，e.g: com.youyi => com/youyi
+                String replaceText = fileDirPathConfig.getReplaceText().replace(".", "/");
+                // 替换路径，e.g: src/main/java/com/youyi/project/Demo.java => src/main/java/{basePackage}/project/Demo.java
+                fileInputPath = inputPathAndFileSuffix[0].replace(replaceText,
+                        String.format("{%s}", fileDirPathConfig.getFieldName()));
+                // 拼接后缀
+                fileInputPath = fileInputPath + "." + fileSuffix;
+            }
+        }
+
         // 文件配置信息
         Meta.FileConfig.FileInfo fileInfo = new Meta.FileConfig.FileInfo();
         fileInfo.setInputPath(fileOutputPath); // 文件输入路径是 ftl 文件

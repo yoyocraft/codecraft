@@ -15,6 +15,11 @@ public class TemplateMakerModelConfig {
     private List<ModelInfoConfig> models;
     private ModelGroupConfig modelGroupConfig;
 
+    /**
+     * 文件目录配置
+     */
+    private ModelInfoConfig fileDirPathConfig;
+
     @NoArgsConstructor
     @Data
     public static class ModelInfoConfig {
