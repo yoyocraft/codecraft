@@ -3,13 +3,37 @@
   "fileConfig": {
     "files": [
       {
-        "path": "src/main/resources/application.yml"
+        "path": "src/main/resources/application.yml",
+        "codeSnippetConfigList": [
+          {
+            "code": "  # Redis 配置\n  # todo 需替换配置，然后取消注释\n#  redis:\n#    database: 1\n#    host: localhost\n#    port: 6379\n#    timeout: 5000\n#    password: redis_pwd",
+            "condition": "needRedis",
+            "boolVal": true,
+            "checkType": "equals"
+          }
+        ]
       },
       {
-        "path": "src/main/java/com/youyi/springbootinit/MainApplication.java"
+        "path": "src/main/java/com/youyi/springbootinit/MainApplication.java",
+        "codeSnippetConfigList": [
+          {
+            "code": "(exclude = {RedisAutoConfiguration.class})",
+            "condition": "needRedis",
+            "boolVal": false,
+            "checkType": "equals"
+          }
+        ]
       },
       {
-        "path": "pom.xml"
+        "path": "pom.xml",
+        "codeSnippetConfigList": [
+          {
+            "code": "<!--\\s*redis\\s*-->[\\s\\S]*<artifactId>spring-session-data-redis</artifactId>.*?\\n\\s*</dependency>\n",
+            "condition": "needRedis",
+            "boolVal": true,
+            "checkType": "regex"
+          }
+        ]
       }
     ]
   },

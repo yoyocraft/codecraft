@@ -5,11 +5,13 @@ import cn.hutool.core.bean.copier.CopyOptions;
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.io.FileUtil;
 import cn.hutool.core.util.IdUtil;
+import cn.hutool.core.util.ReUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.json.JSONUtil;
 import io.github.dingxinliang88.maker.meta.Meta;
 import io.github.dingxinliang88.maker.meta.enums.FileGenerateTypeEnum;
 import io.github.dingxinliang88.maker.meta.enums.FileTypeEnum;
+import io.github.dingxinliang88.maker.template.enums.CodeSnippetCheckTypeEnum;
 import io.github.dingxinliang88.maker.template.model.TemplateMakerConfig;
 import io.github.dingxinliang88.maker.template.model.TemplateMakerFileConfig;
 import io.github.dingxinliang88.maker.template.model.TemplateMakerModelConfig;
@@ -321,6 +323,41 @@ public class TemplateMaker {
                         String.format("{%s}", fileDirPathConfig.getFieldName()));
                 // 拼接后缀
                 fileInputPath = fileInputPath + "." + fileSuffix;
+            }
+        }
+
+        // 控制代码片段是否生成
+        List<TemplateMakerFileConfig.CodeSnippetConfig> codeSnippetConfigList = fileInfoConfig.getCodeSnippetConfigList();
+        if (CollUtil.isNotEmpty(codeSnippetConfigList)) {
+            for (TemplateMakerFileConfig.CodeSnippetConfig codeSnippetConfig : codeSnippetConfigList) {
+                String code = codeSnippetConfig.getCode();
+                String condition = codeSnippetConfig.getCondition();
+                boolean boolVal = codeSnippetConfig.getBoolVal();
+                String checkType = codeSnippetConfig.getCheckType();
+                CodeSnippetCheckTypeEnum checkTypeEnum = CodeSnippetCheckTypeEnum.getEnumByValue(
+                        checkType);
+                if (Objects.isNull(checkTypeEnum)) {
+                    continue;
+                }
+                String replaceCodeSnippets = null;
+                switch (checkTypeEnum) {
+                    case EQUALS -> replaceCodeSnippets = String.format("\n<#if %s>\n%s\n</#if>\n",
+                            boolVal ? condition : "!" + condition, code);
+                    case REGEX -> {
+                        // 根据正则找到需要匹配的内容
+                        code = ReUtil.get(code, fileContent, 0);
+                        replaceCodeSnippets = String.format("\n<#if %s>\n%s\n</#if>\n",
+                                boolVal ? condition : "!" + condition, code);
+                    }
+                    default -> {
+                    }
+                }
+                // 判断目前内容中是否已有我们需要生成的代码片段，如果存在，说明已经加工过了，不需要操作，否则执行替换操作
+                boolean contains = StrUtil.contains(newFileContent, replaceCodeSnippets);
+                if (!contains) {
+                    newFileContent = StrUtil.replace(newFileContent, code,
+                            replaceCodeSnippets);
+                }
             }
         }
 

@@ -1,10 +1,13 @@
 package io.github.dingxinliang88.maker.template.model;
 
+import io.github.dingxinliang88.maker.template.enums.CodeSnippetCheckTypeEnum;
 import java.util.List;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 /**
+ * 模板制作文件配置
+ *
  * @author <a href="https://github.com/dingxinliang88">youyi</a>
  */
 @Data
@@ -32,7 +35,6 @@ public class TemplateMakerFileConfig {
         }
      */
     private List<FileInfoConfig> files;
-
     private FileGroupConfig fileGroupConfig;
 
     @NoArgsConstructor
@@ -44,6 +46,11 @@ public class TemplateMakerFileConfig {
         private String condition;
 
         private List<FileFilterConfig> filterConfigList;
+
+        /**
+         * 代码片段配置
+         */
+        private List<CodeSnippetConfig> codeSnippetConfigList;
     }
 
     @NoArgsConstructor
@@ -55,5 +62,20 @@ public class TemplateMakerFileConfig {
         private String groupKey;
 
         private String groupName;
+    }
+
+    @NoArgsConstructor
+    @Data
+    public static class CodeSnippetConfig {
+
+        private String code;
+        private String condition;
+        /**
+         * true -> <#if condition>...</#if>
+         * <p>
+         * false -> <#if !condition>...</#if>
+         */
+        private Boolean boolVal;
+        private String checkType = CodeSnippetCheckTypeEnum.EQUALS.getValue();
     }
 }
