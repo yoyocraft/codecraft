@@ -9,6 +9,9 @@ spring:
   mvc:
     pathmatch:
       matching-strategy: ant_path_matcher
+  # jackson 序列化配置，不返回 null 值
+  jackson:
+    default-property-inclusion: non_null
   # session 配置
   session:
     # store-type: redis
