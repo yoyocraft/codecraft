@@ -55,4 +55,8 @@ public interface GeneratorService extends IService<Generator> {
      * @return
      */
     List<Generator> getBatchByIds(List<Long> idList);
+
+    void cacheGenerators(List<Long> idList);
+
+    List<Long> listHotGeneratorIds();
 }

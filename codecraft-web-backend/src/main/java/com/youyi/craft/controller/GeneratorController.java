@@ -18,6 +18,7 @@ import com.youyi.craft.common.BaseResponse;
 import com.youyi.craft.common.DeleteRequest;
 import com.youyi.craft.common.ErrorCode;
 import com.youyi.craft.common.ResultUtils;
+import com.youyi.craft.constant.GeneratorConstant;
 import com.youyi.craft.constant.UserConstant;
 import com.youyi.craft.exception.BusinessException;
 import com.youyi.craft.exception.ThrowUtils;
@@ -50,6 +51,7 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.file.attribute.PosixFilePermission;
 import java.nio.file.attribute.PosixFilePermissions;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -91,6 +93,16 @@ public class GeneratorController {
     @Resource
     private CacheManager cacheManager;
     private static final ExecutorService CLEAN_UP_POOL = new ThreadPoolExecutor(
+            1,
+            5,
+            60L,
+            TimeUnit.SECONDS,
+            new LinkedBlockingQueue<>(100),
+            r -> new Thread(r, "clean-up-thread"),
+            new ThreadPoolExecutor.AbortPolicy()
+    );
+
+    private static final ExecutorService INCR_COUNT_POOL = new ThreadPoolExecutor(
             1,
             5,
             60L,
@@ -419,8 +431,10 @@ public class GeneratorController {
             if (cosObjectInput != null) {
                 cosObjectInput.close();
             }
+            CompletableFuture.runAsync(() -> incrDownloadCount(generator), INCR_COUNT_POOL);
         }
     }
+
 
     /**
      * 在线使用生成器
@@ -543,6 +557,16 @@ public class GeneratorController {
 
         // 清理文件
         CompletableFuture.runAsync(() -> FileUtil.del(tmpDirPath), CLEAN_UP_POOL);
+        // 使用次数和阈值判断
+        CompletableFuture.runAsync(() -> {
+            Integer useCount = generator.getUseCount();
+            if (useCount >= GeneratorConstant.HOT_GENERATOR_USE_COUNT_THRESHOLD - 1) {
+                log.info("cache generator, id = {}", generator.getId());
+                generatorService.cacheGenerators(Collections.singletonList(id));
+            }
+            // 更新使用次数
+            incrUseCount(generator);
+        }, INCR_COUNT_POOL);
     }
 
     /**
@@ -617,42 +641,16 @@ public class GeneratorController {
 
     /**
      * 缓存代码生成器
-     *
-     * @param generatorCacheRequest
      */
     @PostMapping("/cache")
     @AuthCheck(mustRole = UserConstant.ADMIN_ROLE)
     public void cacheGenerator(@RequestBody GeneratorCacheRequest generatorCacheRequest) {
-        // TODO 设置热点阈值，比如生成器的使用次数，通过定时任务或者每次下载之后判断
-        if (Objects.isNull(generatorCacheRequest) || Objects.isNull(generatorCacheRequest.getId())
-                || generatorCacheRequest.getId() <= 0) {
+        List<Long> idList = generatorCacheRequest.getIdList();
+        if (CollUtil.isEmpty(idList)) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR);
         }
-        Long id = generatorCacheRequest.getId();
 
-        Generator generator = generatorService.getById(id);
-        if (Objects.isNull(generator)) {
-            throw new BusinessException(ErrorCode.NOT_FOUND_ERROR);
-        }
-        String distPath = generator.getDistPath();
-        if (StrUtil.isBlank(distPath)) {
-            throw new BusinessException(ErrorCode.NOT_FOUND_ERROR, "产物包不存在");
-        }
-
-        String zipFilePath = LocalFileCacheManager.getCacheFilePath(id, distPath);
-
-        if (FileUtil.exist(zipFilePath)) {
-            FileUtil.del(zipFilePath);
-        }
-        FileUtil.touch(zipFilePath);
-
-        try {
-            cosManager.download(distPath, zipFilePath);
-            // 给缓存设置过期时间
-            LocalFileCacheManager.updateCacheExpiration(zipFilePath);
-        } catch (InterruptedException e) {
-            throw new BusinessException(ErrorCode.SYSTEM_ERROR, "生成器下载失败");
-        }
+        generatorService.cacheGenerators(idList);
     }
 
     @DeleteMapping("/del/cache")
@@ -675,5 +673,16 @@ public class GeneratorController {
     }
 
     // TODO 完善生成器状态流转，考虑使用状态机
+    // TODO 推荐生成器（根据标签 余弦相似度算法）
+
+    private void incrDownloadCount(Generator generator) {
+        generator.setDownloadCount(generator.getDownloadCount() + 1);
+        generatorService.updateById(generator);
+    }
+
+    private void incrUseCount(Generator generator) {
+        generator.setUseCount(generator.getUseCount() + 1);
+        generatorService.updateById(generator);
+    }
 
 }

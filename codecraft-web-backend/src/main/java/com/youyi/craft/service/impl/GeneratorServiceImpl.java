@@ -1,6 +1,8 @@
 package com.youyi.craft.service.impl;
 
 import cn.hutool.core.collection.CollUtil;
+import cn.hutool.core.io.FileUtil;
+import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -8,6 +10,8 @@ import com.youyi.craft.common.ErrorCode;
 import com.youyi.craft.constant.CommonConstant;
 import com.youyi.craft.exception.BusinessException;
 import com.youyi.craft.exception.ThrowUtils;
+import com.youyi.craft.manager.CosManager;
+import com.youyi.craft.manager.LocalFileCacheManager;
 import com.youyi.craft.mapper.GeneratorMapper;
 import com.youyi.craft.model.dto.generator.GeneratorQueryRequest;
 import com.youyi.craft.model.entity.Generator;
@@ -25,6 +29,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
@@ -32,6 +37,7 @@ import org.springframework.stereotype.Service;
 /**
  * @author <a href="https://github.com/dingxinliang88">youyi</a>
  */
+@Slf4j
 @Service
 public class GeneratorServiceImpl extends ServiceImpl<GeneratorMapper, Generator>
         implements GeneratorService {
@@ -41,6 +47,9 @@ public class GeneratorServiceImpl extends ServiceImpl<GeneratorMapper, Generator
 
     @Resource
     private UserService userService;
+
+    @Resource
+    private CosManager cosManager;
 
     @Override
     public void validGenerator(Generator generator, boolean add) {
@@ -171,6 +180,44 @@ public class GeneratorServiceImpl extends ServiceImpl<GeneratorMapper, Generator
             return Collections.emptyList();
         }
         return generatorMapper.selectBatchIds(idList);
+    }
+
+    @Override
+    public void cacheGenerators(List<Long> idList) {
+        for (Long id : idList) {
+            if (id <= 0) {
+                continue;
+            }
+            log.info("cache generator, id = {}", id);
+            Generator generator = this.getById(id);
+            if (Objects.isNull(generator)) {
+                throw new BusinessException(ErrorCode.NOT_FOUND_ERROR);
+            }
+            String distPath = generator.getDistPath();
+            if (StrUtil.isBlank(distPath)) {
+                throw new BusinessException(ErrorCode.NOT_FOUND_ERROR, "产物包不存在");
+            }
+
+            String zipFilePath = LocalFileCacheManager.getCacheFilePath(id, distPath);
+
+            if (FileUtil.exist(zipFilePath)) {
+                FileUtil.del(zipFilePath);
+            }
+            FileUtil.touch(zipFilePath);
+
+            try {
+                cosManager.download(distPath, zipFilePath);
+                // 给缓存设置过期时间
+                LocalFileCacheManager.updateCacheExpiration(zipFilePath);
+            } catch (InterruptedException e) {
+                throw new BusinessException(ErrorCode.SYSTEM_ERROR, "生成器下载失败");
+            }
+        }
+    }
+
+    @Override
+    public List<Long> listHotGeneratorIds() {
+        return generatorMapper.listHotGeneratorIds();
     }
 
 }
