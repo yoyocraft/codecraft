@@ -9,6 +9,7 @@ import cn.hutool.core.util.ZipUtil;
 import cn.hutool.json.JSONUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.google.common.util.concurrent.RateLimiter;
 import com.qcloud.cos.model.COSObject;
 import com.qcloud.cos.model.COSObjectInputStream;
 import com.qcloud.cos.utils.IOUtils;
@@ -54,6 +55,10 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
@@ -79,14 +84,24 @@ public class GeneratorController {
 
     @Resource
     private GeneratorService generatorService;
-
     @Resource
     private UserService userService;
-
     @Resource
     private CosManager cosManager;
     @Resource
     private CacheManager cacheManager;
+    private static final ExecutorService CLEAN_UP_POOL = new ThreadPoolExecutor(
+            1,
+            5,
+            60L,
+            TimeUnit.SECONDS,
+            new LinkedBlockingQueue<>(100),
+            r -> new Thread(r, "clean-up-thread"),
+            new ThreadPoolExecutor.AbortPolicy()
+    );
+
+    private static final RateLimiter USE_LIMITER = RateLimiter.create(10);
+    private static final RateLimiter MAKE_LIMITER = RateLimiter.create(10);
 
     // region 增删改查
 
@@ -103,6 +118,8 @@ public class GeneratorController {
         if (generatorAddRequest == null) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR);
         }
+        User loginUser = userService.getLoginUser(request);
+
         Generator generator = new Generator();
         BeanUtils.copyProperties(generatorAddRequest, generator);
         List<String> tags = generatorAddRequest.getTags();
@@ -114,7 +131,6 @@ public class GeneratorController {
 
         // 参数校验
         generatorService.validGenerator(generator, true);
-        User loginUser = userService.getLoginUser(request);
         generator.setUserId(loginUser.getId());
         generator.setStatus(0);
         boolean result = generatorService.save(generator);
@@ -222,7 +238,9 @@ public class GeneratorController {
      * @param generatorQueryRequest
      * @param request
      * @return
+     * @deprecated
      */
+    @Deprecated
     @PostMapping("/list/page/vo")
     public BaseResponse<Page<GeneratorVO>> listGeneratorVOByPage(
             @RequestBody GeneratorQueryRequest generatorQueryRequest,
@@ -258,7 +276,7 @@ public class GeneratorController {
         String cacheKey = cacheManager.getPageCacheKey(generatorQueryRequest);
         Object cache = cacheManager.get(cacheKey);
         if (Objects.nonNull(cache)) {
-            //noinspection unchecked
+            // noinspection unchecked
             return ResultUtils.success((Page<GeneratorVO>) cache);
         }
         QueryWrapper<Generator> queryWrapper = generatorService.getQueryWrapper(
@@ -347,7 +365,7 @@ public class GeneratorController {
     /**
      * 根据 id 下载
      *
-     * @param id
+     * @param id 生成器id
      */
     @GetMapping("/download")
     public void downloadGeneratorById(Long id, HttpServletRequest request,
@@ -382,8 +400,9 @@ public class GeneratorController {
             Files.copy(Paths.get(zipFilePath), response.getOutputStream());
             return;
         }
-        COSObjectInputStream cosObjectInput = null;
 
+        // 从对象存储下载
+        COSObjectInputStream cosObjectInput = null;
         try {
             COSObject cosObject = cosManager.getObject(filepath);
             cosObjectInput = cosObject.getObjectContent();
@@ -413,6 +432,9 @@ public class GeneratorController {
     @PostMapping("/use")
     public void onlineUseGenerator(@RequestBody GeneratorUseRequest generatorUseRequest,
             HttpServletRequest request, HttpServletResponse response) throws IOException {
+        if (!USE_LIMITER.tryAcquire()) {
+            throw new BusinessException(ErrorCode.TOO_MANY_REQUEST);
+        }
         // 获取用户的输入参数
         Long id = generatorUseRequest.getId();
         Map<String, Object> dataModel = generatorUseRequest.getDataModel();
@@ -431,7 +453,7 @@ public class GeneratorController {
             throw new BusinessException(ErrorCode.NOT_FOUND_ERROR, "产物包不存在");
         }
 
-        // 定义独立的工作空间
+        // 定义独立的工作空间，用户单独的工作空间
         String projectPath = System.getProperty("user.dir");
         String tmpDirPath = String.format("%s/.tmp/use/%s/%s", projectPath, loginUser.getId(), id);
         String zipFilePath = tmpDirPath + "/dist.zip";
@@ -487,8 +509,6 @@ public class GeneratorController {
         String scriptAbsolutePath = scriptFile.getAbsolutePath().replace("\\", "/");
         String[] commands = {scriptAbsolutePath, "json-generate", "--file=" + dataModelFilePath};
 
-//        log.info("scriptAbsolutePath: {}", scriptAbsolutePath);
-//        log.info("dataModelFilePath: {}", dataModelFilePath);
         // 执行命令
         File scriptDir = scriptFile.getParentFile();
         ProcessBuilder processBuilder = new ProcessBuilder(commands);
@@ -522,8 +542,7 @@ public class GeneratorController {
         Files.copy(resultFile.toPath(), response.getOutputStream());
 
         // 清理文件
-        // TODO 设置线程池
-        CompletableFuture.runAsync(() -> FileUtil.del(tmpDirPath));
+        CompletableFuture.runAsync(() -> FileUtil.del(tmpDirPath), CLEAN_UP_POOL);
     }
 
     /**
@@ -536,6 +555,9 @@ public class GeneratorController {
     @PostMapping("/make")
     public void onlineMakeGenerator(@RequestBody GeneratorMakeRequest generatorMakeRequest,
             HttpServletRequest request, HttpServletResponse response) throws IOException {
+        if (!MAKE_LIMITER.tryAcquire()) {
+            throw new BusinessException(ErrorCode.TOO_MANY_REQUEST);
+        }
         // 获取用户输入参数
         String zipFilePath = generatorMakeRequest.getZipFilePath();
         Meta meta = generatorMakeRequest.getMeta();
@@ -574,7 +596,6 @@ public class GeneratorController {
         // 调用 maker 制作生成器
         GeneratorTemplate generatorTemplate = new SrcZipGenerator();
         try {
-            // TODO 异步化操作
             // 将下载好的生成器写回前端，注意是要完整的文件打包，因为用户可能还会修改
             generatorTemplate.doGenerate(meta, outputPath);
         } catch (Exception e) {
@@ -591,7 +612,7 @@ public class GeneratorController {
         Files.copy(Paths.get(distZipFilePath), response.getOutputStream());
 
         // 清理工作空间
-        CompletableFuture.runAsync(() -> FileUtil.del(tmpDirPath));
+        CompletableFuture.runAsync(() -> FileUtil.del(tmpDirPath), CLEAN_UP_POOL);
     }
 
     /**
@@ -652,5 +673,7 @@ public class GeneratorController {
                 .collect(Collectors.toList());
         LocalFileCacheManager.clearCache(cacheKeyList);
     }
+
+    // TODO 完善生成器状态流转，考虑使用状态机
 
 }

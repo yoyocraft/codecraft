@@ -49,9 +49,9 @@ public class FileController {
     /**
      * 测试文件上传
      *
-     * @param multipartFile
-     * @return
+     * @deprecated
      */
+    @Deprecated
     @PostMapping("/test/upload")
     @AuthCheck(mustRole = UserConstant.ADMIN_ROLE)
     public BaseResponse<String> testUploadFile(@RequestPart("file") MultipartFile multipartFile) {
@@ -82,12 +82,11 @@ public class FileController {
     /**
      * 测试文件下载
      *
-     * @param filepath
-     * @param response
-     * @return
+     * @deprecated
      */
-    @AuthCheck(mustRole = UserConstant.ADMIN_ROLE)
+    @Deprecated
     @GetMapping("/test/download")
+    @AuthCheck(mustRole = UserConstant.ADMIN_ROLE)
     public void testDownloadFile(String filepath, HttpServletResponse response) throws IOException {
         COSObjectInputStream cosObjectInput = null;
         try {
@@ -115,10 +114,10 @@ public class FileController {
     /**
      * 文件上传
      *
-     * @param multipartFile
-     * @param uploadFileRequest
-     * @param request
-     * @return
+     * @param multipartFile     上传的文件
+     * @param uploadFileRequest 文件上传请求
+     * @param request           HTTP请求
+     * @return 返回上传结果
      */
     @PostMapping("/upload")
     public BaseResponse<String> uploadFile(@RequestPart("file") MultipartFile multipartFile,
@@ -160,7 +159,7 @@ public class FileController {
     /**
      * 校验文件
      *
-     * @param multipartFile
+     * @param multipartFile     上传的文件
      * @param fileUploadBizEnum 业务类型
      */
     private void validFile(MultipartFile multipartFile, FileUploadBizEnum fileUploadBizEnum) {
@@ -168,10 +167,10 @@ public class FileController {
         long fileSize = multipartFile.getSize();
         // 文件后缀
         String fileSuffix = FileUtil.getSuffix(multipartFile.getOriginalFilename());
-        final long oneMB = 1024 * 1024L;
+        final long fiveMB = 5 * 1024 * 1024L;
         if (FileUploadBizEnum.USER_AVATAR.equals(fileUploadBizEnum)) {
-            if (fileSize > oneMB) {
-                throw new BusinessException(ErrorCode.PARAMS_ERROR, "文件大小不能超过 1M");
+            if (fileSize > fiveMB) {
+                throw new BusinessException(ErrorCode.PARAMS_ERROR, "文件大小不能超过 5M");
             }
             if (!Arrays.asList("jpeg", "jpg", "svg", "png", "webp").contains(fileSuffix)) {
                 throw new BusinessException(ErrorCode.PARAMS_ERROR, "文件类型错误");
