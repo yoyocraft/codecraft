@@ -1,0 +1,92 @@
+{
+  "id": 2,
+  "meta": {
+    "name": "springboot-init-generator",
+    "description": "SpringBoot 示例项目生成器"
+  },
+  "originProjectPath": "../../../sample/springboot-init",
+  "fileConfig": {
+    "fileGroupConfig": {
+      "groupKey": "post",
+      "groupName": "帖子文件组",
+      "condition": "needPost"
+    },
+    "files": [
+      {
+        "path": "src/main",
+        "filterConfigList": [
+          {
+            "range": "fileName",
+            "rule": "contains",
+            "value": "Post"
+          }
+        ]
+      },
+      {
+        "path": "src/main/java/com/youyi/springbootinit/model/dto/post/PostEsDTO.java",
+        "condition": "needPost && needEs",
+        "noParseConfig": {
+          "code": "#\\{[^{}]+\\}"
+        },
+        "codeSnippetConfigList": [
+          {
+            "code": "xxx",
+            "condition": "needEs",
+            "boolVal": true,
+            "checkType": "equals"
+          }
+        ]
+      },
+      {
+        "path": "src/main/java/com/youyi/springbootinit/service/impl/PostServiceImpl.java",
+        "codeSnippetConfigList": [
+          {
+            "code": "@Override\\n\\s*public\\s+Page<Post>\\s+searchFromEs\\(PostQueryRequest\\s+postQueryRequest\\)[\\s\\S]*?return\\s*page;[\\s\\S]*?}\n",
+            "condition": "needEs",
+            "boolVal": true,
+            "checkType": "regex"
+          }
+        ]
+      }
+    ]
+  },
+  "modelConfig": {
+    "fileDirPathConfig": {
+      "fieldName": "basePackage",
+      "replaceText": "com.youyi"
+    },
+    "modelGroupConfig": {
+      "groupKey": "docsConfig",
+      "groupName": "接口文档配置",
+      "type": "DocsConfig",
+      "description": "用于生成接口文档配置",
+      "condition": "needDocs"
+    },
+    "models": [
+      {
+        "fieldName": "title",
+        "type": "String",
+        "description": "接口文档标题",
+        "defaultValue": "接口文档",
+        "replaceText": "接口文档"
+      },
+      {
+        "fieldName": "description",
+        "type": "String",
+        "description": "接口文档描述",
+        "defaultValue": "接口文档描述",
+        "replaceText": "springboot-init"
+      },
+      {
+        "fieldName": "version",
+        "type": "String",
+        "description": "接口文档版本",
+        "defaultValue": "1.0.0",
+        "replaceText": "1.0"
+      }
+    ]
+  },
+  "outputConfig": {
+    "removeGroupFilesFromRoot": true
+  }
+}

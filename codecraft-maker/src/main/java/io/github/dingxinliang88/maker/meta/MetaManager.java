@@ -29,8 +29,7 @@ public class MetaManager {
         }
 
         private Meta initMeta() {
-            // String metaJson = ResourceUtil.readUtf8Str("meta.json");
-            String metaJson = ResourceUtil.readUtf8Str("springboot-init-plus-meta.json");
+            String metaJson = ResourceUtil.readUtf8Str("meta.json");
             Meta newMeta = JSONUtil.toBean(metaJson, Meta.class);
             MetaValidator.doValidateAndFill(newMeta);
             return newMeta;
