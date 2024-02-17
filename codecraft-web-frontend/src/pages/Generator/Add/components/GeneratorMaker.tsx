@@ -2,7 +2,7 @@ import FileUploader from '@/components/FileUploader';
 import { onlineMakeGeneratorUsingPost } from '@/services/backend/generatorController';
 import { ProFormInstance } from '@ant-design/pro-components';
 import { ProForm, ProFormItem } from '@ant-design/pro-form';
-import { Alert, Collapse, message } from 'antd';
+import { Alert, Button, Collapse, message } from 'antd';
 import { saveAs } from 'file-saver';
 import { useRef } from 'react';
 
@@ -58,7 +58,22 @@ export default (props: Props) => {
    */
   const formView = (
     <>
-      <Alert message="在线制作功能只能够辅助生成，具体细节还需要调整" type="warning" closable />
+      <Alert
+        message="在线制作功能只能够辅助生成，具体细节还需要调整，推荐下载生成器制作工具使用"
+        type="warning"
+        action={
+          <Button
+            size="small"
+            type="primary"
+            style={{ marginLeft: 8 }}
+            onClick={() =>
+              window.open('https://github.com/dingxinliang88/codecraft/tree/master/codecraft-maker')
+            }
+          >
+            前往下载
+          </Button>
+        }
+      />
       <div style={{ marginBottom: 16 }} />
       <ProForm
         formRef={formRef}
