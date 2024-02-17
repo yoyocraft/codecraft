@@ -29,6 +29,8 @@ public class TemplateMakerModelConfig {
         private String description;
         private Object defaultValue;
         private String abbr;
+        // 是否必填，不针对模型组和模型组内字段
+        private Boolean required;
         // 替换文本
         private String replaceText;
     }

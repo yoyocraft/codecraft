@@ -68,7 +68,8 @@
         "type": "String",
         "description": "接口文档标题",
         "defaultValue": "接口文档",
-        "replaceText": "接口文档"
+        "replaceText": "接口文档",
+        "required": true
       },
       {
         "fieldName": "description",

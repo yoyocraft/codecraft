@@ -49,7 +49,6 @@ public class Meta implements Serializable {
             private String groupKey;
             private String groupName;
             private List<FileInfo> files;
-            // TODO 补充：必需 => required=true/false
         }
     }
 
@@ -73,6 +72,9 @@ public class Meta implements Serializable {
             private String groupKey;
             private String groupName;
             private List<ModelInfo> models;
+
+            // required
+            private Boolean required;
 
             // tmp args, not for command use
             private String allArgsStr;
