@@ -14,11 +14,16 @@
   <version>0.0.1-SNAPSHOT</version>
   <name>codecraft-web-backend</name>
   <properties>
+    <java.version>17</java.version>
     <hutool.version>5.8.25</hutool.version>
+    <guava.version>32.1.3-jre</guava.version>
     <knife4j-spring.version>4.4.0</knife4j-spring.version>
     <mybatis-spring.version>2.2.2</mybatis-spring.version>
     <mybatis-plus-spring.version>3.5.2</mybatis-plus-spring.version>
     <cos_api.version>5.6.155</cos_api.version>
+    <lombok.version>1.18.30</lombok.version>
+    <caffeine.version>3.1.8</caffeine.version>
+    <xxl-job.version>2.4.0</xxl-job.version>
     <maven-checkstyle-plugin.version>3.2.0</maven-checkstyle-plugin.version>
   </properties>
   <dependencies>
@@ -54,7 +59,7 @@
     <dependency>
       <groupId>com.github.ben-manes.caffeine</groupId>
       <artifactId>caffeine</artifactId>
-      <version>3.1.8</version>
+      <version>${caffeine.version}</version>
     </dependency>
     <!-- https://doc.xiaominfo.com/docs/quick-start#openapi2 -->
     <dependency>
@@ -79,6 +84,12 @@
       <artifactId>hutool-all</artifactId>
       <version>${hutool.version}</version>
     </dependency>
+    <!-- https://mvnrepository.com/artifact/com.google.guava/guava -->
+    <dependency>
+      <groupId>com.google.guava</groupId>
+      <artifactId>guava</artifactId>
+      <version>${guava.version}</version>
+    </dependency>
 
     <!-- maker -->
     <dependency>
@@ -93,7 +104,7 @@
       <scope>runtime</scope>
       <optional>true</optional>
     </dependency>
-    <!-- https://mvnrepository.com/artifact/com.mysql/mysql-connector-j -->
+
     <dependency>
       <groupId>com.mysql</groupId>
       <artifactId>mysql-connector-j</artifactId>
@@ -104,10 +115,12 @@
       <artifactId>spring-boot-configuration-processor</artifactId>
       <optional>true</optional>
     </dependency>
+    <!-- https://mvnrepository.com/artifact/org.projectlombok/lombok -->
     <dependency>
       <groupId>org.projectlombok</groupId>
       <artifactId>lombok</artifactId>
-      <optional>true</optional>
+      <version>${lombok.version}</version>
+      <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>org.springframework.boot</groupId>
@@ -126,7 +139,7 @@
     <dependency>
       <groupId>com.xuxueli</groupId>
       <artifactId>xxl-job-core</artifactId>
-      <version>2.4.0</version>
+      <version>${xxl-job.version}</version>
     </dependency>
 
   </dependencies>
@@ -172,8 +185,10 @@
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-compiler-plugin</artifactId>
         <configuration>
-          <source>8</source>
-          <target>8</target>
+          <source>${java.version}</source>
+          <target>${java.version}</target>
+          <release>${java.version}</release>
+          <compilerArgument>-Xlint:unchecked</compilerArgument>
         </configuration>
       </plugin>
     </plugins>

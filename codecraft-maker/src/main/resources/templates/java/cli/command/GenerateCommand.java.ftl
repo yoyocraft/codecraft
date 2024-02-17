@@ -4,7 +4,8 @@ ${indent}@CommandLine.Option(
         ${indent}names = {<#if modelInfo.abbr??>"-${modelInfo.abbr}", </#if>"--${modelInfo.fieldName}"},
         ${indent}arity = "0..1",
         ${indent}<#if modelInfo.description??>description = "${modelInfo.description}",</#if>
-        ${indent}interactive = true,
+        ${indent}interactive = true,<#if modelInfo.required??>
+        ${indent}required = true,</#if>
         ${indent}echo = true)
 ${indent}private ${modelInfo.type} ${modelInfo.fieldName}<#if modelInfo.defaultValue??> = ${modelInfo.defaultValue?c}</#if>;
 </#macro>

@@ -1,6 +1,7 @@
 package com.youyi.craft.model.dto.generator;
 
 import java.io.Serializable;
+import java.util.List;
 import lombok.Data;
 
 /**
@@ -15,7 +16,7 @@ public class GeneratorCacheRequest implements Serializable {
     /**
      * 生成器 ID
      */
-    private Long id;
+    private List<Long> idList;
 
     private static final long serialVersionUID = 1L;
 }

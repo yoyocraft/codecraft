@@ -35,6 +35,9 @@ public class TemplateMakerFileConfig {
         }
      */
     private List<FileInfoConfig> files;
+    /**
+     * 文件组配置
+     */
     private FileGroupConfig fileGroupConfig;
 
     @NoArgsConstructor
@@ -42,11 +45,8 @@ public class TemplateMakerFileConfig {
     public static class FileInfoConfig {
 
         private String path;
-
         private String condition;
-
         private List<FileFilterConfig> filterConfigList;
-
         /**
          * 代码片段配置
          */
@@ -63,9 +63,7 @@ public class TemplateMakerFileConfig {
     public static class FileGroupConfig {
 
         private String condition;
-
         private String groupKey;
-
         private String groupName;
     }
 
@@ -81,6 +79,9 @@ public class TemplateMakerFileConfig {
          * false -> <#if !condition>...</#if>
          */
         private Boolean boolVal;
+        /**
+         * {@link CodeSnippetCheckTypeEnum}
+         */
         private String checkType = CodeSnippetCheckTypeEnum.EQUALS.getValue();
     }
 }

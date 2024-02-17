@@ -81,6 +81,16 @@ public class Generator implements Serializable {
      * 创建用户 id
      */
     private Long userId;
+    
+    /**
+     * 使用次数
+     */
+    private Integer useCount;
+
+    /**
+     * 下载次数
+     */
+    private Integer downloadCount;
 
     /**
      * 创建时间

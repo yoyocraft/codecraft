@@ -18,6 +18,8 @@
     <result property="distPath" column="distPath" jdbcType="VARCHAR"/>
     <result property="status" column="status" jdbcType="TINYINT"/>
     <result property="userId" column="userId" jdbcType="BIGINT"/>
+    <result property="useCount" column="useCount" jdbcType="INTEGER"/>
+    <result property="downloadCount" column="downloadCount" jdbcType="INTEGER"/>
     <result property="createTime" column="createTime" jdbcType="TIMESTAMP"/>
     <result property="updateTime" column="updateTime" jdbcType="TIMESTAMP"/>
     <result property="isDelete" column="isDelete" jdbcType="TINYINT"/>
@@ -29,7 +31,7 @@
         basePackage,version,author,
         tags,picture,fileConfig,
         modelConfig,distPath,status,
-        userId,createTime,updateTime,
+        userId,useCount,downloadCount,createTime,updateTime,
         isDelete
   </sql>
 </mapper>
