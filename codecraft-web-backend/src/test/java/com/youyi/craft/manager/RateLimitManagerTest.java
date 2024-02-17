@@ -1,13 +1,13 @@
 package com.youyi.craft.manager;
 
-import static org.junit.jupiter.api.Assertions.*;
-
 import com.google.common.util.concurrent.RateLimiter;
+import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
 
 /**
  * @author <a href="https://github.com/dingxinliang88">youyi</a>
  */
+@Slf4j
 class RateLimitManagerTest {
 
     RateLimiter limiter = RateLimiter.create(2);
@@ -19,7 +19,7 @@ class RateLimitManagerTest {
             new Thread(() -> {
                 while (true) {
                     if (limiter.tryAcquire()) {
-                        System.out.println("获取到令牌");
+                        log.info("获取到令牌");
                         break;
                     }
                 }

@@ -2,12 +2,15 @@ package com.youyi.craft.service;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.baomidou.mybatisplus.extension.service.IService;
 import com.youyi.craft.model.dto.generator.GeneratorQueryRequest;
 import com.youyi.craft.model.entity.Generator;
-import com.baomidou.mybatisplus.extension.service.IService;
 import com.youyi.craft.model.vo.GeneratorVO;
+import io.github.dingxinliang88.maker.meta.Meta;
+import java.io.IOException;
 import java.util.List;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 /**
  * @author <a href="https://github.com/dingxinliang88">youyi</a>
@@ -59,4 +62,12 @@ public interface GeneratorService extends IService<Generator> {
     void cacheGenerators(List<Long> idList);
 
     List<Long> listHotGeneratorIds();
+
+    void downloadGenerator(Generator generator, HttpServletResponse response) throws IOException;
+
+    void onlineUseGenerator(Generator generator, Object dataModel, Long userId,
+            HttpServletResponse response) throws IOException;
+
+    void onlineMakerGenerator(Meta meta, String zipFilePath, HttpServletResponse response)
+            throws IOException;
 }
