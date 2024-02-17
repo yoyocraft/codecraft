@@ -252,6 +252,8 @@ public class GeneratorServiceImpl extends ServiceImpl<GeneratorMapper, Generator
             }
             FileUtil.touch(zipFilePath);
 
+            // 本地文件有一定限度（缓存10个），采用 LRU 算法，主动淘汰掉最不经常使用的
+
             try {
                 cosManager.download(distPath, zipFilePath);
                 // 给缓存设置过期时间
@@ -323,8 +325,9 @@ public class GeneratorServiceImpl extends ServiceImpl<GeneratorMapper, Generator
         }
 
         String cacheFilePath = LocalFileCacheManager.getCacheFilePath(id, distPath);
+        boolean isCached = LocalFileCacheManager.isCached(cacheFilePath);
         // 判断当前要执行的生成器是否在缓存中
-        if (LocalFileCacheManager.isCached(cacheFilePath)) {
+        if (isCached) {
             // 复制
             FileUtil.copy(cacheFilePath, zipFilePath, true);
         } else {
@@ -403,7 +406,7 @@ public class GeneratorServiceImpl extends ServiceImpl<GeneratorMapper, Generator
 
         // 清理文件
         CompletableFuture.runAsync(() -> FileUtil.del(tmpDirPath), CLEAN_UP_POOL);
-        // 使用次数和阈值判断
+        // 使用次数和阈值判断，以及更新本地文件缓存
         CompletableFuture.runAsync(() -> {
             Integer useCount = generator.getUseCount();
             if (useCount >= GeneratorConstant.HOT_GENERATOR_USE_COUNT_THRESHOLD - 1) {
@@ -412,6 +415,10 @@ public class GeneratorServiceImpl extends ServiceImpl<GeneratorMapper, Generator
             }
             // 更新使用次数
             incrUseCount(generator);
+            // 更新缓存
+            if (isCached) {
+                LocalFileCacheManager.updateCacheExpiration(cacheFilePath);
+            }
         }, INCR_COUNT_POOL);
     }
 

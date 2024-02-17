@@ -4,6 +4,7 @@ import cn.hutool.core.codec.Base64Encoder;
 import cn.hutool.json.JSONUtil;
 import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
+import com.youyi.craft.constant.GeneratorConstant;
 import com.youyi.craft.model.dto.generator.GeneratorQueryRequest;
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
@@ -12,6 +13,10 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Component;
 
 /**
+ * 缓存管理
+ * <p>
+ * 缓存一致性问题讨论：缓存的是首页数据，首页数据更新不频繁，因为代码生成器的更新是需要校验和审核的，因此这部分的缓存可以不考虑一致性问题。通过过期时间兜底
+ *
  * @author <a href="https://github.com/dingxinliang88">youyi</a>
  */
 @Component
@@ -79,7 +84,7 @@ public class CacheManager {
         String jsonStr = JSONUtil.toJsonStr(generatorQueryRequest);
         // 请求参数编码
         String base64 = Base64Encoder.encode(jsonStr);
-        return "generator:page:" + base64;
+        return GeneratorConstant.CACHE_KEY_PREFIX + base64;
     }
 
 }

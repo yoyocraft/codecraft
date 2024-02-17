@@ -15,4 +15,6 @@ public interface GeneratorConstant {
      */
     int HOT_GENERATOR_USE_COUNT_THRESHOLD = 2;
 
+    String CACHE_KEY_PREFIX = "generator:page:";
+
 }
