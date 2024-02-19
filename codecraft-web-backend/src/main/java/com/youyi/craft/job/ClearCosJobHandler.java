@@ -31,7 +31,7 @@ public class ClearCosJobHandler {
         log.info("clear cos job handler start...");
 
         // 1. 包括用户上传的模板制作文件（`generator_make_template`）
-        // TODO 思考问题：定时批量删除模板制作文件会不会有什么问题？比如刚上传就删了。
+        // TODO 思考问题：定时批量删除模板制作文件会不会有什么问题？比如刚上传就删了。考虑设置文件保护期
         cosManager.deleteDir("/generator_make_template/");
         // 2. 已删除的代码生成器对应的产物包文件（`generator_dist`）
         List<Generator> generatorList = generatorMapper.listDeletedGenerator();

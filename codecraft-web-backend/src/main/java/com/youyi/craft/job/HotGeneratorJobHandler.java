@@ -23,6 +23,5 @@ public class HotGeneratorJobHandler {
         List<Long> idList = generatorService.listHotGeneratorIds();
         generatorService.cacheGenerators(idList);
     }
-
-
+    
 }

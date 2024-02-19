@@ -4,7 +4,6 @@ import io.github.dingxinliang88.maker.meta.Meta;
 import java.io.Serial;
 import java.io.Serializable;
 import lombok.Data;
-import org.springframework.web.multipart.MultipartFile;
 
 /**
  * 制作代码生成器请求
@@ -24,11 +23,6 @@ public class GeneratorMakeRequest implements Serializable {
      * 元信息
      */
     private Meta meta;
-
-    /**
-     * 文件信息
-     */
-    private MultipartFile multipartFile;
 
     @Serial
     private static final long serialVersionUID = 1L;

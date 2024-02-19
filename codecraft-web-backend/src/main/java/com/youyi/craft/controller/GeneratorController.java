@@ -47,9 +47,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.multipart.MultipartFile;
 
 /**
  * 生成器接口
@@ -437,15 +435,12 @@ public class GeneratorController {
         if (!MAKE_LIMITER.tryAcquire()) {
             throw new BusinessException(ErrorCode.TOO_MANY_REQUEST);
         }
-        // 获取用户输入参数
-        Meta meta = generatorMakeRequest.getMeta();
-        MultipartFile multipartFile = generatorMakeRequest.getMultipartFile();
 
         // 需要用户登录
         User loginUser = userService.getLoginUser(request);
         log.info("userId: {} make generator", loginUser.getId());
 
-        generatorService.onlineMakerGenerator(meta, multipartFile, response);
+        // do nothing
     }
 
     /**

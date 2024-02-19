@@ -14,7 +14,6 @@ import com.qcloud.cos.model.COSObject;
 import com.qcloud.cos.model.COSObjectInputStream;
 import com.qcloud.cos.utils.IOUtils;
 import com.youyi.craft.common.ErrorCode;
-import com.youyi.craft.common.ResultUtils;
 import com.youyi.craft.constant.CommonConstant;
 import com.youyi.craft.constant.GeneratorConstant;
 import com.youyi.craft.exception.BusinessException;
@@ -254,7 +253,6 @@ public class GeneratorServiceImpl extends ServiceImpl<GeneratorMapper, Generator
             }
             FileUtil.touch(zipFilePath);
 
-            // 本地文件有一定限度（缓存10个），采用 LRU 算法，主动淘汰掉最不经常使用的
             try {
                 cosManager.download(distPath, zipFilePath);
                 // 给缓存设置过期时间
