@@ -14,6 +14,7 @@ import com.qcloud.cos.model.COSObject;
 import com.qcloud.cos.model.COSObjectInputStream;
 import com.qcloud.cos.utils.IOUtils;
 import com.youyi.craft.common.ErrorCode;
+import com.youyi.craft.common.ResultUtils;
 import com.youyi.craft.constant.CommonConstant;
 import com.youyi.craft.constant.GeneratorConstant;
 import com.youyi.craft.exception.BusinessException;
@@ -60,6 +61,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 /**
  * @author <a href="https://github.com/dingxinliang88">youyi</a>
@@ -439,6 +441,54 @@ public class GeneratorServiceImpl extends ServiceImpl<GeneratorMapper, Generator
             cosManager.download(zipFilePath, localZipFilePath);
         } catch (InterruptedException e) {
             throw new BusinessException(ErrorCode.SYSTEM_ERROR, "项目文件下载失败");
+        }
+
+        // 解压，得到项目文件
+        File unzipFilePath = ZipUtil.unzip(localZipFilePath);
+
+        // 构造 meta 对象和生成器输出路径
+        String sourceRootPath = unzipFilePath.getAbsolutePath();
+        meta.getFileConfig().setSourceRootPath(sourceRootPath);
+        // 校验和处理默认值
+        MetaValidator.doValidateAndFill(meta);
+        String outputPath = tmpDirPath + "/generated/" + meta.getName();
+
+        // 调用 maker 制作生成器
+        GeneratorTemplate generatorTemplate = new SrcZipGenerator();
+        try {
+            // 将下载好的生成器写回前端，注意是要完整的文件打包，因为用户可能还会修改
+            generatorTemplate.doGenerate(meta, outputPath);
+        } catch (Exception e) {
+            log.error("make generator failed, ", e);
+            throw new BusinessException(ErrorCode.SYSTEM_ERROR, "制作失败");
+        }
+
+        String zipSuffix = "-dist.zip";
+        String zipFileName = meta.getName() + zipSuffix;
+        String distZipFilePath = outputPath + zipSuffix;
+        // 设置响应头
+        response.setContentType("application/octet-stream;charset=UTF-8");
+        response.setHeader("Content-Disposition", "attachment; filename=" + zipFileName);
+        Files.copy(Paths.get(distZipFilePath), response.getOutputStream());
+
+        // 清理工作空间
+        CompletableFuture.runAsync(() -> FileUtil.del(tmpDirPath), CLEAN_UP_POOL);
+    }
+
+    @Override
+    public void onlineMakerGenerator(Meta meta, MultipartFile multipartFile,
+            HttpServletResponse response) throws IOException {
+        // 创建独立的工作空间，将文件下载到本地
+        String projectPath = System.getProperty("user.dir");
+        String tmpId = IdUtil.getSnowflakeNextIdStr() + RandomUtil.randomString(6);
+        String tmpDirPath = String.format("%s/.tmp/make/%s", projectPath, tmpId);
+        String localZipFilePath = tmpDirPath + "/project.zip";
+
+        try {
+            File file = File.createTempFile(localZipFilePath, null);
+            multipartFile.transferTo(file);
+        } catch (Exception e) {
+            throw new BusinessException(ErrorCode.SYSTEM_ERROR, "获取项目文件失败");
         }
 
         // 解压，得到项目文件

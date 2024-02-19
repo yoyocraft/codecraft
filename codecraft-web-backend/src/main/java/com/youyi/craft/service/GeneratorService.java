@@ -11,6 +11,7 @@ import java.io.IOException;
 import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import org.springframework.web.multipart.MultipartFile;
 
 /**
  * @author <a href="https://github.com/dingxinliang88">youyi</a>
@@ -69,5 +70,8 @@ public interface GeneratorService extends IService<Generator> {
             HttpServletResponse response) throws IOException;
 
     void onlineMakerGenerator(Meta meta, String zipFilePath, HttpServletResponse response)
+            throws IOException;
+
+    void onlineMakerGenerator(Meta meta, MultipartFile multipartFile, HttpServletResponse response)
             throws IOException;
 }
