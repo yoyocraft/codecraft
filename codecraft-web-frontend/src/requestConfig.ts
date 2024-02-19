@@ -33,7 +33,7 @@ export const requestConfig: RequestConfig = {
   responseInterceptors: [
     (response) => {
       // 请求地址
-      const requestPath: string = response.config.url ?? '';
+      // const requestPath: string = response.config.url ?? '';
 
       // 响应
       const { data } = response as unknown as ResponseStructure;
@@ -51,7 +51,7 @@ export const requestConfig: RequestConfig = {
       // 未登录，且不为获取用户登录信息接口
       if (
         code === 40100 &&
-        !requestPath.includes('user/get/login') &&
+        // !requestPath.includes('user/get/login') &&
         !location.pathname.includes('/user/login')
       ) {
         // 跳转至登录页
