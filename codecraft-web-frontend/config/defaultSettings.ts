@@ -11,10 +11,10 @@ const Settings: ProLayoutProps & {
   colorPrimary: '#2F54EB',
   layout: 'top',
   contentWidth: 'Fixed',
-  fixedHeader: false,
+  fixedHeader: true,
   fixSiderbar: true,
   colorWeak: false,
-  title: 'CodeCraft 代码工艺',
+  title: 'CodeCraft',
   pwa: true,
   iconfontUrl: '',
   token: {

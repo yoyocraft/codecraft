@@ -1,4 +1,4 @@
-import { GithubOutlined } from '@ant-design/icons';
+import { GithubOutlined, LinkOutlined } from '@ant-design/icons';
 import { DefaultFooter } from '@ant-design/pro-components';
 import '@umijs/max';
 import React from 'react';
@@ -15,7 +15,11 @@ const Footer: React.FC = () => {
       links={[
         {
           key: 'Blog',
-          title: 'youyiのBlog',
+          title: (
+            <>
+              <LinkOutlined /> youyiのBlog
+            </>
+          ),
           href: 'https://codejuzi.icu',
           blankTarget: true,
         },
