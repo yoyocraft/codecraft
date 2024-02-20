@@ -13,7 +13,7 @@ public interface GeneratorConstant {
      * <p>
      * 设置热点阈值，比如生成器的使用次数，通过定时任务和每次下载之后判断
      */
-    int HOT_GENERATOR_USE_COUNT_THRESHOLD = 2;
+    int HOT_GENERATOR_USE_COUNT_THRESHOLD = 1000;
 
     String CACHE_KEY_PREFIX = "generator:page:";
 
