@@ -1,75 +1,642 @@
 {
-  "name": "acm-template-pro-generator",
-  "description": "acm-template-pro-generator",
-  "basePackage": "io.github.dingxinliang88",
-  "version": "1.0",
-  "author": "youyi",
-  "createTime": "2024-01-21",
+  "name": "love",
+  "description": "表白模板",
   "fileConfig": {
-    "sourceRootPath": "/Users/codejuzi/Documents/CodeWorkSpace/Project/CodeCraft/codecraft/sample/acm-template-pro",
-    "inputRootPath": ".source/acm-template-pro",
-    "outputRootPath": "generated",
-    "type": "dir",
+    "sourceRootPath": "/Users/codejuzi/Documents/CodeWorkSpace/Project/CodeCraft/codecraft/codecraft-maker/.tmp/5/love-template",
     "files": [
       {
-        "inputPath": "src/io/github/dingxinliang88/acm/MainTemplate.java.ftl",
-        "outputPath": "src/io/github/dingxinliang88/acm/MainTemplate.java",
-        "type": "file",
-        "generateType": "dynamic"
-      },
-      {
-        "inputPath": "README.md",
-        "outputPath": "README.md",
+        "inputPath": "img/iali65.jpg",
+        "outputPath": "img/iali65.jpg",
         "type": "file",
         "generateType": "static"
       },
       {
-        "inputPath": ".gitignore",
-        "outputPath": ".gitignore",
+        "inputPath": "img/iali2.jpg",
+        "outputPath": "img/iali2.jpg",
         "type": "file",
-        "generateType": "static",
-        "condition": "needGit"
+        "generateType": "static"
+      },
+      {
+        "inputPath": "img/iali22.jpg",
+        "outputPath": "img/iali22.jpg",
+        "type": "file",
+        "generateType": "static"
+      },
+      {
+        "inputPath": "img/iali76_bg.png",
+        "outputPath": "img/iali76_bg.png",
+        "type": "file",
+        "generateType": "static"
+      },
+      {
+        "inputPath": "img/iali12.jpg",
+        "outputPath": "img/iali12.jpg",
+        "type": "file",
+        "generateType": "static"
+      },
+      {
+        "inputPath": "img/iali10.gif",
+        "outputPath": "img/iali10.gif",
+        "type": "file",
+        "generateType": "static"
+      },
+      {
+        "inputPath": "img/iali67.jpg",
+        "outputPath": "img/iali67.jpg",
+        "type": "file",
+        "generateType": "static"
+      },
+      {
+        "inputPath": "img/iali9.jpg",
+        "outputPath": "img/iali9.jpg",
+        "type": "file",
+        "generateType": "static"
+      },
+      {
+        "inputPath": ".git/hooks/push-to-checkout.sample",
+        "outputPath": ".git/hooks/push-to-checkout.sample",
+        "type": "file",
+        "generateType": "static"
+      },
+      {
+        "inputPath": "img/iali24.jpg",
+        "outputPath": "img/iali24.jpg",
+        "type": "file",
+        "generateType": "static"
+      },
+      {
+        "inputPath": "img/iali0.jpg",
+        "outputPath": "img/iali0.jpg",
+        "type": "file",
+        "generateType": "static"
+      },
+      {
+        "inputPath": "img/iali37.jpg",
+        "outputPath": "img/iali37.jpg",
+        "type": "file",
+        "generateType": "static"
+      },
+      {
+        "inputPath": "img/iali49.jpg",
+        "outputPath": "img/iali49.jpg",
+        "type": "file",
+        "generateType": "static"
+      },
+      {
+        "inputPath": "img/iali30_2.jpg",
+        "outputPath": "img/iali30_2.jpg",
+        "type": "file",
+        "generateType": "static"
+      },
+      {
+        "inputPath": "img/iali19.jpg",
+        "outputPath": "img/iali19.jpg",
+        "type": "file",
+        "generateType": "static"
+      },
+      {
+        "inputPath": "img/iali71.jpg",
+        "outputPath": "img/iali71.jpg",
+        "type": "file",
+        "generateType": "static"
+      },
+      {
+        "inputPath": "img/iali40.jpg",
+        "outputPath": "img/iali40.jpg",
+        "type": "file",
+        "generateType": "static"
+      },
+      {
+        "inputPath": "img/319280.jpg",
+        "outputPath": "img/319280.jpg",
+        "type": "file",
+        "generateType": "static"
+      },
+      {
+        "inputPath": "img/iali53.jpg",
+        "outputPath": "img/iali53.jpg",
+        "type": "file",
+        "generateType": "static"
+      },
+      {
+        "inputPath": "img/iali50_2.jpg",
+        "outputPath": "img/iali50_2.jpg",
+        "type": "file",
+        "generateType": "static"
+      },
+      {
+        "inputPath": "img/iali18.jpg",
+        "outputPath": "img/iali18.jpg",
+        "type": "file",
+        "generateType": "static"
+      },
+      {
+        "inputPath": ".git/hooks/prepare-commit-msg.sample",
+        "outputPath": ".git/hooks/prepare-commit-msg.sample",
+        "type": "file",
+        "generateType": "static"
+      },
+      {
+        "inputPath": "img/iali2_bg.jpg",
+        "outputPath": "img/iali2_bg.jpg",
+        "type": "file",
+        "generateType": "static"
+      },
+      {
+        "inputPath": ".git/refs/heads/master",
+        "outputPath": ".git/refs/heads/master",
+        "type": "file",
+        "generateType": "static"
+      },
+      {
+        "inputPath": "img/iali76.gif",
+        "outputPath": "img/iali76.gif",
+        "type": "file",
+        "generateType": "static"
+      },
+      {
+        "inputPath": "all.min.css",
+        "outputPath": "all.min.css",
+        "type": "file",
+        "generateType": "static"
+      },
+      {
+        "inputPath": "img/iali52.jpg",
+        "outputPath": "img/iali52.jpg",
+        "type": "file",
+        "generateType": "static"
+      },
+      {
+        "inputPath": ".git/refs/remotes/origin/HEAD",
+        "outputPath": ".git/refs/remotes/origin/HEAD",
+        "type": "file",
+        "generateType": "static"
+      },
+      {
+        "inputPath": "img/iali35.jpg",
+        "outputPath": "img/iali35.jpg",
+        "type": "file",
+        "generateType": "static"
+      },
+      {
+        "inputPath": "img/iali25.jpg",
+        "outputPath": "img/iali25.jpg",
+        "type": "file",
+        "generateType": "static"
+      },
+      {
+        "inputPath": "img/iali68.jpg",
+        "outputPath": "img/iali68.jpg",
+        "type": "file",
+        "generateType": "static"
+      },
+      {
+        "inputPath": "img/iali42.jpg",
+        "outputPath": "img/iali42.jpg",
+        "type": "file",
+        "generateType": "static"
+      },
+      {
+        "inputPath": "img/iali59_bg.jpg",
+        "outputPath": "img/iali59_bg.jpg",
+        "type": "file",
+        "generateType": "static"
+      },
+      {
+        "inputPath": "img/14915.jpg",
+        "outputPath": "img/14915.jpg",
+        "type": "file",
+        "generateType": "static"
+      },
+      {
+        "inputPath": "all.min.js",
+        "outputPath": "all.min.js",
+        "type": "file",
+        "generateType": "static"
+      },
+      {
+        "inputPath": "img/iali57.gif",
+        "outputPath": "img/iali57.gif",
+        "type": "file",
+        "generateType": "static"
+      },
+      {
+        "inputPath": "img/iali40_bg.jpg",
+        "outputPath": "img/iali40_bg.jpg",
+        "type": "file",
+        "generateType": "static"
+      },
+      {
+        "inputPath": "img/iali22_bg.jpg",
+        "outputPath": "img/iali22_bg.jpg",
+        "type": "file",
+        "generateType": "static"
+      },
+      {
+        "inputPath": "img/iali29.jpg",
+        "outputPath": "img/iali29.jpg",
+        "type": "file",
+        "generateType": "static"
+      },
+      {
+        "inputPath": "img/iali16.jpg",
+        "outputPath": "img/iali16.jpg",
+        "type": "file",
+        "generateType": "static"
+      },
+      {
+        "inputPath": "img/iali46.jpg",
+        "outputPath": "img/iali46.jpg",
+        "type": "file",
+        "generateType": "static"
+      },
+      {
+        "inputPath": "img/iali63.jpg",
+        "outputPath": "img/iali63.jpg",
+        "type": "file",
+        "generateType": "static"
+      },
+      {
+        "inputPath": "img/iali20.jpg",
+        "outputPath": "img/iali20.jpg",
+        "type": "file",
+        "generateType": "static"
+      },
+      {
+        "inputPath": "love.min.js",
+        "outputPath": "love.min.js",
+        "type": "file",
+        "generateType": "static"
+      },
+      {
+        "inputPath": "img/iali31.jpg",
+        "outputPath": "img/iali31.jpg",
+        "type": "file",
+        "generateType": "static"
+      },
+      {
+        "inputPath": "img/iali5.jpg",
+        "outputPath": "img/iali5.jpg",
+        "type": "file",
+        "generateType": "static"
+      },
+      {
+        "inputPath": "img/iali14.jpg",
+        "outputPath": "img/iali14.jpg",
+        "type": "file",
+        "generateType": "static"
+      },
+      {
+        "inputPath": "img/iali44.jpg",
+        "outputPath": "img/iali44.jpg",
+        "type": "file",
+        "generateType": "static"
+      },
+      {
+        "inputPath": ".git/logs/HEAD",
+        "outputPath": ".git/logs/HEAD",
+        "type": "file",
+        "generateType": "static"
+      },
+      {
+        "inputPath": "img/iali57.jpg",
+        "outputPath": "img/iali57.jpg",
+        "type": "file",
+        "generateType": "static"
+      },
+      {
+        "inputPath": ".git/index",
+        "outputPath": ".git/index",
+        "type": "file",
+        "generateType": "static"
+      },
+      {
+        "inputPath": ".git/logs/refs/remotes/origin/HEAD",
+        "outputPath": ".git/logs/refs/remotes/origin/HEAD",
+        "type": "file",
+        "generateType": "static"
+      },
+      {
+        "inputPath": "img/iali8_bg.png",
+        "outputPath": "img/iali8_bg.png",
+        "type": "file",
+        "generateType": "static"
+      },
+      {
+        "inputPath": "img/music.png",
+        "outputPath": "img/music.png",
+        "type": "file",
+        "generateType": "static"
+      },
+      {
+        "inputPath": ".git/config",
+        "outputPath": ".git/config",
+        "type": "file",
+        "generateType": "static"
+      },
+      {
+        "inputPath": "img/iali3.jpg",
+        "outputPath": "img/iali3.jpg",
+        "type": "file",
+        "generateType": "static"
+      },
+      {
+        "inputPath": "img/iali45_bg.jpg",
+        "outputPath": "img/iali45_bg.jpg",
+        "type": "file",
+        "generateType": "static"
+      },
+      {
+        "inputPath": "index.html.ftl",
+        "outputPath": "index.html",
+        "type": "file",
+        "generateType": "dynamic"
+      },
+      {
+        "inputPath": "img/iali64.jpg",
+        "outputPath": "img/iali64.jpg",
+        "type": "file",
+        "generateType": "static"
+      },
+      {
+        "inputPath": ".git/hooks/update.sample",
+        "outputPath": ".git/hooks/update.sample",
+        "type": "file",
+        "generateType": "static"
+      },
+      {
+        "inputPath": ".git/hooks/pre-push.sample",
+        "outputPath": ".git/hooks/pre-push.sample",
+        "type": "file",
+        "generateType": "static"
+      },
+      {
+        "inputPath": "img/iali21.jpg",
+        "outputPath": "img/iali21.jpg",
+        "type": "file",
+        "generateType": "static"
+      },
+      {
+        "inputPath": ".git/hooks/pre-applypatch.sample",
+        "outputPath": ".git/hooks/pre-applypatch.sample",
+        "type": "file",
+        "generateType": "static"
+      },
+      {
+        "inputPath": ".git/hooks/pre-commit.sample",
+        "outputPath": ".git/hooks/pre-commit.sample",
+        "type": "file",
+        "generateType": "static"
+      },
+      {
+        "inputPath": "README.txt",
+        "outputPath": "README.txt",
+        "type": "file",
+        "generateType": "static"
+      },
+      {
+        "inputPath": ".git/hooks/pre-rebase.sample",
+        "outputPath": ".git/hooks/pre-rebase.sample",
+        "type": "file",
+        "generateType": "static"
+      },
+      {
+        "inputPath": ".git/hooks/commit-msg.sample",
+        "outputPath": ".git/hooks/commit-msg.sample",
+        "type": "file",
+        "generateType": "static"
+      },
+      {
+        "inputPath": "lovebgm.mp3",
+        "outputPath": "lovebgm.mp3",
+        "type": "file",
+        "generateType": "static"
+      },
+      {
+        "inputPath": "img/iali50_1.jpg",
+        "outputPath": "img/iali50_1.jpg",
+        "type": "file",
+        "generateType": "static"
+      },
+      {
+        "inputPath": "img/mute.png",
+        "outputPath": "img/mute.png",
+        "type": "file",
+        "generateType": "static"
+      },
+      {
+        "inputPath": "img/iali30_1.jpg",
+        "outputPath": "img/iali30_1.jpg",
+        "type": "file",
+        "generateType": "static"
+      },
+      {
+        "inputPath": "img/iali11.jpg",
+        "outputPath": "img/iali11.jpg",
+        "type": "file",
+        "generateType": "static"
+      },
+      {
+        "inputPath": ".git/objects/pack/pack-d18afc902f0286070cfedb8699cd8e389d5b931f.pack",
+        "outputPath": ".git/objects/pack/pack-d18afc902f0286070cfedb8699cd8e389d5b931f.pack",
+        "type": "file",
+        "generateType": "static"
+      },
+      {
+        "inputPath": ".git/info/exclude",
+        "outputPath": ".git/info/exclude",
+        "type": "file",
+        "generateType": "static"
+      },
+      {
+        "inputPath": "img/iali66.jpg",
+        "outputPath": "img/iali66.jpg",
+        "type": "file",
+        "generateType": "static"
+      },
+      {
+        "inputPath": ".git/hooks/applypatch-msg.sample",
+        "outputPath": ".git/hooks/applypatch-msg.sample",
+        "type": "file",
+        "generateType": "static"
+      },
+      {
+        "inputPath": "img/319280_bg.xcf",
+        "outputPath": "img/319280_bg.xcf",
+        "type": "file",
+        "generateType": "static"
+      },
+      {
+        "inputPath": "iali53.jpg",
+        "outputPath": "iali53.jpg",
+        "type": "file",
+        "generateType": "static"
+      },
+      {
+        "inputPath": ".git/hooks/pre-receive.sample",
+        "outputPath": ".git/hooks/pre-receive.sample",
+        "type": "file",
+        "generateType": "static"
+      },
+      {
+        "inputPath": "img/iali69.jpg",
+        "outputPath": "img/iali69.jpg",
+        "type": "file",
+        "generateType": "static"
+      },
+      {
+        "inputPath": "img/iali6.jpg",
+        "outputPath": "img/iali6.jpg",
+        "type": "file",
+        "generateType": "static"
+      },
+      {
+        "inputPath": "fonts/RuiHeiXiTi.otf",
+        "outputPath": "fonts/RuiHeiXiTi.otf",
+        "type": "file",
+        "generateType": "static"
+      },
+      {
+        "inputPath": ".git/hooks/post-update.sample",
+        "outputPath": ".git/hooks/post-update.sample",
+        "type": "file",
+        "generateType": "static"
+      },
+      {
+        "inputPath": ".git/hooks/pre-merge-commit.sample",
+        "outputPath": ".git/hooks/pre-merge-commit.sample",
+        "type": "file",
+        "generateType": "static"
+      },
+      {
+        "inputPath": ".git/HEAD",
+        "outputPath": ".git/HEAD",
+        "type": "file",
+        "generateType": "static"
+      },
+      {
+        "inputPath": "img/iali75_bg.jpg",
+        "outputPath": "img/iali75_bg.jpg",
+        "type": "file",
+        "generateType": "static"
+      },
+      {
+        "inputPath": ".git/hooks/fsmonitor-watchman.sample",
+        "outputPath": ".git/hooks/fsmonitor-watchman.sample",
+        "type": "file",
+        "generateType": "static"
+      },
+      {
+        "inputPath": ".git/packed-refs",
+        "outputPath": ".git/packed-refs",
+        "type": "file",
+        "generateType": "static"
+      },
+      {
+        "inputPath": "img/iali51.jpg",
+        "outputPath": "img/iali51.jpg",
+        "type": "file",
+        "generateType": "static"
+      },
+      {
+        "inputPath": "img/iali60.jpg",
+        "outputPath": "img/iali60.jpg",
+        "type": "file",
+        "generateType": "static"
+      },
+      {
+        "inputPath": "img/iali59.png",
+        "outputPath": "img/iali59.png",
+        "type": "file",
+        "generateType": "static"
+      },
+      {
+        "inputPath": "img/iali77.jpg",
+        "outputPath": "img/iali77.jpg",
+        "type": "file",
+        "generateType": "static"
+      },
+      {
+        "inputPath": "jquery.min.js",
+        "outputPath": "jquery.min.js",
+        "type": "file",
+        "generateType": "static"
+      },
+      {
+        "inputPath": ".git/objects/pack/pack-d18afc902f0286070cfedb8699cd8e389d5b931f.idx",
+        "outputPath": ".git/objects/pack/pack-d18afc902f0286070cfedb8699cd8e389d5b931f.idx",
+        "type": "file",
+        "generateType": "static"
+      },
+      {
+        "inputPath": "img/iali4.jpg",
+        "outputPath": "img/iali4.jpg",
+        "type": "file",
+        "generateType": "static"
+      },
+      {
+        "inputPath": "img/iali32.jpg",
+        "outputPath": "img/iali32.jpg",
+        "type": "file",
+        "generateType": "static"
+      },
+      {
+        "inputPath": "img/iali8.gif",
+        "outputPath": "img/iali8.gif",
+        "type": "file",
+        "generateType": "static"
+      },
+      {
+        "inputPath": ".git/logs/refs/heads/master",
+        "outputPath": ".git/logs/refs/heads/master",
+        "type": "file",
+        "generateType": "static"
+      },
+      {
+        "inputPath": ".git/description",
+        "outputPath": ".git/description",
+        "type": "file",
+        "generateType": "static"
+      },
+      {
+        "inputPath": "img/iali58.jpg",
+        "outputPath": "img/iali58.jpg",
+        "type": "file",
+        "generateType": "static"
+      },
+      {
+        "inputPath": "img/iali45.jpg",
+        "outputPath": "img/iali45.jpg",
+        "type": "file",
+        "generateType": "static"
+      },
+      {
+        "inputPath": "img/iali75.jpg",
+        "outputPath": "img/iali75.jpg",
+        "type": "file",
+        "generateType": "static"
+      },
+      {
+        "inputPath": "img/iali62.jpg",
+        "outputPath": "img/iali62.jpg",
+        "type": "file",
+        "generateType": "static"
       }
     ]
   },
   "modelConfig": {
     "models": [
       {
-        "fieldName": "loop",
-        "type": "boolean",
-        "description": "是否循环",
-        "defaultValue": false,
-        "required": true,
-        "abbr": "l"
+        "fieldName": "myName",
+        "type": "String",
+        "description": "我",
+        "defaultValue": "myName"
       },
       {
-        "fieldName": "needGit",
-        "type": "boolean",
-        "description": "是否生成 .gitignore 文件",
-        "defaultValue": true
-      },
-      {
-        "groupKey": "mainTemplate",
-        "groupName": "核心模板",
-        "type": "MainTemplate",
-        "description": "用于生成核心模板文件",
-        "condition": "loop",
-        "models": [
-          {
-            "fieldName": "author",
-            "type": "String",
-            "description": "作者",
-            "defaultValue": "youyi",
-            "abbr": "a"
-          },
-          {
-            "fieldName": "outputText",
-            "type": "String",
-            "description": "输出文本",
-            "defaultValue": "sum = ",
-            "abbr": "o"
-          }
-        ]
+        "fieldName": "herName",
+        "type": "String",
+        "description": "她",
+        "defaultValue": "herName"
       }
     ]
   }

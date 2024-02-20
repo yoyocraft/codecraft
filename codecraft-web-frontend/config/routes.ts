@@ -8,7 +8,6 @@ export default [
     ],
   },
   { path: '/', icon: 'home', component: './Index', name: '主页' },
-  // TODO 我的生成器列表
   { path: '/generator/add', icon: 'plus', component: './Generator/Add', name: '创建生成器' },
   {
     path: '/generator/update',

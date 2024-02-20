@@ -1,6 +1,7 @@
 package com.youyi.craft.model.dto.generator;
 
 import io.github.dingxinliang88.maker.meta.Meta;
+import java.io.Serial;
 import java.io.Serializable;
 import lombok.Data;
 
@@ -23,6 +24,6 @@ public class GeneratorMakeRequest implements Serializable {
      */
     private Meta meta;
 
-
+    @Serial
     private static final long serialVersionUID = 1L;
 }

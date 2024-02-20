@@ -99,6 +99,7 @@ declare namespace API {
     createTime?: string;
     description?: string;
     distPath?: string;
+    downloadCount?: number;
     fileConfig?: string;
     id?: number;
     isDelete?: number;
@@ -108,6 +109,7 @@ declare namespace API {
     status?: number;
     tags?: string;
     updateTime?: string;
+    useCount?: number;
     userId?: number;
     version?: string;
   };
@@ -127,7 +129,7 @@ declare namespace API {
   };
 
   type GeneratorCacheRequest = {
-    id?: number;
+    idList?: number[];
   };
 
   type GeneratorDelCacheRequest = {
@@ -150,6 +152,7 @@ declare namespace API {
 
   type GeneratorMakeRequest = {
     meta?: Meta;
+    multipartFile?: string;
     zipFilePath?: string;
   };
 

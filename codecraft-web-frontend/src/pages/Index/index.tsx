@@ -1,11 +1,12 @@
 import { listGeneratorVoByPageSimplifyDataUsingPost } from '@/services/backend/generatorController';
 import { UserOutlined } from '@ant-design/icons';
-import { PageContainer, ProFormSelect, ProFormText, QueryFilter } from '@ant-design/pro-components';
+import { PageContainer, ProFormSelect, QueryFilter } from '@ant-design/pro-components';
 import '@umijs/max';
 import { Link } from '@umijs/max';
-import { Avatar, Card, Flex, Input, List, message, Tabs, Tag, Typography } from 'antd';
+import { Alert, Avatar, Card, Flex, Input, List, message, Tag, Typography } from 'antd';
 import moment from 'moment';
 import React, { useEffect, useState } from 'react';
+import Marquee from 'react-fast-marquee';
 
 /**
  * 默认分页参数
@@ -63,6 +64,19 @@ const IndexPage: React.FC = () => {
 
   return (
     <PageContainer title={<></>}>
+      <Alert
+        banner
+        type="success"
+        message={
+          <Marquee pauseOnHover gradient={false}>
+            欢迎各位使用 Code
+            Craft，一起来制作出属于你的Craft吧！相信我，利用好这里，一定能够帮助你大幅提高开发效率！
+          </Marquee>
+        }
+      />
+
+      <div style={{ marginBottom: 16 }} />
+
       <Flex justify="center">
         <Input.Search
           allowClear
@@ -84,7 +98,7 @@ const IndexPage: React.FC = () => {
 
       <div style={{ marginBottom: 16 }} />
 
-      <Tabs
+      {/* <Tabs
         size="large"
         defaultActiveKey="newest"
         items={[
@@ -99,7 +113,7 @@ const IndexPage: React.FC = () => {
         ]}
         // TODO 完成推荐
         onChange={() => {}}
-      />
+      /> */}
 
       <QueryFilter
         span={12}
@@ -117,8 +131,8 @@ const IndexPage: React.FC = () => {
         }}
       >
         <ProFormSelect name="tags" label="标签" mode="tags" />
-        <ProFormText name="name" label="名称" />
-        <ProFormText name="description" label="描述" />
+        {/* <ProFormText name="name" label="名称" /> */}
+        {/* <ProFormText name="description" label="描述" /> */}
       </QueryFilter>
 
       <div style={{ marginBottom: 24 }} />

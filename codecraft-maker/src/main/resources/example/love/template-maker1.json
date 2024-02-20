@@ -1,0 +1,35 @@
+{
+  "id": 5,
+  "fileConfig": {
+    "files": [
+      {
+        "path": "",
+        "filterConfigList": [
+          {
+            "range": "fileName",
+            "rule": "nonStartsWith",
+            "value": ".DS_Store"
+          }
+        ]
+      }
+    ]
+  },
+  "modelConfig": {
+    "models": [
+      {
+        "fieldName": "myName",
+        "type": "String",
+        "description": "我",
+        "defaultValue": "myName",
+        "replaceText": "myName"
+      },
+      {
+        "fieldName": "herName",
+        "type": "String",
+        "description": "她",
+        "defaultValue": "herName",
+        "replaceText": "herName"
+      }
+    ]
+  }
+}

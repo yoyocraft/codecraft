@@ -72,7 +72,7 @@ export default defineConfig({
    * @name layout 插件
    * @doc https://umijs.org/docs/max/layout-menu
    */
-  title: 'CodeCraft 代码工艺',
+  title: 'CodeCraft',
   layout: {
     locale: true,
     ...defaultSettings,

@@ -1,0 +1,28 @@
+{
+  "id": 3,
+  "fileConfig": {
+    "files": [
+      {
+        "path": "",
+        "filterConfigList": [
+          {
+            "range": "fileName",
+            "rule": "nonStartsWith",
+            "value": ".DS_Store"
+          }
+        ]
+      }
+    ]
+  },
+  "modelConfig": {
+    "models": [
+      {
+        "fieldName": "birthday",
+        "type": "String",
+        "description": "生日",
+        "defaultValue": "2002-11-18",
+        "replaceText": "2002-11-18"
+      }
+    ]
+  }
+}

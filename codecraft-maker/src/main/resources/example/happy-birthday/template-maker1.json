@@ -1,0 +1,28 @@
+{
+  "id": 3,
+  "fileConfig": {
+    "files": [
+      {
+        "path": "",
+        "filterConfigList": [
+          {
+            "range": "fileName",
+            "rule": "nonStartsWith",
+            "value": ".DS_Store"
+          }
+        ]
+      }
+    ]
+  },
+  "modelConfig": {
+    "models": [
+      {
+        "fieldName": "name",
+        "type": "String",
+        "description": "称呼",
+        "defaultValue": "youyichannel",
+        "replaceText": "youyichannel"
+      }
+    ]
+  }
+}

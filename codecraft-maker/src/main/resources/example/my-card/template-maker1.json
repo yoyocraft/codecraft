@@ -1,0 +1,49 @@
+{
+  "id": 4,
+  "fileConfig": {
+    "files": [
+      {
+        "path": "",
+        "filterConfigList": [
+          {
+            "range": "fileName",
+            "rule": "nonStartsWith",
+            "value": ".DS_Store"
+          }
+        ]
+      }
+    ]
+  },
+  "modelConfig": {
+    "models": [
+      {
+        "fieldName": "name",
+        "type": "String",
+        "description": "姓名",
+        "defaultValue": "youyi",
+        "replaceText": "youyi"
+      },
+      {
+        "fieldName": "email",
+        "type": "String",
+        "description": "邮箱",
+        "defaultValue": "email@example.com",
+        "replaceText": "email@example.com"
+      },
+      {
+        "fieldName": "phone",
+        "type": "String",
+        "description": "手机号",
+        "defaultValue": "17712345678",
+        "replaceText": "17712345678"
+      },
+      {
+        "fieldName": "birthday",
+        "type": "String",
+        "description": "出生日期",
+        "defaultValue": "2002-11-18",
+        "replaceText": "2002-11-18"
+      }
+    ]
+  }
+}

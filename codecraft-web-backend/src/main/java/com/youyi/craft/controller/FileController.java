@@ -99,7 +99,7 @@ public class FileController {
      * @param multipartFile     上传的文件
      * @param fileUploadBizEnum 业务类型
      */
-    private void validFile(MultipartFile multipartFile, FileUploadBizEnum fileUploadBizEnum) {
+    public static void validFile(MultipartFile multipartFile, FileUploadBizEnum fileUploadBizEnum) {
         // 文件大小
         long fileSize = multipartFile.getSize();
         // 文件后缀

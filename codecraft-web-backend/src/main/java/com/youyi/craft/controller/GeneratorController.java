@@ -419,6 +419,30 @@ public class GeneratorController {
         generatorService.onlineMakerGenerator(meta, zipFilePath, response);
     }
 
+
+    /**
+     * 在线制作生成器，直接上传到后端，不上传文件到对象存储
+     *
+     * @param generatorMakeRequest
+     * @param request
+     * @param response
+     */
+    @PostMapping("/make/v2")
+    @Deprecated
+    public void onlineMakeGeneratorWithoutCos(
+            @RequestBody GeneratorMakeRequest generatorMakeRequest,
+            HttpServletRequest request, HttpServletResponse response) throws IOException {
+        if (!MAKE_LIMITER.tryAcquire()) {
+            throw new BusinessException(ErrorCode.TOO_MANY_REQUEST);
+        }
+
+        // 需要用户登录
+        User loginUser = userService.getLoginUser(request);
+        log.info("userId: {} make generator", loginUser.getId());
+
+        // do nothing
+    }
+
     /**
      * 缓存代码生成器
      */

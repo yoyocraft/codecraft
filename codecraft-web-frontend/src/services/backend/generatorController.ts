@@ -167,6 +167,21 @@ export async function onlineMakeGeneratorUsingPost(
   });
 }
 
+/** onlineMakeGeneratorWithoutCos POST /api/generator/make/v2 */
+export async function onlineMakeGeneratorWithoutCosUsingPost(
+  body: API.GeneratorMakeRequest,
+  options?: { [key: string]: any },
+) {
+  return request<any>('/api/generator/make/v2', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    data: body,
+    ...(options || {}),
+  });
+}
+
 /** listMyGeneratorVOByPage POST /api/generator/my/list/page/vo */
 export async function listMyGeneratorVoByPageUsingPost(
   body: API.GeneratorQueryRequest,
