@@ -15,7 +15,7 @@ generated-dist/
 .tmp/
 application-local.yml
 application-preview.yml
-
+*.drawio.bkp
 
 ### MAC ###
 _MACOSX/
