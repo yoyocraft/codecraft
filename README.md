@@ -2,7 +2,7 @@
 
 > Build Your Own Code Generator!
 >
-> [ZH-CN Doc](doc/code-craft.md)
+> [ZH-CN Doc](doc/README-CN.md)
 
 ## Introduction
 
