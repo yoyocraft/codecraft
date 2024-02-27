@@ -1,6 +1,7 @@
 package com.youyi.craft.model.dto.generator;
 
 import com.youyi.craft.common.PageRequest;
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.List;
 import lombok.Data;
@@ -82,5 +83,6 @@ public class GeneratorQueryRequest extends PageRequest implements Serializable {
     private Integer status;
 
 
+    @Serial
     private static final long serialVersionUID = 1L;
 }

@@ -1,4 +1,4 @@
-package com.youyi.craft.job;
+package com.youyi.craft.job.cycle;
 
 import cn.hutool.core.util.StrUtil;
 import com.xxl.job.core.handler.annotation.XxlJob;

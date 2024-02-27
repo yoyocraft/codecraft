@@ -1,8 +1,9 @@
-package com.youyi.craft.job;
+package com.youyi.craft.job.cycle;
 
 import com.youyi.craft.service.GeneratorService;
 import java.util.List;
 import javax.annotation.Resource;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
@@ -11,6 +12,7 @@ import org.springframework.stereotype.Component;
  *
  * @author <a href="https://github.com/dingxinliang88">youyi</a>
  */
+@Slf4j
 @Component
 public class HotGeneratorJobHandler {
 
@@ -22,6 +24,6 @@ public class HotGeneratorJobHandler {
     public void cacheHotGenerators() {
         List<Long> idList = generatorService.listHotGeneratorIds();
         generatorService.cacheGenerators(idList);
+        log.info("cache hot generator ids: {}", idList);
     }
-    
 }
