@@ -218,8 +218,7 @@ public class GeneratorController {
 
         Page<Generator> generatorPage = generatorService.page(new Page<>(current, size),
                 generatorService.getQueryWrapper(generatorQueryRequest));
-        return ResultUtils.success(generatorService.getGeneratorVOPage(generatorPage,
-                request));
+        return ResultUtils.success(generatorService.getGeneratorVOPage(generatorPage));
     }
 
     /**
@@ -233,7 +232,6 @@ public class GeneratorController {
     public BaseResponse<Page<GeneratorVO>> listGeneratorVOByPageSimplifyData(
             @RequestBody GeneratorQueryRequest generatorQueryRequest,
             HttpServletRequest request) {
-        long current = generatorQueryRequest.getCurrent();
         long size = generatorQueryRequest.getPageSize();
         // 限制爬虫
         ThrowUtils.throwIf(size > 20, ErrorCode.PARAMS_ERROR);
@@ -245,13 +243,8 @@ public class GeneratorController {
             // noinspection unchecked
             return ResultUtils.success((Page<GeneratorVO>) cache);
         }
-        QueryWrapper<Generator> queryWrapper = generatorService.getQueryWrapper(
+        Page<GeneratorVO> generatorVOPage = generatorService.listGeneratorVOByPageSimplifyData(
                 generatorQueryRequest);
-        queryWrapper.select("id", "name", "description", "author", "tags",
-                "picture", "userId", "createTime", "updateTime");
-        Page<GeneratorVO> generatorVOPage = generatorService.getGeneratorVOPage(
-                generatorService.page(new Page<>(current, size), queryWrapper),
-                request);
         // 写入缓存
         cacheManager.put(cacheKey, generatorVOPage);
         return ResultUtils.success(generatorVOPage);
@@ -279,7 +272,7 @@ public class GeneratorController {
         ThrowUtils.throwIf(size > 20, ErrorCode.PARAMS_ERROR);
         Page<Generator> generatorPage = generatorService.page(new Page<>(current, size),
                 generatorService.getQueryWrapper(generatorQueryRequest));
-        return ResultUtils.success(generatorService.getGeneratorVOPage(generatorPage, request));
+        return ResultUtils.success(generatorService.getGeneratorVOPage(generatorPage));
     }
 
     // endregion

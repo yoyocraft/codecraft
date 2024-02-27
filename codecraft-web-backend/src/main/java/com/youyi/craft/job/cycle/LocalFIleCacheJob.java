@@ -1,4 +1,4 @@
-package com.youyi.craft.job;
+package com.youyi.craft.job.cycle;
 
 import com.youyi.craft.manager.LocalFileCacheManager;
 import org.springframework.scheduling.annotation.Scheduled;

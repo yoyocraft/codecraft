@@ -190,8 +190,7 @@ public class GeneratorServiceImpl extends ServiceImpl<GeneratorMapper, Generator
     }
 
     @Override
-    public Page<GeneratorVO> getGeneratorVOPage(Page<Generator> generatorPage,
-            HttpServletRequest request) {
+    public Page<GeneratorVO> getGeneratorVOPage(Page<Generator> generatorPage) {
         List<Generator> generatorList = generatorPage.getRecords();
         Page<GeneratorVO> generatorVOPage = new Page<>(generatorPage.getCurrent(),
                 generatorPage.getSize(),
@@ -228,6 +227,19 @@ public class GeneratorServiceImpl extends ServiceImpl<GeneratorMapper, Generator
             return Collections.emptyList();
         }
         return generatorMapper.selectBatchIds(idList);
+    }
+
+    @Override
+    public Page<GeneratorVO> listGeneratorVOByPageSimplifyData(
+            GeneratorQueryRequest generatorQueryRequest) {
+        int current = generatorQueryRequest.getCurrent();
+        int size = generatorQueryRequest.getPageSize();
+        QueryWrapper<Generator> queryWrapper = this.getQueryWrapper(
+                generatorQueryRequest);
+        queryWrapper.select("id", "name", "description", "author", "tags",
+                "picture", "userId", "createTime", "updateTime");
+        return this.getGeneratorVOPage(
+                this.page(new Page<>(current, size), queryWrapper));
     }
 
     @Override

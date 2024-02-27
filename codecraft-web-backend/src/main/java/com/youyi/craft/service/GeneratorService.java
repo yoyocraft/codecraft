@@ -47,10 +47,9 @@ public interface GeneratorService extends IService<Generator> {
      * 分页获取生成器封装
      *
      * @param generatorPage
-     * @param request
      * @return
      */
-    Page<GeneratorVO> getGeneratorVOPage(Page<Generator> generatorPage, HttpServletRequest request);
+    Page<GeneratorVO> getGeneratorVOPage(Page<Generator> generatorPage);
 
     /**
      * 批量获取
@@ -59,6 +58,9 @@ public interface GeneratorService extends IService<Generator> {
      * @return
      */
     List<Generator> getBatchByIds(List<Long> idList);
+
+    Page<GeneratorVO> listGeneratorVOByPageSimplifyData(
+            GeneratorQueryRequest generatorQueryRequest);
 
     void cacheGenerators(List<Long> idList);
 
