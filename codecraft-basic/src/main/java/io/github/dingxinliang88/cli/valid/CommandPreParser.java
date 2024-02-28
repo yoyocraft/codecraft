@@ -16,10 +16,11 @@ import picocli.CommandLine;
 public class CommandPreParser {
 
     public String[] parse(String[] args) {
+        // main command
         if (args.length < 1 || !hasRegisteredCommand(args[0])) {
             return args;
         }
-
+        // 需要保证参数不重复和顺序
         Set<String> processedArgs = new LinkedHashSet<>(Arrays.asList(args));
         processOptionFields(processedArgs, getCommandClass(args[0]).orElse(null));
 
