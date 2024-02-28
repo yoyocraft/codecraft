@@ -2,7 +2,7 @@ package io.github.dingxinliang88.maker.meta;
 
 import cn.hutool.core.io.resource.ResourceUtil;
 import cn.hutool.json.JSONUtil;
-import lombok.Getter;
+import java.util.concurrent.atomic.AtomicReference;
 
 /**
  * 元信息管理器
@@ -11,28 +11,33 @@ import lombok.Getter;
  */
 public class MetaManager {
 
-    private MetaManager() {
-    }
 
     public static Meta getMeta() {
-        return MetaHolder.INSTANCE.getMeta();
+        return MetaHolder.getMeta();
     }
 
-    @Getter
-    private enum MetaHolder {
-        INSTANCE;
+    private static class MetaHolder {
 
-        private final Meta meta;
+        private static final AtomicReference<Meta> META_REF = new AtomicReference<>();
 
-        MetaHolder() {
-            meta = initMeta();
-        }
-
-        private Meta initMeta() {
+        private static Meta initMeta() {
             String metaJson = ResourceUtil.readUtf8Str("meta.json");
             Meta newMeta = JSONUtil.toBean(metaJson, Meta.class);
             MetaValidator.doValidateAndFill(newMeta);
             return newMeta;
+        }
+
+        private static Meta getMeta() {
+            Meta meta = META_REF.get();
+            if (meta == null) {
+                synchronized (MetaHolder.class) {
+                    if (META_REF.get() == null) {
+                        meta = initMeta();
+                        META_REF.set(meta);
+                    }
+                }
+            }
+            return meta;
         }
     }
 

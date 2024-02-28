@@ -10,6 +10,9 @@ import java.io.IOException;
  */
 public class Main {
 
+    /**
+     * 制作代码生成器
+     */
     public static void main(String[] args)
             throws TemplateException, IOException, InterruptedException {
         GeneratorTemplate generatorTemplate = new ZipGenerator();
