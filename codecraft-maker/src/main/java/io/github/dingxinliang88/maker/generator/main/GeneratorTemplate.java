@@ -19,24 +19,6 @@ import java.io.IOException;
  */
 public abstract class GeneratorTemplate {
 
-    public void doGenerate(Meta meta, String outputPath)
-            throws TemplateException, IOException, InterruptedException {
-        // 1. 复制原始文件
-        String sourceCopyDestPath = copySource(meta, outputPath);
-
-        // 2. 代码生成
-        generateCode(meta, outputPath);
-
-        // 3. 构建 Jar 包
-        String jarPath = buildJar(meta, outputPath);
-
-        // 4. 封装脚本
-        String shellOutputFilePath = buildScript(outputPath, jarPath);
-
-        // 5. 生成精简版的程序（产物）
-        buildDist(outputPath, sourceCopyDestPath, jarPath, shellOutputFilePath);
-    }
-
     public void doGenerate() throws TemplateException, IOException, InterruptedException {
         // 读取元数据
         Meta meta = MetaManager.getMeta();
@@ -53,6 +35,24 @@ public abstract class GeneratorTemplate {
 
         // 生成
         doGenerate(meta, outputPath);
+    }
+
+    public void doGenerate(Meta meta, String outputPath)
+            throws TemplateException, IOException, InterruptedException {
+        // 1. 复制原始文件
+        String sourceCopyDestPath = copySource(meta, outputPath);
+
+        // 2. 代码生成
+        generateCode(meta, outputPath);
+
+        // 3. 构建 Jar 包
+        String jarPath = buildJar(meta, outputPath);
+
+        // 4. 封装脚本
+        String shellOutputFilePath = buildScript(outputPath, jarPath);
+
+        // 5. 生成精简版的程序（产物）
+        buildDist(outputPath, sourceCopyDestPath, jarPath, shellOutputFilePath);
     }
 
     protected String copySource(Meta meta, String outputPath) {
@@ -167,8 +167,8 @@ public abstract class GeneratorTemplate {
         outputFilePath = outputPath + File.separator + "README.md";
         DynamicFileGenerator.doGenerate(inputFilePath, outputFilePath, meta);
 
-        // .gitignore
         // TODO 考虑 .gitignore 文件的 ftl 模板，区分项目，比如后端，前端，小程序，等等
+        // .gitignore
         inputFilePath = inputResourcePath + File.separator + "templates/.gitignore.ftl";
         outputFilePath = outputPath + File.separator + ".gitignore";
         DynamicFileGenerator.doGenerate(inputFilePath, outputFilePath, meta);

@@ -5,6 +5,8 @@ import java.util.List;
 
 /**
  * 元信息
+ * <p>
+ * see: doc/meta-example.json
  *
  * @author <a href="https://github.com/dingxinliang88">youyi</a>
  */
