@@ -33,6 +33,53 @@ public class DynamicGenerator {
         doGenerate(inputPath, outputPath, dataModel);
     }
 
+
+    /**
+     * 使用相对路径生成文件
+     *
+     * @param relativeInputPath 模板文件相对输入路径
+     * @param outputPath        输出路径
+     * @param model             数据模型
+     */
+    public static void doGenerate(final String relativeInputPath, String outputPath, Object model)
+            throws IOException, TemplateException {
+        // 获取模板文件所属包和模板名称
+        int lastSplitIndex = relativeInputPath.lastIndexOf("/");
+        String basePackagePath = relativeInputPath.substring(0, lastSplitIndex);
+        Template template = getTemplate(relativeInputPath, lastSplitIndex,
+                basePackagePath);
+
+        // validate
+        if (!FileUtil.exist(outputPath)) {
+            FileUtil.touch(outputPath);
+        }
+
+        // process
+        Writer out = new FileWriter(outputPath);
+        template.process(model, out);
+
+        out.close();
+
+    }
+
+    private static Template getTemplate(String relativeInputPath, int lastSplitIndex,
+            String basePackagePath) throws IOException {
+        String templateName = relativeInputPath.substring(lastSplitIndex + 1);
+
+        // 通过类加载器来读取模板
+        ClassTemplateLoader templateLoader = new ClassTemplateLoader(
+                DynamicGenerator.class, basePackagePath);
+
+        // configure
+        Configuration configuration = new Configuration(Configuration.VERSION_2_3_32);
+        configuration.setDefaultEncoding("utf-8");
+        configuration.setTemplateLoader(templateLoader);
+
+        // get template
+        return configuration.getTemplate(templateName);
+    }
+
+
     /**
      * 生成文件
      *
@@ -67,44 +114,5 @@ public class DynamicGenerator {
         template.process(model, out);
 
         out.close();
-    }
-
-    /**
-     * 使用相对路径生成文件
-     *
-     * @param relativeInputPath 模板文件相对输入路径
-     * @param outputPath        输出路径
-     * @param model             数据模型
-     */
-    public static void doGenerate(final String relativeInputPath, String outputPath, Object model)
-            throws IOException, TemplateException {
-        // 获取模板文件所属包和模板名称
-        int lastSplitIndex = relativeInputPath.lastIndexOf("/");
-        String basePackagePath = relativeInputPath.substring(0, lastSplitIndex);
-        String templateName = relativeInputPath.substring(lastSplitIndex + 1);
-
-        // 通过类加载器来读取模板
-        ClassTemplateLoader templateLoader = new ClassTemplateLoader(
-                DynamicGenerator.class, basePackagePath);
-
-        // configure
-        Configuration configuration = new Configuration(Configuration.VERSION_2_3_32);
-        configuration.setDefaultEncoding("utf-8");
-        configuration.setTemplateLoader(templateLoader);
-
-        // get template
-        Template template = configuration.getTemplate(templateName);
-
-        // validate
-        if (!FileUtil.exist(outputPath)) {
-            FileUtil.touch(outputPath);
-        }
-
-        // process
-        Writer out = new FileWriter(outputPath);
-        template.process(model, out);
-
-        out.close();
-
     }
 }

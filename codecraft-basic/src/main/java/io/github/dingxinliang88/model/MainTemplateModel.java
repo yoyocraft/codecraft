@@ -35,6 +35,7 @@ public class MainTemplateModel {
         this.outputText = outputText;
     }
 
+    // region setter for freemarker
     public boolean isLoop() {
         return loop;
     }
@@ -46,6 +47,8 @@ public class MainTemplateModel {
     public String getOutputText() {
         return outputText;
     }
+
+    // endregion
 
     @Override
     public String toString() {

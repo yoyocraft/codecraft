@@ -29,8 +29,7 @@ public class StaticGenerator {
         String inputPath = new File(parentFile, "sample/acm-template").getAbsolutePath();
         // 输出路径：输出到项目的根路径的 .tmp 目录下
         String outputPath = projectPath + "/.tmp";
-//        copyFileByHutool(inputPath, outputPath);
-        copyFileByRecursive(inputPath, outputPath);
+        copyFileByHutool(inputPath, outputPath);
     }
 
     /**
@@ -48,7 +47,10 @@ public class StaticGenerator {
      *
      * @param inputPath  输入目录路径
      * @param outputPath 输出目录路径
+     * @see StaticGenerator#copyFileByHutool(String, String)
+     * @deprecated
      */
+    @Deprecated
     public static void copyFileByRecursive(final String inputPath, String outputPath) {
         copyFileByRecursive(new File(inputPath), new File(outputPath));
     }
@@ -67,7 +69,7 @@ public class StaticGenerator {
             // 如果是目录，首先创建目标目录
             File destOutputFile = new File(outputFile, inputFile.getName());
             if (!destOutputFile.exists()) {
-                //noinspection ResultOfMethodCallIgnored
+                // noinspection ResultOfMethodCallIgnored
                 destOutputFile.mkdirs();
             }
             // 获取目录下的所有文件和子目录
