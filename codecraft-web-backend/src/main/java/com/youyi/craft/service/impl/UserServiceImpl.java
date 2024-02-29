@@ -40,6 +40,8 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
      */
     public static final String SALT = "youyi";
 
+    public static final String ACC_PATTEN = "^[a-zA-Z0-9]+$";
+
     @Override
     public long userRegister(String userAccount, String userPassword, String checkPassword) {
         // 1. 校验
@@ -48,6 +50,9 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         }
         if (userAccount.length() < 4) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR, "用户账号过短");
+        }
+        if (!userAccount.matches(ACC_PATTEN)) {
+            throw new BusinessException(ErrorCode.PARAMS_ERROR, "用户账号格式不正确");
         }
         if (userPassword.length() < 8 || checkPassword.length() < 8) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR, "用户密码过短");

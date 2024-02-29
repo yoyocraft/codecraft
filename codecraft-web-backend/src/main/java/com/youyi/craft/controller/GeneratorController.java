@@ -201,15 +201,13 @@ public class GeneratorController {
      * 分页获取列表（封装类）
      *
      * @param generatorQueryRequest
-     * @param request
      * @return
      * @deprecated
      */
     @Deprecated
     @PostMapping("/list/page/vo")
     public BaseResponse<Page<GeneratorVO>> listGeneratorVOByPage(
-            @RequestBody GeneratorQueryRequest generatorQueryRequest,
-            HttpServletRequest request) {
+            @RequestBody GeneratorQueryRequest generatorQueryRequest) {
         long current = generatorQueryRequest.getCurrent();
         long size = generatorQueryRequest.getPageSize();
         // 限制爬虫
@@ -224,13 +222,11 @@ public class GeneratorController {
      * 分页获取列表（封装类）
      *
      * @param generatorQueryRequest
-     * @param request
      * @return
      */
     @PostMapping("/list/page/vo/v2")
     public BaseResponse<Page<GeneratorVO>> listGeneratorVOByPageSimplifyData(
-            @RequestBody GeneratorQueryRequest generatorQueryRequest,
-            HttpServletRequest request) {
+            @RequestBody GeneratorQueryRequest generatorQueryRequest) {
         long size = generatorQueryRequest.getPageSize();
         // 限制爬虫
         ThrowUtils.throwIf(size > 20, ErrorCode.PARAMS_ERROR);

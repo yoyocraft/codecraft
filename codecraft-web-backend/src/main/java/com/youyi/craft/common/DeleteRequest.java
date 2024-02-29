@@ -1,5 +1,6 @@
 package com.youyi.craft.common;
 
+import java.io.Serial;
 import java.io.Serializable;
 import lombok.Data;
 
@@ -16,5 +17,6 @@ public class DeleteRequest implements Serializable {
      */
     private Long id;
 
+    @Serial
     private static final long serialVersionUID = 1L;
 }

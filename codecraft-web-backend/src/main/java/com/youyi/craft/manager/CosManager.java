@@ -49,51 +49,24 @@ public class CosManager {
         transferManager = new TransferManager(cosClient, threadPool);
     }
 
-    /**
-     * 上传对象
-     *
-     * @param key           唯一键
-     * @param localFilePath 本地文件路径
-     * @return
-     */
+
     public PutObjectResult putObject(String key, String localFilePath) {
         PutObjectRequest putObjectRequest = new PutObjectRequest(cosClientConfig.getBucket(), key,
                 new File(localFilePath));
         return cosClient.putObject(putObjectRequest);
     }
 
-    /**
-     * 上传对象
-     *
-     * @param key  唯一键
-     * @param file 文件
-     * @return
-     */
     public PutObjectResult putObject(String key, File file) {
         PutObjectRequest putObjectRequest = new PutObjectRequest(cosClientConfig.getBucket(), key,
                 file);
         return cosClient.putObject(putObjectRequest);
     }
 
-    /**
-     * 下载对象
-     *
-     * @param key 唯一键
-     * @return
-     */
     public COSObject getObject(String key) {
         GetObjectRequest getObjectRequest = new GetObjectRequest(cosClientConfig.getBucket(), key);
         return cosClient.getObject(getObjectRequest);
     }
 
-    /**
-     * 下载文件
-     *
-     * @param key
-     * @param localFilePath
-     * @return
-     * @throws InterruptedException
-     */
     public Download download(String key, String localFilePath) throws InterruptedException {
         File downloadFile = new File(localFilePath);
 
@@ -104,23 +77,12 @@ public class CosManager {
         return download;
     }
 
-    /**
-     * 删除对象
-     *
-     * @param key
-     * @throws CosClientException
-     */
+
     public void deleteObject(String key) throws CosClientException {
         cosClient.deleteObject(cosClientConfig.getBucket(), key);
     }
 
-    /**
-     * 批量删除对象
-     *
-     * @param keyList
-     * @return
-     * @throws CosClientException
-     */
+
     public DeleteObjectsResult deleteObjects(List<String> keyList) throws CosClientException {
         if (CollUtil.isEmpty(keyList)) {
             return null;
@@ -131,7 +93,8 @@ public class CosManager {
         List<DeleteObjectsRequest.KeyVersion> keys = new ArrayList<>();
         // 传入要删除的文件名
         // 注意文件名不允许以正斜线/或者反斜线\开头，例如：
-        // 存储桶目录下有a/b/c.txt文件，如果要删除，只能是 keyList.add(new KeyVersion("a/b/c.txt")), 若使用 keyList.add(new KeyVersion("/a/b/c.txt"))会导致删除不成功
+        // 存储桶目录下有a/b/c.txt文件，如果要删除，只能是 keyList.add(new KeyVersion("a/b/c.txt")),
+        // 若使用 keyList.add(new KeyVersion("/a/b/c.txt"))会导致删除不成功
         for (String key : keyList) {
             keys.add(new DeleteObjectsRequest.KeyVersion(key));
         }
@@ -140,12 +103,6 @@ public class CosManager {
         return cosClient.deleteObjects(deleteObjectsRequest);
     }
 
-    /**
-     * 删除目录
-     *
-     * @param delPrefix 尽量以 / 结尾，防止误删文件
-     * @throws CosClientException
-     */
     public void deleteDir(String delPrefix) throws CosClientException {
         ListObjectsRequest listObjectsRequest = new ListObjectsRequest();
         // 设置 bucket 名称

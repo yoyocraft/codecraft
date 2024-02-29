@@ -1,8 +1,6 @@
 package com.youyi.craft.model.enums;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.stream.Collectors;
+import lombok.Getter;
 import org.apache.commons.lang3.ObjectUtils;
 
 /**
@@ -10,6 +8,7 @@ import org.apache.commons.lang3.ObjectUtils;
  *
  * @author <a href="https://github.com/dingxinliang88">youyi</a>
  */
+@Getter
 public enum UserRoleEnum {
 
     USER("用户", "user"),
@@ -25,22 +24,7 @@ public enum UserRoleEnum {
         this.value = value;
     }
 
-    /**
-     * 获取值列表
-     *
-     * @return
-     */
-    public static List<String> getValues() {
-        return Arrays.stream(values()).map(item -> item.value).collect(Collectors.toList());
-    }
-
-    /**
-     * 根据 value 获取枚举
-     *
-     * @param value
-     * @return
-     */
-    public static UserRoleEnum getEnumByValue(String value) {
+    public static UserRoleEnum resolve(String value) {
         if (ObjectUtils.isEmpty(value)) {
             return null;
         }
@@ -52,11 +36,4 @@ public enum UserRoleEnum {
         return null;
     }
 
-    public String getValue() {
-        return value;
-    }
-
-    public String getText() {
-        return text;
-    }
 }
