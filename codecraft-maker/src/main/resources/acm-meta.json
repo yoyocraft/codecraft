@@ -1,0 +1,76 @@
+{
+  "name": "acm-template-pro-generator",
+  "description": "acm-template-pro-generator",
+  "basePackage": "io.github.dingxinliang88",
+  "version": "1.0",
+  "author": "youyi",
+  "createTime": "2024-01-21",
+  "fileConfig": {
+    "sourceRootPath": "/Users/codejuzi/Documents/CodeWorkSpace/Project/CodeCraft/codecraft/sample/acm-template-pro",
+    "inputRootPath": ".source/acm-template-pro",
+    "outputRootPath": "generated",
+    "type": "dir",
+    "files": [
+      {
+        "inputPath": "src/io/github/dingxinliang88/acm/MainTemplate.java.ftl",
+        "outputPath": "src/io/github/dingxinliang88/acm/MainTemplate.java",
+        "type": "file",
+        "generateType": "dynamic"
+      },
+      {
+        "inputPath": "README.md",
+        "outputPath": "README.md",
+        "type": "file",
+        "generateType": "static"
+      },
+      {
+        "inputPath": ".gitignore",
+        "outputPath": ".gitignore",
+        "type": "file",
+        "generateType": "static",
+        "condition": "needGit"
+      }
+    ]
+  },
+  "modelConfig": {
+    "models": [
+      {
+        "fieldName": "loop",
+        "type": "boolean",
+        "description": "是否循环",
+        "defaultValue": false,
+        "required": true,
+        "abbr": "l"
+      },
+      {
+        "fieldName": "needGit",
+        "type": "boolean",
+        "description": "是否生成 .gitignore 文件",
+        "defaultValue": true
+      },
+      {
+        "groupKey": "mainTemplate",
+        "groupName": "核心模板",
+        "type": "MainTemplate",
+        "description": "用于生成核心模板文件",
+        "condition": "loop",
+        "models": [
+          {
+            "fieldName": "author",
+            "type": "String",
+            "description": "作者",
+            "defaultValue": "youyi",
+            "abbr": "a"
+          },
+          {
+            "fieldName": "outputText",
+            "type": "String",
+            "description": "输出文本",
+            "defaultValue": "sum = ",
+            "abbr": "o"
+          }
+        ]
+      }
+    ]
+  }
+}

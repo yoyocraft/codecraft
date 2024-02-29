@@ -182,7 +182,7 @@ public class TemplateMaker {
                     BeanUtil.copyProperties(modelInfoConfig, modelInfo);
                     return modelInfo;
                 })
-                .collect(Collectors.toList());
+                .toList();
 
         // 如果是模型组
         TemplateMakerModelConfig.ModelGroupConfig modelGroupConfig = templateMakerModelConfig.getModelGroupConfig();
@@ -217,6 +217,7 @@ public class TemplateMaker {
             return newFileInfoList;
         }
 
+        // 获取到所有的文件配置信息
         List<TemplateMakerFileConfig.FileInfoConfig> fileConfigInfoList = templateMakerFileConfig.getFiles();
         if (CollUtil.isEmpty(fileConfigInfoList)) {
             return newFileInfoList;
@@ -224,7 +225,7 @@ public class TemplateMaker {
         for (TemplateMakerFileConfig.FileInfoConfig fileInfoConfig : fileConfigInfoList) {
             String inputFilePath = fileInfoConfig.getPath();
 
-            // 如果填的是相对路径，改成绝对路径
+            // 如果填的是相对路径，改成绝对路径，方便之后过滤文件
             if (!inputFilePath.startsWith(sourceRootPath)) {
                 inputFilePath = sourceRootPath + File.separator + inputFilePath;
             }
@@ -288,6 +289,7 @@ public class TemplateMaker {
             // 如果已有模板文件，说明不是第一次制作，需要在模板的基础上再次制作
             fileContent = FileUtil.readUtf8String(fileOutputAbsolutePath);
         } else {
+            // 第一次制作，读取原始文件
             fileContent = FileUtil.readUtf8String(fileInputAbsolutePath);
         }
 
@@ -312,73 +314,15 @@ public class TemplateMaker {
 
         // 文件路径替换
         TemplateMakerModelConfig.ModelInfoConfig fileDirPathConfig = templateMakerModelConfig.getFileDirPathConfig();
-        if (Objects.nonNull(fileDirPathConfig)) {
-            String[] inputPathAndFileSuffix = fileInputPath.split("\\.");
-            if (inputPathAndFileSuffix.length > 1) {
-                String fileSuffix = inputPathAndFileSuffix[1];
-                // 拿到要替换的包名，e.g: com.youyi => com/youyi
-                String replaceText = fileDirPathConfig.getReplaceText().replace(".", "/");
-                // 替换路径，e.g: src/main/java/com/youyi/project/Demo.java => src/main/java/{basePackage}/project/Demo.java
-                fileInputPath = inputPathAndFileSuffix[0].replace(replaceText,
-                        String.format("{%s}", fileDirPathConfig.getFieldName()));
-                // 拼接后缀
-                fileInputPath = fileInputPath + "." + fileSuffix;
-            }
-        }
+        fileInputPath = replaceFilePath(fileDirPathConfig, fileInputPath);
 
         // 控制代码片段是否生成
         List<TemplateMakerFileConfig.CodeSnippetConfig> codeSnippetConfigList = fileInfoConfig.getCodeSnippetConfigList();
-        if (CollUtil.isNotEmpty(codeSnippetConfigList)) {
-            for (TemplateMakerFileConfig.CodeSnippetConfig codeSnippetConfig : codeSnippetConfigList) {
-                String code = codeSnippetConfig.getCode();
-                String condition = codeSnippetConfig.getCondition();
-                boolean boolVal = codeSnippetConfig.getBoolVal();
-                String checkType = codeSnippetConfig.getCheckType();
-                CodeSnippetCheckTypeEnum checkTypeEnum = CodeSnippetCheckTypeEnum.getEnumByValue(
-                        checkType);
-                if (Objects.isNull(checkTypeEnum)) {
-                    continue;
-                }
-                String replaceCodeSnippets = null;
-                switch (checkTypeEnum) {
-                    case EQUALS -> replaceCodeSnippets = String.format("\n<#if %s>\n%s\n</#if>\n",
-                            boolVal ? condition : "!" + condition, code);
-                    case REGEX -> {
-                        // 根据正则找到需要匹配的内容
-                        code = ReUtil.get(code, fileContent, 0);
-                        replaceCodeSnippets = String.format("\n<#if %s>\n%s\n</#if>\n",
-                                boolVal ? condition : "!" + condition, code);
-                    }
-                    default -> {
-                    }
-                }
-                // 判断目前内容中是否已有我们需要生成的代码片段，如果存在，说明已经加工过了，不需要操作，否则执行替换操作
-                boolean contains = StrUtil.contains(newFileContent, replaceCodeSnippets);
-                if (!contains) {
-                    newFileContent = StrUtil.replace(newFileContent, code,
-                            replaceCodeSnippets);
-                }
-            }
-        }
+        newFileContent = codeSnippetCheck(codeSnippetConfigList, fileContent, newFileContent);
 
         // 转义字符转换 <#noparse>...</#noparse>
         TemplateMakerFileConfig.CodeSnippetConfig noParseConfig = fileInfoConfig.getNoParseConfig();
-        if (Objects.nonNull(noParseConfig)) {
-            String code = noParseConfig.getCode();
-            List<String> noParserContentList = ReUtil.findAll(code, fileContent, 0);
-            if (CollUtil.isNotEmpty(noParserContentList)) {
-                for (String noParserContent : noParserContentList) {
-                    String replaceCodeSnippets = String.format("<#noparse>%s</#noparse>",
-                            noParserContent);
-                    // 判断目前内容中是否存在我们需要生成的内容，如果有，说明替换过了，不需要操作
-                    boolean contains = StrUtil.contains(newFileContent, replaceCodeSnippets);
-                    if (!contains) {
-                        newFileContent = StrUtil.replace(newFileContent, noParserContent,
-                                replaceCodeSnippets);
-                    }
-                }
-            }
-        }
+        newFileContent = noParseCheck(noParseConfig, fileContent, newFileContent);
 
         // 文件配置信息
         Meta.FileConfig.FileInfo fileInfo = new Meta.FileConfig.FileInfo();
@@ -405,6 +349,115 @@ public class TemplateMaker {
         }
 
         return fileInfo;
+    }
+
+    /**
+     * 替换文件路径
+     *
+     * @param fileDirPathConfig 模板生成器模型配置中的文件目录路径配置
+     * @param fileInputPath     文件输入路径
+     * @return 替换后的文件路径
+     */
+    private static String replaceFilePath(
+            TemplateMakerModelConfig.ModelInfoConfig fileDirPathConfig,
+            String fileInputPath) {
+        if (Objects.isNull(fileDirPathConfig)) {
+            return fileInputPath;
+        }
+        String[] inputPathAndFileSuffix = fileInputPath.split("\\.");
+        if (inputPathAndFileSuffix.length > 1) {
+            String fileSuffix = inputPathAndFileSuffix[1];
+            // 拿到要替换的包名，e.g: com.youyi => com/youyi
+            String replaceText = fileDirPathConfig.getReplaceText().replace(".", "/");
+            String fieldName = fileDirPathConfig.getFieldName(); // fieldName 目前只支持 basePackage
+            // 替换路径，e.g: src/main/java/com/youyi/project/Demo => src/main/java/{basePackage}/project/Demo
+            fileInputPath = inputPathAndFileSuffix[0].replace(replaceText,
+                    String.format("{%s}", fieldName));
+            // 拼接后缀
+            fileInputPath = fileInputPath + "." + fileSuffix;
+        }
+        return fileInputPath;
+    }
+
+
+    /**
+     * 检查是否需要进行转义操作
+     *
+     * @param noParseConfig  转义配置
+     * @param fileContent    文件内容
+     * @param newFileContent 新文件内容
+     * @return 转义后的文件内容
+     */
+    private static String noParseCheck(TemplateMakerFileConfig.CodeSnippetConfig noParseConfig,
+            String fileContent, String newFileContent) {
+        if (Objects.isNull(noParseConfig)) {
+            return newFileContent;
+        }
+        String code = noParseConfig.getCode();
+        // 获取所有需要转义的内容
+        List<String> noParserContentList = ReUtil.findAll(code, fileContent, 0);
+        if (CollUtil.isNotEmpty(noParserContentList)) {
+            for (String noParserContent : noParserContentList) {
+                String replaceCodeSnippets = String.format("<#noparse>%s</#noparse>",
+                        noParserContent);
+                // 判断目前内容中是否存在我们需要生成的内容，如果有，说明替换过了，不需要操作
+                boolean contains = StrUtil.contains(newFileContent, replaceCodeSnippets);
+                if (!contains) {
+                    newFileContent = StrUtil.replace(newFileContent, noParserContent,
+                            replaceCodeSnippets);
+                }
+            }
+        }
+        return newFileContent;
+    }
+
+
+    /**
+     * 根据代码片段配置列表，检查并替换文件内容中的代码片段。
+     *
+     * @param codeSnippetConfigList 代码片段配置列表
+     * @param fileContent           文件内容
+     * @param newFileContent        新的文件内容
+     * @return 替换后的文件内容
+     */
+    private static String codeSnippetCheck(
+            List<TemplateMakerFileConfig.CodeSnippetConfig> codeSnippetConfigList,
+            String fileContent, String newFileContent) {
+        if (CollUtil.isEmpty(codeSnippetConfigList)) {
+            return newFileContent;
+        }
+
+        for (TemplateMakerFileConfig.CodeSnippetConfig codeSnippetConfig : codeSnippetConfigList) {
+            String code = codeSnippetConfig.getCode();
+            String condition = codeSnippetConfig.getCondition();
+            boolean boolVal = codeSnippetConfig.getBoolVal();
+            String checkType = codeSnippetConfig.getCheckType();
+            CodeSnippetCheckTypeEnum checkTypeEnum = CodeSnippetCheckTypeEnum.resolve(
+                    checkType);
+            if (Objects.isNull(checkTypeEnum)) {
+                continue;
+            }
+            String replaceCodeSnippets;
+            switch (checkTypeEnum) {
+                case EQUALS -> replaceCodeSnippets = String.format("\n<#if %s>\n%s\n</#if>\n",
+                        boolVal ? condition : "!" + condition, code);
+                case REGEX -> {
+                    // 根据正则找到需要匹配的内容
+                    code = ReUtil.get(code, fileContent, 0);
+                    replaceCodeSnippets = String.format("\n<#if %s>\n%s\n</#if>\n",
+                            boolVal ? condition : "!" + condition, code);
+                }
+                default -> throw new UnsupportedOperationException(
+                        "不支持的代码片段检查类型：" + checkType);
+            }
+            // 判断目前内容中是否已有我们需要生成的代码片段，如果存在，说明已经加工过了，不需要操作，否则执行替换操作
+            boolean contains = StrUtil.contains(newFileContent, replaceCodeSnippets);
+            if (!contains) {
+                newFileContent = StrUtil.replace(newFileContent, code,
+                        replaceCodeSnippets);
+            }
+        }
+        return newFileContent;
     }
 
 

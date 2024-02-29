@@ -41,11 +41,9 @@ public class FileFilter {
      * @return 过滤结果，true 表示通过过滤，false 表示不通过过滤
      */
     public static boolean doSingleFileFilter(File file, List<FileFilterConfig> filterConfigList) {
-        String fileName = file.getName();
-        String fileContent = FileUtil.readUtf8String(file);
-
         boolean filterRes = true;
 
+        // 无需过滤
         if (CollUtil.isEmpty(filterConfigList)) {
             return filterRes;
         }
@@ -55,50 +53,34 @@ public class FileFilter {
             String rule = filterConfig.getRule();
             String value = filterConfig.getValue();
 
-            FileFilterRangeEnum rangeEnum = FileFilterRangeEnum.getEnumByValue(range);
+            FileFilterRangeEnum rangeEnum = FileFilterRangeEnum.resolve(range);
             if (Objects.isNull(rangeEnum)) {
                 continue;
             }
+            String fileName = file.getName();
             // 过滤内容，默认过滤文件名
-            String filterContent = fileName;
+            String filterContent;
             switch (rangeEnum) {
-                case FILE_NAME:
-                    filterContent = fileName;
-                    break;
-                case FILE_CONTENT:
-                    filterContent = fileContent;
-                    break;
-                default:
+                case FILE_NAME -> filterContent = fileName;
+                // 延时读取文件内容
+                case FILE_CONTENT -> filterContent = FileUtil.readUtf8String(file);
+                default -> throw new UnsupportedOperationException("不支持的过滤内容：" + range);
             }
 
             // 过滤类别
-            FileFilterRuleEnum ruleEnum = FileFilterRuleEnum.getEnumByValue(rule);
+            FileFilterRuleEnum ruleEnum = FileFilterRuleEnum.resolve(rule);
             if (Objects.isNull(ruleEnum)) {
                 continue;
             }
             switch (ruleEnum) {
-                case CONTAINS:
-                    filterRes = filterContent.contains(value);
-                    break;
-                case NON_CONTAINS:
-                    filterRes = !filterContent.contains(value);
-                    break;
-                case START_WITH:
-                    filterRes = filterContent.startsWith(value);
-                    break;
-                case NON_START_WITH:
-                    filterRes = !filterContent.startsWith(value);
-                    break;
-                case END_WITH:
-                    filterRes = filterContent.endsWith(value);
-                    break;
-                case REGEX:
-                    filterRes = filterContent.matches(value);
-                    break;
-                case EQUALS:
-                    filterRes = filterContent.equals(value);
-                    break;
-                default:
+                case CONTAINS -> filterRes = filterContent.contains(value);
+                case NON_CONTAINS -> filterRes = !filterContent.contains(value);
+                case START_WITH -> filterRes = filterContent.startsWith(value);
+                case NON_START_WITH -> filterRes = !filterContent.startsWith(value);
+                case END_WITH -> filterRes = filterContent.endsWith(value);
+                case REGEX -> filterRes = filterContent.matches(value);
+                case EQUALS -> filterRes = filterContent.equals(value);
+                default -> throw new UnsupportedOperationException("不支持的过滤类别：" + rule);
             }
 
             if (!filterRes) {

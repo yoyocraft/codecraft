@@ -28,13 +28,13 @@ public enum FileFilterRangeEnum {
      * @param value 字符串值
      * @return 对应的枚举对象，如果不存在则返回 null
      */
-    public static FileFilterRangeEnum getEnumByValue(String value) {
+    public static FileFilterRangeEnum resolve(String value) {
         if (ObjectUtil.isEmpty(value)) {
             return null;
         }
 
         for (FileFilterRangeEnum rangeEnum : FileFilterRangeEnum.values()) {
-            if (rangeEnum.getValue().equals(value)) {
+            if (rangeEnum.value.equals(value)) {
                 return rangeEnum;
             }
         }

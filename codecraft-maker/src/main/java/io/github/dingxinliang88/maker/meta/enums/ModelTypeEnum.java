@@ -1,10 +1,13 @@
 package io.github.dingxinliang88.maker.meta.enums;
 
+import lombok.Getter;
+
 /**
  * 模型类型枚举
  *
  * @author <a href="https://github.com/dingxinliang88">youyi</a>
  */
+@Getter
 public enum ModelTypeEnum {
 
     STRING("字符串", "String"),
@@ -19,11 +22,4 @@ public enum ModelTypeEnum {
         this.value = value;
     }
 
-    public String getText() {
-        return text;
-    }
-
-    public String getValue() {
-        return value;
-    }
 }
