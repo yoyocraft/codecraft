@@ -29,13 +29,13 @@ public enum CodeSnippetCheckTypeEnum {
      * @param value 字符串值
      * @return 对应的枚举对象，如果不存在则返回 null
      */
-    public static CodeSnippetCheckTypeEnum getEnumByValue(String value) {
+    public static CodeSnippetCheckTypeEnum resolve(String value) {
         if (ObjectUtil.isEmpty(value)) {
             return null;
         }
 
         for (CodeSnippetCheckTypeEnum typeEnum : CodeSnippetCheckTypeEnum.values()) {
-            if (typeEnum.getValue().equals(value)) {
+            if (typeEnum.value.equals(value)) {
                 return typeEnum;
             }
         }

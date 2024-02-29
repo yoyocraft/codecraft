@@ -33,13 +33,13 @@ public enum FileFilterRuleEnum {
      * @param value 字符串值
      * @return 对应的枚举对象，如果不存在则返回 null
      */
-    public static FileFilterRuleEnum getEnumByValue(String value) {
+    public static FileFilterRuleEnum resolve(String value) {
         if (ObjectUtil.isEmpty(value)) {
             return null;
         }
 
         for (FileFilterRuleEnum rangeEnum : FileFilterRuleEnum.values()) {
-            if (rangeEnum.getValue().equals(value)) {
+            if (rangeEnum.value.equals(value)) {
                 return rangeEnum;
             }
         }

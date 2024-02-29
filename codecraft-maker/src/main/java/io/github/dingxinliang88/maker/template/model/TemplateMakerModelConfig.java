@@ -17,6 +17,8 @@ public class TemplateMakerModelConfig {
 
     /**
      * 文件目录配置
+     * <p>
+     * fieldName 目前只支持 basePackage
      */
     private ModelInfoConfig fileDirPathConfig;
 
