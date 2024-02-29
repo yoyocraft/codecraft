@@ -16,11 +16,6 @@ import org.springframework.context.annotation.Configuration;
 @MapperScan("com.youyi.craft.mapper")
 public class MyBatisPlusConfig {
 
-    /**
-     * 拦截器配置
-     *
-     * @return
-     */
     @Bean
     public MybatisPlusInterceptor mybatisPlusInterceptor() {
         MybatisPlusInterceptor interceptor = new MybatisPlusInterceptor();

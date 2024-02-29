@@ -1,12 +1,14 @@
 package com.youyi.craft.exception;
 
 import com.youyi.craft.common.ErrorCode;
+import lombok.Getter;
 
 /**
  * 自定义异常类
  *
  * @author <a href="https://github.com/dingxinliang88">youyi</a>
  */
+@Getter
 public class BusinessException extends RuntimeException {
 
     /**
@@ -29,7 +31,4 @@ public class BusinessException extends RuntimeException {
         this.code = errorCode.getCode();
     }
 
-    public int getCode() {
-        return code;
-    }
 }

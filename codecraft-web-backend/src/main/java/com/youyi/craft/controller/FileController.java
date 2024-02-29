@@ -59,7 +59,7 @@ public class FileController {
     public BaseResponse<String> uploadFile(@RequestPart("file") MultipartFile multipartFile,
             UploadFileRequest uploadFileRequest, HttpServletRequest request) {
         String biz = uploadFileRequest.getBiz();
-        FileUploadBizEnum fileUploadBizEnum = FileUploadBizEnum.getEnumByValue(biz);
+        FileUploadBizEnum fileUploadBizEnum = FileUploadBizEnum.resolve(biz);
         if (fileUploadBizEnum == null) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR);
         }

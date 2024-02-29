@@ -39,7 +39,7 @@ public class AuthInterceptor {
         User loginUser = userService.getLoginUser(request);
         // 必须有该权限才通过
         if (StringUtils.isNotBlank(mustRole)) {
-            UserRoleEnum mustUserRoleEnum = UserRoleEnum.getEnumByValue(mustRole);
+            UserRoleEnum mustUserRoleEnum = UserRoleEnum.resolve(mustRole);
             if (mustUserRoleEnum == null) {
                 throw new BusinessException(ErrorCode.NO_AUTH_ERROR);
             }

@@ -55,6 +55,10 @@ public class LocalFileCacheManager {
         }
     }
 
+    public static void clearAllCache() {
+        clearCache(CACHE_EXPIRATION_MAP.asMap().keySet().stream().toList());
+    }
+
     public static boolean isCached(String cacheKey) {
         return !isCacheExpired(cacheKey);
     }

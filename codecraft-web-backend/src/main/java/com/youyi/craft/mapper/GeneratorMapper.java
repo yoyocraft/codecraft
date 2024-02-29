@@ -14,7 +14,7 @@ public interface GeneratorMapper extends BaseMapper<Generator> {
     /**
      * 查询所有删除了的 generator
      *
-     * @return
+     * @return generator
      */
     @Select("SELECT id, distPath FROM generator WHERE isDelete = 1;")
     List<Generator> listDeletedGenerator();
@@ -27,7 +27,7 @@ public interface GeneratorMapper extends BaseMapper<Generator> {
      *
      * @see GeneratorConstant#HOT_GENERATOR_USE_COUNT_THRESHOLD
      */
-    @Select("SELECT id FROM generator WHERE useCount >= 1000 AND isDelete = 0 ORDER BY useCount DESC LIMIT 10;")
+    @Select("SELECT id FROM generator WHERE useCount >= 500 AND isDelete = 0 ORDER BY useCount DESC LIMIT 10;")
     List<Long> listHotGeneratorIds();
 }
 
