@@ -32,11 +32,11 @@ public class IndexPageCacheWarmupInitializer implements InitializingBean {
         defaultReq.setPageSize(12);
         defaultReq.setSortField("updateTime");
         defaultReq.setSortOrder("descend");
+        String cacheKey = CacheManager.getPageCacheKey(defaultReq);
 
         Page<GeneratorVO> generatorVOPage = generatorService.listGeneratorVOByPageSimplifyData(
                 defaultReq);
 
-        String cacheKey = cacheManager.getPageCacheKey(defaultReq);
         cacheManager.put(cacheKey, generatorVOPage);
         log.info("index page cache warmup completed");
     }
