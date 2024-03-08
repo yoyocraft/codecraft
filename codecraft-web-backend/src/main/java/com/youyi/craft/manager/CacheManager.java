@@ -80,11 +80,20 @@ public class CacheManager {
      * @param generatorQueryRequest
      * @return
      */
-    public String getPageCacheKey(GeneratorQueryRequest generatorQueryRequest) {
+    public static String getPageCacheKey(GeneratorQueryRequest generatorQueryRequest) {
         String jsonStr = JSONUtil.toJsonStr(generatorQueryRequest);
         // 请求参数编码
         String base64 = Base64Encoder.encode(jsonStr);
         return GeneratorConstant.CACHE_KEY_PREFIX + base64;
+    }
+
+    public static String getIndexPageCacheKey() {
+        GeneratorQueryRequest defaultReq = new GeneratorQueryRequest();
+        defaultReq.setCurrent(1);
+        defaultReq.setPageSize(12);
+        defaultReq.setSortField("updateTime");
+        defaultReq.setSortOrder("descend");
+        return CacheManager.getPageCacheKey(defaultReq);
     }
 
 }

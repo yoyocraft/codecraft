@@ -40,7 +40,7 @@ public class MainVerticle extends AbstractVerticle {
 
                             // 处理 JSON 数据
                             // 在实际应用中，这里可以解析 JSON、执行业务逻辑等
-                            String cacheKey = cacheManager.getPageCacheKey(generatorQueryRequest);
+                            String cacheKey = CacheManager.getPageCacheKey(generatorQueryRequest);
 
                             // 设置响应头
                             HttpServerResponse response = req.response();
@@ -50,7 +50,7 @@ public class MainVerticle extends AbstractVerticle {
                             Object cacheValue = cacheManager.get(cacheKey);
                             if (cacheValue != null) {
                                 // 返回 JSON 响应
-                                //noinspection unchecked
+                                // noinspection unchecked
                                 response.end(JSONUtil.toJsonStr(
                                         ResultUtils.success((Page<GeneratorVO>) cacheValue)));
                                 return;

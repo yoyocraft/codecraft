@@ -101,6 +101,7 @@ public class GeneratorController {
         boolean result = generatorService.save(generator);
         ThrowUtils.throwIf(!result, ErrorCode.OPERATION_ERROR);
         long newGeneratorId = generator.getId();
+        cacheManager.delete(CacheManager.getIndexPageCacheKey());
         return ResultUtils.success(newGeneratorId);
     }
 
@@ -127,6 +128,7 @@ public class GeneratorController {
             throw new BusinessException(ErrorCode.NO_AUTH_ERROR);
         }
         boolean b = generatorService.removeById(id);
+        cacheManager.delete(CacheManager.getIndexPageCacheKey());
         return ResultUtils.success(b);
     }
 
@@ -159,6 +161,7 @@ public class GeneratorController {
         Generator oldGenerator = generatorService.getById(id);
         ThrowUtils.throwIf(oldGenerator == null, ErrorCode.NOT_FOUND_ERROR);
         boolean result = generatorService.updateById(generator);
+        cacheManager.delete(CacheManager.getIndexPageCacheKey());
         return ResultUtils.success(result);
     }
 
@@ -232,7 +235,7 @@ public class GeneratorController {
         ThrowUtils.throwIf(size > 20, ErrorCode.PARAMS_ERROR);
 
         // 优先从缓存获取
-        String cacheKey = cacheManager.getPageCacheKey(generatorQueryRequest);
+        String cacheKey = CacheManager.getPageCacheKey(generatorQueryRequest);
         Object cache = cacheManager.get(cacheKey);
         if (Objects.nonNull(cache)) {
             // noinspection unchecked
