@@ -466,8 +466,4 @@ public class GeneratorController {
                 .collect(Collectors.toList());
         LocalFileCacheManager.clearCache(cacheKeyList);
     }
-
-    // TODO 完善生成器状态流转，考虑使用状态机
-    // TODO 推荐生成器（根据标签 余弦相似度算法）
-
 }
